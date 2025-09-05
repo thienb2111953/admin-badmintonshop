@@ -1,135 +1,79 @@
 import AppLayout from '@/layouts/app-layout';
-import { columns, Payment } from '@/pages/admin/columns';
+import { columns } from '@/pages/admin/columns';
 import { DataTable } from '@/pages/admin/data-table';
-import { quyen } from '@/routes';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
-import { DialogCRUD } from './dialog-crud';
+import { type BreadcrumbItem, Quyen } from '@/types';
+import { Head, router } from '@inertiajs/react';
 import * as React from 'react';
-import { DialogConfirmDelete } from '@/pages/admin/dialog-confirm-delete';
+import { DialogCRUD } from './dialog-crud';
+import { DialogConfirmDelete } from './dialog-confirm-delete';
+import { toast } from 'sonner';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Quản lý người dùng',
-    href: quyen().url,
-  },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quản lý người dùng', href: '/quyen' }];
 
-function getData(): Promise<Payment[]> {
-  // Fetch data từ API
-  return Promise.resolve([
-    {
-      id: '1',
-      amount: 10000000000,
-      status: 'done',
-      email: 'HUYPHAN@example.com',
-    },
-    {
-      id: '2',
-      amount: 232,
-      status: 'success',
-      email: 'sonxuandi@example.com',
-    },
-    {
-      id: '3',
-      amount: 345,
-      status: 'waitting',
-      email: 'tanphat@example.com',
-    },
-    {
-      id: '4',
-      amount: 433,
-      status: 'pending',
-      email: 'hoangkha@example.com',
-    },
-    {
-      id: '5',
-      amount: 787,
-      status: 'pending',
-      email: 'khoanhan@example.com',
-    },
-    {
-      id: '1',
-      amount: 100,
-      status: 'done',
-      email: 'HUYPHAN@example.com',
-    },
-    {
-      id: '2',
-      amount: 232,
-      status: 'success',
-      email: 'sonxuandi@example.com',
-    },
-  ]);
-}
+export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [selectedRow, setSelectedRow] = React.useState<Quyen | null>(null);
 
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+  const [rowsToDelete, setRowsToDelete] = React.useState<Quyen[]>([]);
 
-export default function QuyenPage() {
-    const [openDialog, setOpenDialog] = React.useState(false);
-    const [dialogMode, setDialogMode] = React.useState<'create' | 'edit'>('create');
-    const [selectedRow, setSelectedRow] = React.useState<Payment | null>(null);
-    const [openConfirm, setOpenConfirm] = React.useState(false);
-    const [rowToDelete, setRowToDelete] = React.useState<Payment | null>(null);
+  const handleAdd = () => {
+    setSelectedRow(null);
+    setOpenDialog(true);
+  };
 
-    const [data, setData] = useState<Payment[]>([]);
+  const handleEdit = (row: Quyen) => {
+    setSelectedRow(row);
+    setOpenDialog(true);
+  };
 
-  useEffect(() => {
-    getData().then(setData);
-  }, []);
+  const handleDelete = (row: Quyen) => {
+    setRowsToDelete([row]);
+    setOpenConfirm(true);
+  };
 
-    const handleAdd = () => {
-        setDialogMode('create');
-        setSelectedRow(null);
-        setOpenDialog(true);
-    };
+  const handleDeleteSelected = (selectedRows: Quyen[]) => {
+    if (selectedRows.length === 0) {
+      toast.error('Chưa chọn quyền nào.');
+      return;
+    }
+    setRowsToDelete(selectedRows);
+    setOpenConfirm(true);
+  };
 
-    const handleEdit = (row: Payment) => {
-        setDialogMode('edit');
-        setSelectedRow(row);
-        setOpenDialog(true);
-    };
+  const confirmDelete = () => {
+    if (rowsToDelete.length === 0) return;
 
-    const handleSave = (newRow: Payment) => {
-        if (dialogMode === 'edit' && selectedRow) {
-            setData((prev) => prev.map((item) => (item.id === newRow.id ? newRow : item)));
-        } else {
-            setData((prev) => [...prev, { ...newRow, id: Date.now().toString() }]);
-        }
-    };
+    const isBulk = rowsToDelete.length > 1;
+    const data = isBulk ? { ids: rowsToDelete.map((r) => r.id_quyen) } : undefined;
 
-    const handleDelete = (row: Payment) => {
-        setRowToDelete(row);
-        setOpenConfirm(true);
-    };
-
-    const confirmDelete = () => {
-        if (rowToDelete) {
-            setData((prev) => prev.filter((item) => item.id !== rowToDelete.id));
-        }
-        setRowToDelete(null);
+    router.delete('xoa-nhieu-quyen', {
+      data,
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Xóa thành công!');
         setOpenConfirm(false);
-    };
+        setRowsToDelete([]);
+      },
+      onError: () => toast.error('Xóa thất bại!'),
+    });
+  };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Quản lý Quyền" />
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-          <DataTable columns={columns(handleEdit, handleDelete)} data={data} onAdd={handleAdd} />
+        <DataTable
+          columns={columns(handleEdit, handleDelete)}
+          data={quyen}
+          onAdd={handleAdd}
+          onDeleteSelected={(selectedRows) => handleDeleteSelected(selectedRows)}
+        />
       </div>
-        <DialogCRUD
-            open={openDialog}
-            row={selectedRow}
-            onClose={() => setOpenDialog(false)}
-            onSave={handleSave}
-        />
 
-        <DialogConfirmDelete
-            open={openConfirm}
-            onClose={() => setOpenConfirm(false)}
-            onConfirm={confirmDelete}
-        />
+      <DialogCRUD open={openDialog} row={selectedRow} onClose={() => setOpenDialog(false)} />
 
+      <DialogConfirmDelete open={openConfirm} onClose={() => setOpenConfirm(false)} onConfirm={confirmDelete} />
     </AppLayout>
   );
 }

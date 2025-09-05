@@ -2,22 +2,29 @@ import { Table } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Plus } from 'lucide-react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
+  onDeleteSelected?: () => void;
 }
 
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({ table, onDeleteSelected }: DataTablePaginationProps<TData>) {
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
+        <Button className="ml-4" onClick={onDeleteSelected}>
+          <Label>Xóa nhiều</Label>
+        </Button>
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
+
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {

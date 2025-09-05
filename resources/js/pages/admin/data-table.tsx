@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import {
@@ -23,9 +23,17 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onAdd: () => void;
+  onDeleteSelected?: (selectedRows: TData[]) => void; // truyền cả row chứ không chỉ id
+  tableInstanceRef?: (table: ReturnType<typeof useReactTable<TData>>) => void;
 }
 
-export function DataTable<TData, TValue>({ columns, data, onAdd }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  onAdd,
+  onDeleteSelected,
+  tableInstanceRef,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
@@ -54,12 +62,24 @@ export function DataTable<TData, TValue>({ columns, data, onAdd }: DataTableProp
     },
   });
 
+  React.useEffect(() => {
+    if (tableInstanceRef) tableInstanceRef(table);
+  }, [table]);
+
+  const handleDeleteSelected = () => {
+    const selectedIds = Object.keys(rowSelection)
+      .filter((id) => rowSelection[id])
+      .map((id) => table.getRow(id).original.id_quyen);
+
+    if (onDeleteSelected) onDeleteSelected(selectedIds);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between py-4">
         <div className="item-left">
           <Button onClick={onAdd}>
-            <Plus className="h-4 w-4"/>
+            <Plus className="h-4 w-4" />
             <Label>Thêm</Label>
           </Button>
         </div>
@@ -111,9 +131,14 @@ export function DataTable<TData, TValue>({ columns, data, onAdd }: DataTableProp
       </div>
 
       <div className="space-x-2 py-4">
-        <DataTablePagination table={table} />
+        <DataTablePagination
+          table={table}
+          onDeleteSelected={() => {
+            const selectedRows = table.getSelectedRowModel().flatRows.map((row) => row.original);
+            if (onDeleteSelected) onDeleteSelected(selectedRows);
+          }}
+        />
       </div>
     </div>
-
   );
 }
