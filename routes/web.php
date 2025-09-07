@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Quyen;
-
+use \App\Http\Controllers\Admin\QuyenController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -15,17 +15,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    // Route::get('quyen', function () {
-    //     return Inertia::render('admin/quyen', [
-    //         'initialData' => Quyen::all()
-    //     ]);
-    // })->name('quyen.index');
-
-    Route::get('quyen', [\App\Http\Controllers\Admin\QuyenController::class, 'index'])->name('quyen.index');
-    Route::get('dsQuyen', [\App\Http\Controllers\Admin\QuyenController::class, 'dsQuyen']);
-    Route::post('quyen/store-or-update', [\App\Http\Controllers\Admin\QuyenController::class, 'storeOrUpdate'])->name('quyen.storeOrUpdate');
-    Route::delete('quyen', [\App\Http\Controllers\Admin\QuyenController::class, 'destroy'])->name('quyen.destroy');
-    Route::delete('xoa-nhieu-quyen', [\App\Http\Controllers\Admin\QuyenController::class, 'destroyMultiple'])->name('quyen.destroyMultiple');
+    Route::prefix('quyen')->group(function () {
+        Route::get('/', [QuyenController::class, 'index'])->name('quyen');
+        Route::post('/', [QuyenController::class, 'store'])->name('quyen.store');
+        Route::put('/', [QuyenController::class, 'update'])->name('quyen.update');
+        Route::delete('/', [QuyenController::class, 'destroy'])->name('quyen.destroy');
+        Route::delete('xoa-nhieu', [QuyenController::class, 'destroyMultiple'])->name('quyen.destroyMultiple');
+        Route::get('ds-quyen', [QuyenController::class, 'dsQuyen'])->name('quyen.dsQuyen');
+    });
 });
 
 require __DIR__ . '/settings.php';

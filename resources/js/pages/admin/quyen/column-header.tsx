@@ -7,16 +7,12 @@ import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
-interface DataTableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
+interface ColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;
 }
 
-export function DataTableColumnHeader<TData, TValue>({
-  column,
-  title,
-  className,
-}: DataTableColumnHeaderProps<TData, TValue>) {
+export function ColumnHeader<TData, TValue>({ column, title, className }: ColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }

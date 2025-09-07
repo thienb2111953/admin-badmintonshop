@@ -24,7 +24,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Quyền',
-    href: '/quyen',
+    href: quyen(),
     icon: UserLock,
   },
 ];

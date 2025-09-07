@@ -3,50 +3,50 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SquarePen, Trash2 } from 'lucide-react';
-import { DataTableColumnHeader } from './data-table-column-header';
+import { ColumnHeader } from './column-header';
 import { Quyen } from '@/types';
 
 export function columns(onEdit: (row: Quyen) => void, onDelete: (row: Quyen) => void): ColumnDef<Quyen>[] {
   return [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
+    // {
+    //   id: 'select',
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //       aria-label="Select all"
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <Checkbox
+    //       checked={row.getIsSelected()}
+    //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //       aria-label="Select row"
+    //     />
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
     {
       accessorKey: 'ten_quyen',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Quyền" />,
+      header: ({ column }) => <ColumnHeader column={column} title="Quyền" />,
     },
     // {
     //     accessorKey: 'status',
     //     header: ({ column }) => (
-    //         <DataTableColumnHeader column={column} title="Status" />
+    //         <ColumnHeader column={column} title="Status" />
     //     ),
     // },
     // {
     //     accessorKey: 'email',
     //     header: ({ column }) => (
-    //         <DataTableColumnHeader column={column} title="Email" />
+    //         <ColumnHeader column={column} title="Email" />
     //     ),
     // },
     // {
     //     accessorKey: 'amount',
     //     header: ({ column }) => (
-    //         <DataTableColumnHeader column={column} title="Amount" />
+    //         <ColumnHeader column={column} title="Amount" />
     //     ),
     //     cell: ({ row }) => {
     //         const amount = parseFloat(row.getValue('amount'));

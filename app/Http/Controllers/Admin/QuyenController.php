@@ -5,28 +5,27 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Quyen;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Inertia\Inertia;
 
 class QuyenController extends Controller
 {
     public function index()
     {
-        return Inertia::render('admin/quyen', [
-            'quyen' => Quyen::all()
+        return Inertia::render('admin/quyen/quyen', [
+            'quyen' => Quyen::all(),
         ]);
     }
 
     public function dsQuyen()
     {
-        return Response()->json([
+        return response()->json([
             'data' => Quyen::all(),
             'message' => '',
             'status' => 200,
         ]);
     }
 
-    public function storeOrUpdate(Request $request)
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
             'ten_quyen' => 'required|string',
@@ -34,42 +33,56 @@ class QuyenController extends Controller
             'ten_quyen.required' => 'Tên quyền không được để trống.',
         ]);
 
-        if ($request->id_quyen && $request->id_quyen != 0) {
-            $quyen = Quyen::findOrFail($request->id_quyen);
-            $quyen->update($validatedData);
-        } else {
-            Quyen::create($validatedData);
-        }
+        Quyen::create($validatedData);
 
-        return redirect()->route('quyen.index')->with('success', 'Lưu quyền thành công!');
+        return redirect()->route('quyen');
     }
 
-    public function destroy(Request $r)
+
+    public function update(Request $request)
     {
-        $quyen = Quyen::find($r->id_quyen);
-        if ($quyen) {
-            $quyen->delete();
-            return redirect()->back()->with('success', 'Xóa quyền thành công!');
-        }
+        $validatedData = $request->validate([
+            'id_quyen'  => 'required|integer|exists:quyen,id_quyen',
+            'ten_quyen' => 'required|string',
+        ], [
+            'id_quyen.required' => 'ID quyền không hợp lệ.',
+            'ten_quyen.required' => 'Tên quyền không được để trống.',
+        ]);
 
-        return redirect()->back()->with('error', 'Quyền không tồn tại!');
+        $quyen = Quyen::findOrFail($request->id_quyen);
+        $quyen->update($validatedData);
+
+        return redirect()->route('quyen');
     }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'id_quyen' => 'required|integer|exists:quyen,id_quyen',
+        ], [
+            'id_quyen.required' => 'ID quyền không hợp lệ.',
+        ]);
+
+        $quyen = Quyen::findOrFail($request->id_quyen);
+        $quyen->delete();
+
+        return redirect()->route('quyen');
+    }
+
 
     public function destroyMultiple(Request $request)
     {
-        $ids = $request->input('ids', []); // Lấy danh sách id từ request
+        $ids = $request->input('ids', []);
 
         if (empty($ids)) {
-            return redirect()->back()->with('error', 'Chưa chọn quyền nào để xóa!');
+            return response()->json([
+                'message' => 'Chưa chọn quyền nào để xóa!',
+                'status' => 400,
+            ], 400);
         }
 
-        // Xóa tất cả quyền có id trong danh sách
         $deletedCount = Quyen::whereIn('id_quyen', $ids)->delete();
 
-        if ($deletedCount > 0) {
-            return redirect()->back()->with('success', "Đã xóa $deletedCount quyền thành công!");
-        }
-
-        return redirect()->back()->with('error', 'Xóa thất bại hoặc quyền không tồn tại!');
+        return redirect()->route('quyen');
     }
 }

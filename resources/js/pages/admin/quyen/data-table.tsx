@@ -17,7 +17,7 @@ import {
 } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
 
-import { DataTablePagination } from './data-table-pagination';
+import { DataTablePagination } from '@/components/custom/data-table-pagination';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -66,13 +66,13 @@ export function DataTable<TData, TValue>({
     if (tableInstanceRef) tableInstanceRef(table);
   }, [table]);
 
-  const handleDeleteSelected = () => {
-    const selectedIds = Object.keys(rowSelection)
-      .filter((id) => rowSelection[id])
-      .map((id) => table.getRow(id).original.id_quyen);
+  // const handleDeleteSelected = () => {
+  //   const selectedIds = Object.keys(rowSelection)
+  //     .filter((id) => rowSelection[id])
+  //     .map((id) => table.getRow(id).original.id_quyen);
 
-    if (onDeleteSelected) onDeleteSelected(selectedIds);
-  };
+  //   if (onDeleteSelected) onDeleteSelected(selectedIds);
+  // };
 
   return (
     <div>
@@ -133,12 +133,13 @@ export function DataTable<TData, TValue>({
       <div className="space-x-2 py-4">
         <DataTablePagination
           table={table}
-          onDeleteSelected={() => {
-            const selectedRows = table.getSelectedRowModel().flatRows.map((row) => row.original);
-            if (onDeleteSelected) onDeleteSelected(selectedRows);
-          }}
+          // onDeleteSelected={() => {
+          //   const selectedRows = table.getSelectedRowModel().flatRows.map((row) => row.original);
+          //   if (onDeleteSelected) onDeleteSelected(selectedRows);
+          // }}
         />
       </div>
+      
     </div>
   );
 }
