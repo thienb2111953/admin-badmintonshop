@@ -31,9 +31,12 @@ export interface SharedData {
 }
 
 export interface User {
-    id: number;
+    id_nguoi_dung: number;
     name: string;
     email: string;
+    ngay_sinh: date;
+    sdt: string;
+    password: string;
     avatar?: string;
     email_verified_at: string | null;
     created_at: string;
@@ -44,4 +47,17 @@ export interface User {
 export interface Quyen {
     id_quyen: number;
     ten_quyen: string;
+}
+
+export interface ThuongHieu{
+    id_thuong_hieu: number;
+    ma_thuong_hieu: string;
+    ten_thuong_hieu: string;
+    logo_url: string
+}
+
+export interface DanhMuc{
+    id_danh_muc: number;
+    ten_danh_muc: string;
+    slug: string;
 }

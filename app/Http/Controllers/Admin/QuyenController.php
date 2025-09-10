@@ -16,15 +16,6 @@ class QuyenController extends Controller
         ]);
     }
 
-    public function dsQuyen()
-    {
-        return response()->json([
-            'data' => Quyen::all(),
-            'message' => '',
-            'status' => 200,
-        ]);
-    }
-
     public function store(Request $request)
     {
         $validatedData = $request->validate([

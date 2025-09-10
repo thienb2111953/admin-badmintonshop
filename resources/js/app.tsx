@@ -7,6 +7,7 @@ import { initializeTheme } from './hooks/use-appearance';
 
 import { route as routeFn, Config } from 'ziggy-js';
 import { Ziggy } from '@/ziggyGenerated';
+import Providers from './providers';
 
 declare global {
   var route: typeof routeFn;
@@ -23,7 +24,11 @@ createInertiaApp({
   setup({ el, App, props }) {
     const root = createRoot(el);
 
-    root.render(<App {...props} />);
+    root.render(
+      <Providers>
+        <App {...props} />
+      </Providers>,
+    );
   },
   progress: {
     color: '#4B5563',

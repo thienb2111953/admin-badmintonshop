@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SquarePen, Trash2 } from 'lucide-react';
-import { ColumnHeader } from './column-header';
+import { ColumnHeader } from '@/components/custom/column-header';
 import { Quyen } from '@/types';
 
 export function columns(onEdit: (row: Quyen) => void, onDelete: (row: Quyen) => void): ColumnDef<Quyen>[] {

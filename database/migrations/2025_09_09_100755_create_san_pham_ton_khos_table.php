@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('thuong_hieu', function (Blueprint $table) {
-            $table->id('id_thuong_hieu');
-            $table->string('ma_thuong_hieu');
-            $table->string('ten_thuong_hieu');
-            $table->text('logo_url');
+        Schema::create('san_pham_ton_kho', function (Blueprint $table) {
+            $table->id('id_san_pham_ton_kho');
+            $table->foreignId('id_san_pham')
+                ->constrained('san_pham', 'id_san_pham')
+                ->onDelete('cascade');
+            $table->integer('so_luong_ton')->default(0);
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('thuong_hieu');
+        Schema::dropIfExists('san_pham_ton_kho');
     }
 };

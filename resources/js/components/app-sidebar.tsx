@@ -10,10 +10,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, quyen } from '@/routes';
+import { dashboard, quyen, thuong_hieu, nguoi_dung, danh_muc } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, UserLock } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, User, UserLock } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -23,8 +23,18 @@ const mainNavItems: NavItem[] = [
     icon: LayoutGrid,
   },
   {
+    title: 'Người dùng',
+    href: nguoi_dung(),
+    icon: User,
+  },
+  {
     title: 'Quyền',
     href: quyen(),
+    icon: UserLock,
+  },
+  {
+    title: 'Thương hiệu',
+    href: thuong_hieu(),
     icon: UserLock,
   },
 ];

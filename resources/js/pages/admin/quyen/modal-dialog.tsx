@@ -2,27 +2,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useEffect } from 'react';
-import { UseFormReturn } from '@inertiajs/react';
+import { useForm, type InertiaFormProps } from '@inertiajs/react';
+import { Quyen } from '@/types';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   title: string;
-  form: UseFormReturn<any>; // nhận form từ cha
+  form: InertiaFormProps<Quyen>; 
   onSubmit: () => void;
 }
 
-export function DialogCreateUpdate({ open, onClose, title, form, onSubmit }: Props) {
-  const { data, setData, errors, reset } = form;
-
-  // Reset form khi mở dialog
-  useEffect(() => {
-    if (!open) return;
-    // Khi mở, nếu id_quyen = 0 => thêm mới, reset form
-    if (!data.id_quyen) {
-      reset({ id_quyen: 0, ten_quyen: '' });
-    }
-  }, [open]);
+export function ModalDialog({ open, onClose, title, form, onSubmit }: Props) {
+  const { data, setData, errors } = form;
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();

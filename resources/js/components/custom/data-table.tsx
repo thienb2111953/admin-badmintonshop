@@ -64,7 +64,7 @@ export function DataTable<TData, TValue>({
 
   React.useEffect(() => {
     if (tableInstanceRef) tableInstanceRef(table);
-  }, [table]);
+  }, [table, tableInstanceRef]);
 
   // const handleDeleteSelected = () => {
   //   const selectedIds = Object.keys(rowSelection)

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quyen extends Model
 {
@@ -14,4 +16,13 @@ class Quyen extends Model
         'ten_quyen',
     ];
 
+    public function quyen(): HasMany
+    {
+        return $this->hasMany(Quyen::class);
+    }
+
+    public function nguoi_dung(): BelongsTo
+    {
+        return $this->BelongsTo(User::class);
+    }
 }
