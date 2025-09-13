@@ -45,7 +45,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
               <Label htmlFor="ten_thuong_hieu">Tên thương hiệu</Label>
               <Input
                 id="ten_thuong_hieu"
-                placeholder="Mã thương hiệu"
+                placeholder="Tên thương hiệu"
                 value={data.ten_thuong_hieu ?? ''}
                 onChange={(e) => setData('ten_thuong_hieu', e.target.value)}
               />
