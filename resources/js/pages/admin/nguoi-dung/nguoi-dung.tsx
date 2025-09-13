@@ -14,7 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Quản lý người dùng', href: nguoi_dung() },
 ];
 
-export default function Nguoid_nguoi_dungungPage({ users }: { users: User[] }) {
+export default function NguoiDungPage({ users }: { users: User[] }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<User | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -24,6 +24,8 @@ export default function Nguoid_nguoi_dungungPage({ users }: { users: User[] }) {
     name: '',
     email: '',
     password: '',
+    ngay_sinh: '',
+    sdt: '',
   });
 
   const handleAdd = () => {
@@ -34,28 +36,23 @@ export default function Nguoid_nguoi_dungungPage({ users }: { users: User[] }) {
 
   const handleEdit = (row: User) => {
     setSelectedRow(row);
-    form.setData({ id_nguoi_dung: row.id_nguoi_dung, name: row.name, email: row.email });
+    form.setData({
+      id_nguoi_dung: row.id_nguoi_dung,
+      name: row.name,
+      email: row.email,
+      ngay_sinh: row.ngay_sinh,
+      sdt: row.sdt,
+    });
     setOpenDialog(true);
   };
 
   const handleDelete = (row: User) => {
     setSelectedRow(row);
-    // setRowsToDelete([row]);
-    // console.log(rowsToDelete);
     setOpenConfirm(true);
   };
 
-  // const handleDeleteSelected = (selectedRows: User[]) => {
-  //   if (!selectedRows.length) {
-  //     toast.error('Chưa chọn quyền nào.');
-  //     return;
-  //   }
-  //   setRowsToDelete(selectedRows);
-  //   setOpenConfirm(true);
-  // };
-
   const confirmDelete = () => {
-    router.delete(route('User.destroy'), {
+    router.delete(route('nguoi_dung.destroy'), {
       data: { id_nguoi_dung: selectedRow?.id_nguoi_dung },
       preserveScroll: true,
       onSuccess: () => {
@@ -64,24 +61,12 @@ export default function Nguoid_nguoi_dungungPage({ users }: { users: User[] }) {
       },
       onError: () => toast.error('Xóa thất bại!'),
     });
-    // if (!rowsToDelete.length) return;
-    // const id_nguoi_dungs = rowsToDelete.map((r) => r.id_nguoi_dung);
-    // router.delete(route('User.destroyMultiple'), {
-    //   data: { id_nguoi_dungs },
-    //   preserveScroll: true,
-    //   onSuccess: () => {
-    //     toast.success('Xóa thành công!');
-    //     setOpenConfirm(false);
-    //     setRowsToDelete([]);
-    //   },
-    //   onError: () => toast.error('Xóa thất bại!'),
-    // });
   };
 
   const handleSubmit = () => {
     if (selectedRow) {
       // Cập nhật
-      form.put(route('User.update', { User: form.data.id_nguoi_dung }), {
+      form.put(route('nguoi_dung.update'), {
         onSuccess: () => {
           toast.success('Cập nhật thành công!');
           setOpenDialog(false);
@@ -90,7 +75,7 @@ export default function Nguoid_nguoi_dungungPage({ users }: { users: User[] }) {
       });
     } else {
       // Thêm mới
-      form.post(route('User.store'), {
+      form.post(route('nguoi_dung.store'), {
         onSuccess: () => {
           toast.success('Tạo mới thành công!');
           setOpenDialog(false);
@@ -111,9 +96,10 @@ export default function Nguoid_nguoi_dungungPage({ users }: { users: User[] }) {
       <ModalDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        title={selectedRow ? 'Sửa quyền' : 'Thêm quyền'}
-        form={form}
         onSubmit={handleSubmit}
+        form={form}
+        title={selectedRow ? 'Cập nhật người dùng' : 'Thêm người dùng'}
+        btnTitle={selectedRow ? 'Cập nhật' : 'Thêm'}
       />
 
       <DialogConfirmDelete open={openConfirm} onClose={() => setOpenConfirm(false)} onConfirm={confirmDelete} />

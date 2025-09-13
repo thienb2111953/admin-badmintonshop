@@ -13,11 +13,12 @@ interface Props {
   open: boolean;
   onClose: () => void;
   title: string;
+  btnTitle: string;
   form: InertiaFormProps<User>; // nhận form từ cha
   onSubmit: () => void;
 }
 
-export function ModalDialog({ open, onClose, title, form, onSubmit }: Props) {
+export function ModalDialog({ open, onClose, onSubmit, form, title, btnTitle }: Props) {
   const { data, setData, errors } = form;
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [openDate, setOpenDate] = useState(false);
@@ -41,7 +42,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit }: Props) {
               <Input
                 id="name"
                 placeholder="Họ tên"
-                value={data.name}
+                value={data.name ?? ''}
                 onChange={(e) => setData('name', e.target.value)}
               />
               {errors.name && <p className="text-red-500">{errors.name}</p>}
@@ -51,7 +52,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit }: Props) {
               <Input
                 id="email"
                 placeholder="Email"
-                value={data.email}
+                value={data.email ?? ''}
                 onChange={(e) => setData('email', e.target.value)}
               />
               {errors.email && <p className="text-red-500">{errors.email}</p>}
@@ -62,12 +63,12 @@ export function ModalDialog({ open, onClose, title, form, onSubmit }: Props) {
                 id="password"
                 type="password"
                 placeholder="password"
-                value={data.password}
+                value={data.password ?? ''}
                 onChange={(e) => setData('password', e.target.value)}
               />
               {errors.password && <p className="text-red-500">{errors.password}</p>}
             </div>
-            {/* <div className="grid gap-3">
+            <div className="grid gap-3">
               <Label htmlFor="ngay_sinh" className="px-1">
                 Ngày sinh
               </Label>
@@ -101,18 +102,18 @@ export function ModalDialog({ open, onClose, title, form, onSubmit }: Props) {
               <Input
                 id="sdt"
                 placeholder="Số điện thoại"
-                value={data.sdt}
+                value={data.sdt ?? ''}
                 onChange={(e) => setData('sdt', e.target.value)}
               />
               {errors.sdt && <p className="text-red-500">{errors.sdt}</p>}
-            </div> */}
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               Hủy
             </Button>
-            <Button type="submit">{data.id_quyen ? 'Cập nhật' : 'Thêm mới'}</Button>
+            <Button type="submit">{btnTitle}</Button>
           </div>
         </form>
       </DialogContent>

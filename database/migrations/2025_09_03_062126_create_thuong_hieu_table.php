@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('thuong_hieu', function (Blueprint $table) {
             $table->id('id_thuong_hieu');
-            $table->string('ma_thuong_hieu');
-            $table->string('ten_thuong_hieu');
-            $table->text('logo_url');
+            $table->string('ma_thuong_hieu')->nullable();
+            $table->string('ten_thuong_hieu')->nullable();
+            $table->text('logo_url')->nullable();
             $table->timestamps();
         });
     }

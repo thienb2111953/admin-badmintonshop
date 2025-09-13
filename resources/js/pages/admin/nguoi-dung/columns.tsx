@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
-import { Quyen } from '@/types';
+import { User } from '@/types';
 
-export function columns(onEdit: (row: Quyen) => void, onDelete: (row: Quyen) => void): ColumnDef<Quyen>[] {
+export function columns(onEdit: (row: User) => void, onDelete: (row: User) => void): ColumnDef<User>[] {
   return [
     {
       accessorKey: 'name',

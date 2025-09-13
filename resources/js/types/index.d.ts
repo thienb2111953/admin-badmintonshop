@@ -53,7 +53,7 @@ export interface ThuongHieu{
     id_thuong_hieu: number;
     ma_thuong_hieu: string;
     ten_thuong_hieu: string;
-    logo_url: string
+    logo_url: File | null;
 }
 
 export interface DanhMuc{

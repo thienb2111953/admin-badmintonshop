@@ -1,133 +1,107 @@
-import { Plus, Store } from 'lucide-react';
-import TableCard from './data-table';
-import { toast } from 'sonner';
-import { useState } from 'react';
-import ConfirmDialog from './confirm-dialog';
-import { ModalDialog } from './modal-dialog';
-import { createColumns } from './columns';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { columns } from './columns';
+import { DataTable } from '@/components/custom/data-table';
+import { type BreadcrumbItem, ThuongHieu } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import { ModalDialog } from './modal-dialog';
+import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
+import { toast } from 'sonner';
+import { dashboard, quyen, thuong_hieu } from '@/routes';
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quản lý thương hiệu', href: '/thuong_hieu' }];
+const breadcrumbs: BreadcrumbItem[] = [
+  { title: 'Quản lý á', href: thuong_hieu() },
+  { title: 'Quản lý người dùng', href: quyen() },
+];
 
-export interface ThuongHieu {
-  id_thuong_hieu: number;
-  ma_thuong_hieu: string;
-  ten_thuong_hieu: string;
-  logo_url: string;
-}
-
-export default function ThuongHieuPage({ thuong_hieu }: { thuong_hieu: ThuongHieu[] }) {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+export default function QuyenPage({ thuong_hieus }: { thuong_hieus: ThuongHieu[] }) {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<ThuongHieu | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [editData, setEditData] = useState<ThuongHieu | null>(null);
 
-  // Chỉ dùng useForm của Inertia cho việc delete
-  // const { delete: destroy, processing: deleteProcessing } = useForm();
-  const {
-    delete: destroy,
-    processing: deleteProcessing,
-    setData,
-    errors,
-  } = useForm({
-    id_thuong_hieu: null as number | null,
+  const form = useForm<ThuongHieu>({
+    id_thuong_hieu: 0,
+    ten_thuong_hieu: '',
+    logo_url: null as File | null,
+    ma_thuong_hieu: '',
   });
 
-  const columns = createColumns({
-    setSelectedId,
-    setOpenConfirm,
-    onEdit: (rowData: ThuongHieu) => {
-      setEditMode(true);
-      setEditData(rowData);
-      setModalOpen(true);
-    },
-  });
-
-  const handleOpenAdd = () => {
-    setEditMode(false);
-    setEditData(null);
-    setModalOpen(true);
+  const handleAdd = () => {
+    setSelectedRow(null);
+    form.reset();
+    setOpenDialog(true);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setEditMode(false);
-    setEditData(null);
+  const handleEdit = (row: ThuongHieu) => {
+    setSelectedRow(row);
+    form.setData({
+      id_thuong_hieu: row.id_thuong_hieu,
+      ten_thuong_hieu: row.ten_thuong_hieu,
+      ma_thuong_hieu: row.ma_thuong_hieu,
+      logo_url: null,
+    });
+    setOpenDialog(true);
   };
 
-  const handleDelete = () => {
-    if (!selectedId) {
-      toast.error('Vui lòng chọn thương hiệu để xóa');
-      return;
-    }
+  const handleDelete = (row: ThuongHieu) => {
+    setSelectedRow(row);
+    setOpenConfirm(true);
+  };
 
-    router.delete(route('thuong_hieu.destroy', selectedId), {
+  const confirmDelete = () => {
+    router.delete(route('thuong_hieu.destroy'), {
+      data: { id_thuong_hieu: selectedRow?.id_thuong_hieu },
+      preserveScroll: true,
       onSuccess: () => {
-        toast.success('Xóa thành công');
+        toast.success('Xóa thành công!');
         setOpenConfirm(false);
-        setSelectedId(null);
       },
-      onError: (errs) => {
-        console.log('Delete errors:', errs);
-        Object.values(errs).forEach((msg) => toast.error(msg));
-      },
+      onError: () => toast.error('Xóa thất bại!'),
     });
   };
 
-  const props = {
-    backUrl: '/thong-tin',
-    backText: 'Quay lại',
-    title: 'Thương hiệu',
-    description: 'Quản lý thương hiệu',
-    subtitle: 'Danh sách thương hiệu',
-    subdescription: 'Hiển thị các thương hiệu',
-    icon: Store,
+  const handleSubmit = () => {
+    if (selectedRow) {
+      console.log('Form data trước khi gửi:', { ...form.data });
+      console.log('Form data JSON:', JSON.stringify(form.data, null, 2));
+      form.put(route('thuong_hieu.update'), {
+        forceFormData: true,
+        onSuccess: () => {
+          toast.success('Cập nhật thành công!');
+          setOpenDialog(false);
+        },
+        onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
+      });
+    } else {
+      form.post(route('thuong_hieu.store'), {
+        forceFormData: true,
+        onSuccess: () => {
+          toast.success('Tạo mới thành công!');
+          setOpenDialog(false);
+        },
+        onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
+      });
+    }
   };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <TableCard {...props} data={thuong_hieu} columns={columns} isLoading={deleteProcessing}>
-        <Button onClick={handleOpenAdd}>
-          <Plus />
-          <Label>Thêm thương hiệu</Label>
-        </Button>
+      <Head title="Quản lý Thương hiệu" />
 
-        <ModalDialog
-          open={modalOpen}
-          onClose={handleCloseModal}
-          fields={[
-            { key: 'ma_thuong_hieu', label: 'Mã thương hiệu' },
-            { key: 'ten_thuong_hieu', label: 'Tên thương hiệu' },
-            { key: 'logo_url', label: 'Logo URL' },
-          ]}
-          title={editMode ? 'Cập nhật thương hiệu' : 'Thêm thương hiệu'}
-          description={editMode ? 'Chỉnh sửa thông tin' : 'Nhập thông tin mới'}
-          initialValues={
-            editData || {
-              id_thuong_hieu: 0,
-              ma_thuong_hieu: '',
-              ten_thuong_hieu: '',
-              logo_url: '',
-            }
-          }
-          submitRoute={
-            editMode && editData ? route('thuong_hieu.update', editData.id_thuong_hieu) : route('thuong_hieu.store')
-          }
-          method={editMode ? 'patch' : 'post'}
-        />
-      </TableCard>
+      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+        <DataTable columns={columns(handleEdit, handleDelete)} data={thuong_hieus} onAdd={handleAdd} />
+      </div>
 
-      <ConfirmDialog
-        openConfirm={openConfirm}
-        setOpenConfirm={setOpenConfirm}
-        submitFn={handleDelete}
-        title="Bạn có chắc muốn xóa thương hiệu này?"
+      <ModalDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        title={selectedRow ? 'Sửa thương hiệu' : 'Thêm thương hiệu'}
+        btnTitle={selectedRow ? 'Sửa' : 'Thêm'}
+        form={form}
+        onSubmit={handleSubmit}
       />
+
+      <DialogConfirmDelete open={openConfirm} onClose={() => setOpenConfirm(false)} onConfirm={confirmDelete} />
     </AppLayout>
   );
 }

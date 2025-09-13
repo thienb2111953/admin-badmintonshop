@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        
+
         Schema::create('anh_san_pham', function (Blueprint $table) {
             $table->id('id_anh_san_pham');
             $table->string('anh_url');
             $table->integer('chieu_dai')->nullable();
             $table->integer('chieu_rong')->nullable();
-            $table->unsignedBigInteger('id_san_pham');
+            $table->integer('id_san_pham');
             $table->timestamps();
         });
     }

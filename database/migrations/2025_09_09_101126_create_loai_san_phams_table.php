@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('loai_san_pham', function (Blueprint $table) {
             $table->id('id_loai_san_pham');
             $table->string('ten_loai_san_pham');
-            $table->integer('id_thuong_hieu_danh_muc');
+            $table->integer('id_thuong_hieu_danh_muc')->nullable();
             $table->string('slug');
             $table->timestamps();
         });

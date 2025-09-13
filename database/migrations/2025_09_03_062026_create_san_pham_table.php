@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id('id_san_pham');
             $table->string('ma_san_pham');
             $table->string('ten_san_pham');
-            $table->text('mo_ta');
-            $table->decimal('gia_niem_yet');
-            $table->decimal('gia_ban');
-            $table->integer('id_mau');
-            $table->integer('id_kich_thuoc');
-            $table->integer('id_loai_san_pham');
+            $table->text('mo_ta')->nullable();
+            $table->decimal('gia_niem_yet')->nullable();
+            $table->decimal('gia_ban')->nullable();
+            $table->integer('id_mau')->nullable();
+            $table->integer('id_kich_thuoc')->nullable();
+            $table->integer('id_loai_san_pham')->nullable();
             $table->timestamps();
         });
     }

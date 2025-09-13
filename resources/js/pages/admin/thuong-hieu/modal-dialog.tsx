@@ -1,116 +1,73 @@
-// ModalDialog.tsx
-import { useForm } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { type InertiaFormProps } from '@inertiajs/react';
+import { ThuongHieu } from '@/types';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 
-interface FieldConfig<T> {
-  key: keyof T;
-  label: string;
-  placeholder?: string;
-  type?: string;
-}
-
-interface ModalDialogProps<T> {
+interface Props {
   open: boolean;
   onClose: () => void;
-  fields: FieldConfig<T>[];
   title: string;
-  description?: string;
-  initialValues: T;
-  submitRoute: string;
-  method?: 'post' | 'patch';
+  btnTitle: string;
+  form: InertiaFormProps<ThuongHieu>;
+  onSubmit: () => void;
 }
 
-export function ModalDialog<T extends Record<string, any>>({
-  open,
-  onClose,
-  fields,
-  title,
-  description,
-  initialValues,
-  submitRoute,
-  method = 'post',
-}: ModalDialogProps<T>) {
-  const form = useForm<T>(initialValues);
+export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: Props) {
+  const { data, setData, errors } = form;
 
-  // Sync form data khi initialValues thay đổi (cho trường hợp edit)
-  useEffect(() => {
-    if (open) {
-      form.setData(initialValues);
-    }
-  }, [open, initialValues]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const submitOptions = {
-      onSuccess: () => {
-        toast.success(method === 'patch' ? 'Cập nhật thành công' : 'Thêm thành công');
-        onClose();
-        form.reset();
-      },
-      onError: (errors: Record<string, string>) => {
-        Object.values(errors).forEach((msg) => toast.error(msg));
-      },
-    };
-
-    if (method === 'patch') {
-      form.patch(submitRoute, submitOptions);
-    } else {
-      form.post(submitRoute, submitOptions);
-    }
-  };
-
-  const handleOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      onClose();
-      form.reset();
-      form.clearErrors();
-    }
+    onSubmit();
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {fields.map((field) => (
-            <div key={String(field.key)} className="space-y-2">
-              <Label htmlFor={String(field.key)}>{field.label}</Label>
+        <form onSubmit={handleFormSubmit} className="mt-4 space-y-4">
+          <div className="grid gap-4">
+            <div className="grid gap-3">
+              <Label htmlFor="ma_thuong_hieu">Mã thương hiệu</Label>
               <Input
-                id={String(field.key)}
-                type={field.type || 'text'}
-                placeholder={field.placeholder || ''}
-                value={String(form.data[field.key] || '')}
-                onChange={(e) => form.setData(field.key, e.target.value as T[keyof T])}
+                id="ma_thuong_hieu"
+                placeholder="Mã thương hiệu"
+                value={data.ma_thuong_hieu ?? ''}
+                onChange={(e) => setData('ma_thuong_hieu', e.target.value)}
               />
-              {form.errors[field.key] && <span className="text-sm text-red-500">{form.errors[field.key]}</span>}
+              {errors.ma_thuong_hieu && <p className="text-red-500">{errors.ma_thuong_hieu}</p>}
             </div>
-          ))}
-
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
-              Đóng
+            <div className="grid gap-3">
+              <Label htmlFor="ten_thuong_hieu">Tên thương hiệu</Label>
+              <Input
+                id="ten_thuong_hieu"
+                placeholder="Mã thương hiệu"
+                value={data.ten_thuong_hieu ?? ''}
+                onChange={(e) => setData('ten_thuong_hieu', e.target.value)}
+              />
+              {errors.ten_thuong_hieu && <p className="text-red-500">{errors.ten_thuong_hieu}</p>}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="logo_url">Logo</Label>
+              <Input
+                id="logo_url"
+                placeholder="logo_url"
+                type="file"
+                onChange={(e) => setData('logo_url', e.target.files ? e.target.files[0] : null)}
+              />
+              {errors.logo_url && <p className="text-red-500">{errors.logo_url}</p>}
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Hủy
             </Button>
-            <Button type="submit" disabled={form.processing}>
-              {form.processing ? 'Đang xử lý...' : 'Lưu'}
-            </Button>
-          </DialogFooter>
+            <Button type="submit">{btnTitle}</Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

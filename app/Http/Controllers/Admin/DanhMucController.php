@@ -9,9 +9,6 @@ use Inertia\Inertia;
 
 class DanhMucController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $danh_muc = DanhMuc::all();
@@ -24,17 +21,6 @@ class DanhMucController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -45,44 +31,27 @@ class DanhMucController extends Controller
             ...$validated,
             // id_user => auth()->id('id_user'),
         ]);
-        return redirect()->route('danh-muc.danh-muc')->with('success', 'Tạo thành công');
+        return redirect()->route('danh_muc')->with('success', 'Tạo thành công');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(DanhMuc $danhMuc)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DanhMuc $danhMuc)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DanhMuc $danhMuc)
+    public function update(Request $request)
     {
         $validated = $request->validate([
             'ten_danh_muc' => 'required|string|max:255',
             'slug' => 'required|string|max:255',
         ]);
-        $danhMuc->update($validated);
-        return redirect()->route('danh-muc.danh-muc')->with('success', 'Cập nhật thành công');
+
+        $danh_muc = DanhMuc::findOrFail($request->id_danh_muc);
+
+        $danh_muc->update($validated);
+        return redirect()->route('danh_muc')->with('success', 'Cập nhật thành công');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(DanhMuc $danhMuc)
+    public function destroy(Request $request)
     {
-        $danhMuc->delete();
-        return redirect()->route('danh-muc.danh-muc')->with('success', 'Xóa thành công');
+        $danh_muc = DanhMuc::findOrFail($request->id_danh_muc);
+
+        $danh_muc->delete();
+        return redirect()->route('danh_muc')->with('success', 'Xóa thành công');
     }
 }

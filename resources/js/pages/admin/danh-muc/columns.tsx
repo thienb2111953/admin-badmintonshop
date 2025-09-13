@@ -1,40 +1,20 @@
 // columns.ts
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
-import { ThuongHieu } from '@/types';
+import { DanhMuc } from '@/types';
 
-export function columns(
-  onEdit: (row: ThuongHieu) => void,
-  onDelete: (row: ThuongHieu) => void,
-): ColumnDef<ThuongHieu>[] {
+export function columns(onEdit: (row: DanhMuc) => void, onDelete: (row: DanhMuc) => void): ColumnDef<DanhMuc>[] {
   return [
     {
-      id: 'ma_thuong_hieu',
-      header: ({ column }) => <ColumnHeader column={column} title="Mã - Tên thương hiệu" />,
-      cell: ({ row }) => {
-        const { ma_thuong_hieu, ten_thuong_hieu } = row.original;
-        return (
-          <span>
-            {ma_thuong_hieu} - {ten_thuong_hieu}
-          </span>
-        );
-      },
+      accessorKey: 'ten_danh_muc',
+      header: ({ column }) => <ColumnHeader column={column} title="Tên danh mục" />,
     },
     {
-      accessorKey: 'logo_url',
-      header: ({ column }) => <ColumnHeader column={column} title="Logo" />,
-      cell: ({ row }) => {
-        const logoPath = row.original.logo_url ?? '';
-        const fullUrl = logoPath ? `/storage/${logoPath}` : '';
-
-        return logoPath ? (
-          <img src={fullUrl} alt="Logo" className="h-20 w-20 rounded object-contain" />
-        ) : (
-          <span className="text-gray-400">No logo</span>
-        );
-      },
+      accessorKey: 'slug',
+      header: ({ column }) => <ColumnHeader column={column} title="Slug" />,
     },
     {
       id: 'actions',

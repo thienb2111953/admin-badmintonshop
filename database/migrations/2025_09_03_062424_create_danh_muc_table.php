@@ -13,7 +13,7 @@ return new class extends Migration
     {
 
         Schema::create('danh_muc', function (Blueprint $table) {
-            $table->id('danh_muc');
+            $table->id('id_danh_muc');
             $table->string('ten_danh_muc');
             $table->string('slug');
             $table->timestamp('created_at')->useCurrent();

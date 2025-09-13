@@ -39,7 +39,7 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
 
   const handleAdd = () => {
     setSelectedRow(null);
-    form.setData({ id_quyen: 0, ten_quyen: '' });
+    form.reset();
     setOpenDialog(true);
   };
 
@@ -93,7 +93,7 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
   const handleSubmit = () => {
     if (selectedRow) {
       // Cập nhật
-      form.put(route('quyen.update', { quyen: form.data.id_quyen }), {
+      form.put(route('quyen.update'), {
         onSuccess: () => {
           toast.success('Cập nhật thành công!');
           setOpenDialog(false);

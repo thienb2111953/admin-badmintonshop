@@ -26,17 +26,22 @@ class NguoiDungController extends Controller
     {
         $validatedData = $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'email'    => 'required|string|email|max:255|unique:nguoi_dung,email',
+            'password' => 'required|string|min:6',
+            'ngay_sinh' => 'nullable|date',
+            'sdt'       => 'nullable|string|max:12',
         ], [
             'name.required'     => 'Tên người dùng không được để trống.',
             'email.required'    => 'Email không được để trống.',
             'email.email'       => 'Email không hợp lệ.',
             'email.unique'      => 'Email đã tồn tại.',
             'password.required' => 'Mật khẩu không được để trống.',
-            'password.min'      => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+            'password.min'      => 'Mật khẩu phải có ít nhất 6 ký tự.',
+            'ngay_sinh.date'     => 'Ngày sinh không hợp lệ.',
+            'sdt.max'            => 'Số điện thoại không được vượt quá 12 ký tự.',
         ]);
+
+        $validatedData['email_verified_at'] = now();
 
         // Hash password trước khi lưu
         $validatedData['password'] = bcrypt($validatedData['password']);
@@ -46,35 +51,40 @@ class NguoiDungController extends Controller
         return redirect()->route('nguoi_dung')->with('success', 'Tạo người dùng thành công!');
     }
 
-
-    public function update(Request $request, User $user)
+    public function update(Request $request)
     {
+        // Lấy user theo id từ request
+        $user = User::findOrFail($request->input('id_nguoi_dung'));
+
         $validatedData = $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'sdt'      => 'nullable|string|max:20',
+            'email'    => 'required|string|email|max:255|unique:nguoi_dung,email,' . $user->id_nguoi_dung . ',id_nguoi_dung',
+            'password' => 'nullable|string|min:6',
             'ngay_sinh' => 'nullable|date',
+            'sdt'       => 'nullable|string|max:12',
         ], [
             'name.required'     => 'Tên người dùng không được để trống.',
             'email.required'    => 'Email không được để trống.',
             'email.email'       => 'Email không hợp lệ.',
             'email.unique'      => 'Email đã tồn tại.',
-            'password.min'      => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+            'password.required' => 'Mật khẩu không được để trống.',
+            'password.min'      => 'Mật khẩu phải có ít nhất 6 ký tự.',
+            'ngay_sinh.date'     => 'Ngày sinh không hợp lệ.',
+            'sdt.max'            => 'Số điện thoại không được vượt quá 12 ký tự.',
         ]);
 
-        // Nếu có mật khẩu mới thì hash lại
+        // Hash lại nếu có password mới
         if (!empty($validatedData['password'])) {
             $validatedData['password'] = bcrypt($validatedData['password']);
         } else {
-            unset($validatedData['password']); // không update password nếu để trống
+            unset($validatedData['password']);
         }
 
         $user->update($validatedData);
 
         return redirect()->route('nguoi_dung')->with('success', 'Cập nhật người dùng thành công!');
     }
+
 
     public function destroy(Request $request)
     {

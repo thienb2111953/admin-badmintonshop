@@ -37,6 +37,11 @@ const mainNavItems: NavItem[] = [
     href: thuong_hieu(),
     icon: UserLock,
   },
+  {
+    title: 'Danh mục',
+    href: danh_muc(),
+    icon: UserLock,
+  },
 ];
 
 const footerNavItems: NavItem[] = [

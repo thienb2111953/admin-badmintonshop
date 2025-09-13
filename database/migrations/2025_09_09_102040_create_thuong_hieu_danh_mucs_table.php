@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('thuong_hieu_danh_muc', function (Blueprint $table) {
             $table->id('id_thuong_hieu_danh_muc');
-            $table->integer('id_thuong_hieu');
-            $table->integer('id_danh_muc');
             $table->string('ten_thuong_hieu_danh_muc');
-            $table->string('slug');
-            $table->text('mo_ta');
+            $table->string('slug')->nullable();
+            $table->text('mo_ta')->nullable();
+            $table->integer('id_thuong_hieu')->nullable();
+            $table->integer('id_danh_muc')->nullable();
             $table->timestamps();
         });
     }

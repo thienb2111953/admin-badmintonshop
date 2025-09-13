@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Quyen;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DanhMucController;
 use \App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Admin\NguoiDungController;
 use App\Http\Controllers\Admin\ThuongHieuController;
@@ -36,15 +36,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('thuong-hieu')->group(function () {
         Route::get('/', [ThuongHieuController::class, 'index'])->name('thuong_hieu');
         Route::post('/', [ThuongHieuController::class, 'store'])->name('thuong_hieu.store');
-        Route::patch('/', [ThuongHieuController::class, 'update'])->name('thuong_hieu.update');
+        Route::put('/', [ThuongHieuController::class, 'update'])->name('thuong_hieu.update');
         Route::delete('/', [ThuongHieuController::class, 'destroy'])->name('thuong_hieu.destroy');
     });
 
     Route::prefix('danh-muc')->group(function () {
-        Route::get('/', [ThuongHieuController::class, 'index'])->name('danh_muc');
-        Route::post('/', [ThuongHieuController::class, 'store'])->name('danh_muc.store');
-        Route::patch('/', [ThuongHieuController::class, 'update'])->name('danh_muc.update');
-        Route::delete('/', [ThuongHieuController::class, 'destroy'])->name('danh_muc.destroy');
+        Route::get('/', [DanhMucController::class, 'index'])->name('danh_muc');
+        Route::post('/', [DanhMucController::class, 'store'])->name('danh_muc.store');
+        Route::put('/', [DanhMucController::class, 'update'])->name('danh_muc.update');
+        Route::delete('/', [DanhMucController::class, 'destroy'])->name('danh_muc.destroy');
     });
 });
 
