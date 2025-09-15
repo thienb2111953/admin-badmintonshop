@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { type InertiaFormProps } from '@inertiajs/react';
 import { DanhMuc } from '@/types';
 import { Label } from '@/components/ui/label';
-
+import { slugify } from 'transliteration';
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -37,7 +37,11 @@ export function ModalDialog({ open, onClose, onSubmit, form, title, btnTitle }: 
                 id="ten_danh_muc"
                 placeholder="Tên danh mục"
                 value={data.ten_danh_muc ?? ''}
-                onChange={(e) => setData('ten_danh_muc', e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setData('ten_danh_muc', value);
+                  setData('slug', slugify(value));
+                }}
               />
               {errors.ten_danh_muc && <p className="text-red-500">{errors.ten_danh_muc}</p>}
             </div>

@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { type InertiaFormProps } from '@inertiajs/react';
 import { ThuongHieu } from '@/types';
 import { Label } from '@/components/ui/label';
-
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -15,7 +14,7 @@ interface Props {
 }
 
 export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: Props) {
-  const { data, setData, errors } = form;
+  const { data, setData, errors, progress, reset } = form;
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,13 +51,43 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
               {errors.ten_thuong_hieu && <p className="text-red-500">{errors.ten_thuong_hieu}</p>}
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="logo_url">Logo</Label>
+              <Label htmlFor="file_logo">Logo</Label>
               <Input
-                id="logo_url"
-                placeholder="logo_url"
+                id="file_logo"
+                placeholder="file_logo"
                 type="file"
-                onChange={(e) => setData('logo_url', e.target.files ? e.target.files[0] : null)}
+                onChange={(e) => {
+                  const file = e.target.files ? e.target.files[0] : null;
+                  setData('file_logo', file);
+                }}
               />
+              {/* preview ảnh mới chọn */}
+              {data.file_logo instanceof File && (
+                <img
+                  src={URL.createObjectURL(data.file_logo)}
+                  alt="Preview"
+                  className="mx-auto mt-2 h-50 w-full rounded object-contain"
+                />
+              )}
+
+              {/* nếu đang edit mà chưa chọn file mới thì render ảnh cũ */}
+              {!(data.file_logo instanceof File) &&
+                form.data.id_thuong_hieu !== 0 &&
+                (form.data.logo_url ? (
+                  <img
+                    src={`/storage/${form.data.logo_url}`}
+                    alt="Logo"
+                    className="mx-auto mt-2 h-50 w-full rounded object-contain"
+                  />
+                ) : (
+                  <span className="text-gray-400">No logo</span>
+                ))}
+              {progress && (
+                <progress value={progress.percentage} max="100">
+                  {progress.percentage}%
+                </progress>
+              )}
+
               {errors.logo_url && <p className="text-red-500">{errors.logo_url}</p>}
             </div>
           </div>

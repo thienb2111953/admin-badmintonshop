@@ -46,6 +46,7 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
   const handleEdit = (row: Quyen) => {
     setSelectedRow(row);
     form.setData({ id_quyen: row.id_quyen, ten_quyen: row.ten_quyen }); // load dữ liệu vào form
+    console.log(form.data);
     setOpenDialog(true);
   };
 

@@ -14,21 +14,28 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Quản lý người dùng', href: quyen() },
 ];
 
-export default function QuyenPage({ thuong_hieus }: { thuong_hieus: ThuongHieu[] }) {
+export default function ThuongHieuPage({ thuong_hieus }: { thuong_hieus: ThuongHieu[] }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<ThuongHieu | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const form = useForm<ThuongHieu>({
     id_thuong_hieu: 0,
-    ten_thuong_hieu: '',
-    logo_url: null as File | null,
     ma_thuong_hieu: '',
+    ten_thuong_hieu: '',
+    logo_url: null,
+    file_logo: null,
   });
 
   const handleAdd = () => {
     setSelectedRow(null);
-    form.reset();
+    form.setData({
+      id_thuong_hieu: 0,
+      ma_thuong_hieu: '',
+      ten_thuong_hieu: '',
+      logo_url: null,
+      file_logo: null,
+    });
     setOpenDialog(true);
   };
 
@@ -38,7 +45,8 @@ export default function QuyenPage({ thuong_hieus }: { thuong_hieus: ThuongHieu[]
       id_thuong_hieu: row.id_thuong_hieu,
       ten_thuong_hieu: row.ten_thuong_hieu,
       ma_thuong_hieu: row.ma_thuong_hieu,
-      logo_url: null,
+      logo_url: row.logo_url,
+      file_logo: null,
     });
     setOpenDialog(true);
   };
@@ -62,16 +70,21 @@ export default function QuyenPage({ thuong_hieus }: { thuong_hieus: ThuongHieu[]
 
   const handleSubmit = () => {
     if (selectedRow) {
-      console.log('Form data trước khi gửi:', { ...form.data });
-      console.log('Form data JSON:', JSON.stringify(form.data, null, 2));
-      form.put(route('thuong_hieu.update'), {
-        forceFormData: true,
-        onSuccess: () => {
-          toast.success('Cập nhật thành công!');
-          setOpenDialog(false);
+      router.post(
+        route('thuong_hieu.update'),
+        {
+          _method: 'put',
+          ...form.data,
         },
-        onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
-      });
+        {
+          forceFormData: true,
+          onSuccess: () => {
+            toast.success('Cập nhật thành công!');
+            setOpenDialog(false);
+          },
+          onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
+        },
+      );
     } else {
       form.post(route('thuong_hieu.store'), {
         forceFormData: true,
