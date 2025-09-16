@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\ThuongHieuDanhMuc;
+use App\Http\Controllers\Controller;
+use App\Models\LoaiSanPham;
 use Illuminate\Http\Request;
 
-class ThuongHieuDanhMucController extends Controller
+class LoaiSanPhamController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class ThuongHieuDanhMucController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ThuongHieuDanhMuc $thuongHieuDanhMuc)
+    public function show(LoaiSanPham $loaiSanPham)
     {
         //
     }
@@ -42,7 +43,7 @@ class ThuongHieuDanhMucController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ThuongHieuDanhMuc $thuongHieuDanhMuc)
+    public function edit(LoaiSanPham $loaiSanPham)
     {
         //
     }
@@ -50,7 +51,7 @@ class ThuongHieuDanhMucController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ThuongHieuDanhMuc $thuongHieuDanhMuc)
+    public function update(Request $request, LoaiSanPham $loaiSanPham)
     {
         //
     }
@@ -58,7 +59,7 @@ class ThuongHieuDanhMucController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ThuongHieuDanhMuc $thuongHieuDanhMuc)
+    public function destroy(LoaiSanPham $loaiSanPham)
     {
         //
     }

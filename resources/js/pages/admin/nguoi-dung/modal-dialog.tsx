@@ -14,7 +14,7 @@ interface Props {
   onClose: () => void;
   title: string;
   btnTitle: string;
-  form: InertiaFormProps<User>; // nhận form từ cha
+  form: InertiaFormProps<User>;
   onSubmit: () => void;
 }
 

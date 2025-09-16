@@ -2,19 +2,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { type InertiaFormProps } from '@inertiajs/react';
-import { DanhMuc } from '@/types';
+import { DanhMucForm } from '@/types';
 import { Label } from '@/components/ui/label';
 import { slugify } from 'transliteration';
+import { MultiSelect } from '@/components/multi-select';
+import { useState } from 'react';
+
 interface Props {
   open: boolean;
   onClose: () => void;
   title: string;
   btnTitle: string;
-  form: InertiaFormProps<DanhMuc>; // nhận form từ cha
+  form: InertiaFormProps<DanhMucForm>; // nhận form từ cha
   onSubmit: () => void;
+  options: { value: string; label: string }[];
 }
 
-export function ModalDialog({ open, onClose, onSubmit, form, title, btnTitle }: Props) {
+export function ModalDialog({ open, onClose, onSubmit, form, title, btnTitle, options }: Props) {
   const { data, setData, errors } = form;
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -54,6 +58,19 @@ export function ModalDialog({ open, onClose, onSubmit, form, title, btnTitle }: 
                 onChange={(e) => setData('slug', e.target.value)}
               />
               {errors.slug && <p className="text-red-500">{errors.slug}</p>}
+            </div>
+
+            <div className="grid gap-3">
+              <Label>Thuộc tính</Label>
+              <MultiSelect
+                options={options}
+                onValueChange={(values) => setData('id_thuoc_tinh', values)}
+                defaultValue={data.id_thuoc_tinh}
+                placeholder="Chọn giá trị"
+                disabled={!options.length}
+                variant="inverted"
+                animation={2}
+              />
             </div>
           </div>
 

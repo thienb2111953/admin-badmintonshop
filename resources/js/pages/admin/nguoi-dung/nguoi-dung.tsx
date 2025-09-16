@@ -30,7 +30,7 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
 
   const handleAdd = () => {
     setSelectedRow(null);
-    form.setData({ id_nguoi_dung: 0, name: '', email: '' });
+    form.setData({ id_nguoi_dung: 0, name: '', email: '', password: '', ngay_sinh: '', sdt: '' });
     setOpenDialog(true);
   };
 

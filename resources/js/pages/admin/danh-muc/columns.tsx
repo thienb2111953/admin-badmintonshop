@@ -1,7 +1,6 @@
 // columns.ts
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
 import { DanhMuc } from '@/types';
@@ -15,6 +14,21 @@ export function columns(onEdit: (row: DanhMuc) => void, onDelete: (row: DanhMuc)
     {
       accessorKey: 'slug',
       header: ({ column }) => <ColumnHeader column={column} title="Slug" />,
+    },
+    {
+      accessorKey: 'thuoc_tinhs',
+      header: ({ column }) => <ColumnHeader column={column} title="Thuộc tính" />,
+      cell: ({ row }) => {
+        const thuocTinhs = row.original.thuoc_tinhs || [];
+        // return <span>{thuocTinhs.map((t: any) => t.ten_thuoc_tinh).join(', ')}</span>;
+        return (
+          <ul className="list-disc pl-4">
+            {thuocTinhs.map((thuoc_tinh) => (
+              <li key={thuoc_tinh.id_thuoc_tinh}>{thuoc_tinh.ten_thuoc_tinh}</li>
+            ))}
+          </ul>
+        );
+      },
     },
     {
       id: 'actions',

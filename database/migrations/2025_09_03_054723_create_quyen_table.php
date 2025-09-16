@@ -27,8 +27,12 @@ return new class extends Migration
 
         Schema::create('quyen_acl', function (Blueprint $table) {
             $table->id('id_quyen_acl');
-            $table->integer('id_quyen');
-            $table->integer('id_path');
+            $table->foreignId('id_quyen')
+                ->constrained('quyen', 'id_quyen')
+                ->onDelete('cascade');
+            $table->foreignId('id_path')
+                ->constrained('path', 'id_path')
+                ->onDelete('cascade');
             $table->boolean('is_read')->default(false);
             $table->boolean('is_write')->default(false);
             $table->boolean('is_update')->default(false);
@@ -38,8 +42,12 @@ return new class extends Migration
 
         Schema::create('quyen_nguoi_dung', function (Blueprint $table) {
             $table->id('id_quyen_nguoi_dung');
-            $table->integer('id_quyen');
-            $table->integer('id_nguoi_dung');
+            $table->foreignId('id_quyen')
+                ->constrained('quyen', 'id_quyen')
+                ->onDelete('cascade');
+            $table->foreignId('id_nguoi_dung')
+                ->constrained('nguoi_dung', 'id_nguoi_dung')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: Props) {
-  const { data, setData, errors, progress, reset } = form;
+  const { data, setData, errors, progress } = form;
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();

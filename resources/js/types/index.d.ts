@@ -57,8 +57,26 @@ export interface ThuongHieu{
     file_logo: File | null;
 }
 
-export interface DanhMuc{
+export interface DanhMuc {
     id_danh_muc: number;
     ten_danh_muc: string;
     slug: string;
+    thuoc_tinhs?: ThuocTinh[];
+  }
+  
+  export interface DanhMucForm {
+    id_danh_muc: number;
+    ten_danh_muc: string;
+    slug: string;
+    id_thuoc_tinh: string[]; // mảng id để submit
+  }
+
+export interface ThuocTinh{
+    id_thuoc_tinh: number,
+    ten_thuoc_tinh: string,
+}
+
+export interface ThuocTinhChiTiet{
+    id_thuoc_tinh_chi_tiet: number,
+    ten_thuoc_tinh_chi_tiet: string,
 }

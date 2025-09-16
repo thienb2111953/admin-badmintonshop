@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\SanPham;
+use App\Http\Controllers\Controller;
+use App\Models\Mau;
 use Illuminate\Http\Request;
 
-class SanPhamController extends Controller
+class MauController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class SanPhamController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SanPham $sanPham)
+    public function show(Mau $mau)
     {
         //
     }
@@ -42,7 +43,7 @@ class SanPhamController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SanPham $sanPham)
+    public function edit(Mau $mau)
     {
         //
     }
@@ -50,7 +51,7 @@ class SanPhamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, SanPham $sanPham)
+    public function update(Request $request, Mau $mau)
     {
         //
     }
@@ -58,7 +59,7 @@ class SanPhamController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SanPham $sanPham)
+    public function destroy(Mau $mau)
     {
         //
     }

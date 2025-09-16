@@ -14,4 +14,16 @@ class DanhMuc extends Model
         'ten_danh_muc',
         'slug',
     ];
+
+    // Quan hệ nhiều-nhiều với ThuocTinh qua bảng pivot
+    public function thuocTinhs()
+    {
+        return $this->belongsToMany(
+            ThuocTinh::class,
+            'danh_muc_thuoc_tinh',
+            'id_danh_muc',
+            'id_thuoc_tinh'
+        )->withPivot('id_danh_muc_thuoc_tinh')
+            ->withTimestamps();
+    }
 }

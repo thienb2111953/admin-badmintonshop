@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\KichThuoc;
+use App\Http\Controllers\Controller;
+use App\Models\ThuongHieuDanhMuc;
 use Illuminate\Http\Request;
 
-class KichThuocController extends Controller
+class ThuongHieuDanhMucController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class KichThuocController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(KichThuoc $kichThuoc)
+    public function show(ThuongHieuDanhMuc $thuongHieuDanhMuc)
     {
         //
     }
@@ -42,7 +43,7 @@ class KichThuocController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(KichThuoc $kichThuoc)
+    public function edit(ThuongHieuDanhMuc $thuongHieuDanhMuc)
     {
         //
     }
@@ -50,7 +51,7 @@ class KichThuocController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, KichThuoc $kichThuoc)
+    public function update(Request $request, ThuongHieuDanhMuc $thuongHieuDanhMuc)
     {
         //
     }
@@ -58,7 +59,7 @@ class KichThuocController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(KichThuoc $kichThuoc)
+    public function destroy(ThuongHieuDanhMuc $thuongHieuDanhMuc)
     {
         //
     }

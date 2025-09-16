@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('danh_muc_thuoc_tinh', function (Blueprint $table) {
-            $table->id('id_danh_muc_thuoc_tinh');
-            $table->unsignedBigInteger('id_thuoc_tinh');
-            $table->foreign('id_thuoc_tinh')
-                ->references('id_thuoc_tinh')
-                ->on('thuoc_tinh')
+        Schema::create('danh_muc_thuong_hieu', function (Blueprint $table) {
+            $table->id('id_danh_muc_thuong_hieu');
+            $table->string('ten_danh_muc_thuong_hieu');
+            $table->string('slug')->nullable();
+            $table->text('mo_ta')->nullable();
+            $table->unsignedBigInteger('id_thuong_hieu');
+            $table->foreign('id_thuong_hieu')
+                ->references('id_thuong_hieu')
+                ->on('thuong_hieu')
                 ->onDelete('cascade');
             $table->unsignedBigInteger('id_danh_muc');
             $table->foreign('id_danh_muc')
@@ -32,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('danh_muc_thuoc_tinh');
+        Schema::dropIfExists('danh_muc_thuong_hieu');
     }
 };

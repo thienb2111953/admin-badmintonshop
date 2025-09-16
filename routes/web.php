@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DanhMucController;
 use \App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Admin\NguoiDungController;
+use App\Http\Controllers\Admin\ThuocTinhChiTietController;
+use App\Http\Controllers\Admin\ThuocTinhController;
 use App\Http\Controllers\Admin\ThuongHieuController;
 
 Route::get('/', function () {
@@ -45,6 +47,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/', [DanhMucController::class, 'store'])->name('danh_muc.store');
         Route::put('/', [DanhMucController::class, 'update'])->name('danh_muc.update');
         Route::delete('/', [DanhMucController::class, 'destroy'])->name('danh_muc.destroy');
+    });
+
+    Route::prefix('thuoc-tinh')->group(function () {
+        Route::get('/', [ThuocTinhController::class, 'index'])->name('thuoc_tinh');
+        Route::post('/', [ThuocTinhController::class, 'store'])->name('thuoc_tinh.store');
+        Route::put('/', [ThuocTinhController::class, 'update'])->name('thuoc_tinh.update');
+        Route::delete('/', [ThuocTinhController::class, 'destroy'])->name('thuoc_tinh.destroy');
+
+        Route::prefix('{id_thuoc_tinh}')->group(function () {
+            Route::get('/', [ThuocTinhChiTietController::class, 'index'])->name('thuoc_tinh_chi_tiet');
+            Route::post('/', [ThuocTinhChiTietController::class, 'store'])->name('thuoc_tinh_chi_tiet.store');
+            Route::put('/', [ThuocTinhChiTietController::class, 'update'])->name('thuoc_tinh_chi_tiet.update');
+            Route::delete('/', [ThuocTinhChiTietController::class, 'destroy'])->name('thuoc_tinh_chi_tiet.destroy');
+        });
     });
 });
 
