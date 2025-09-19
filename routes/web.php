@@ -3,8 +3,12 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DanhMucController;
+use App\Http\Controllers\Admin\DanhMucThuongHieuController;
+use App\Http\Controllers\Admin\KichThuocController;
+use App\Http\Controllers\Admin\MauController;
 use \App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Admin\NguoiDungController;
+use App\Http\Controllers\Admin\SanPhamController;
 use App\Http\Controllers\Admin\ThuocTinhChiTietController;
 use App\Http\Controllers\Admin\ThuocTinhController;
 use App\Http\Controllers\Admin\ThuongHieuController;
@@ -61,6 +65,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/', [ThuocTinhChiTietController::class, 'update'])->name('thuoc_tinh_chi_tiet.update');
             Route::delete('/', [ThuocTinhChiTietController::class, 'destroy'])->name('thuoc_tinh_chi_tiet.destroy');
         });
+    });
+
+    Route::prefix('danh-muc-thuong-hieu')->group(function () {
+        Route::get('/', [DanhMucThuongHieuController::class, 'index'])->name('danh_muc_thuong_hieu');
+        Route::post('/', [DanhMucThuongHieuController::class, 'store'])->name('danh_muc_thuong_hieu.store');
+        Route::put('/', [DanhMucThuongHieuController::class, 'update'])->name('danh_muc_thuong_hieu.update');
+        Route::delete('/', [DanhMucThuongHieuController::class, 'destroy'])->name('danh_muc_thuong_hieu.destroy');
+
+        Route::prefix('{id_danh_muc_thuong_hieu}/san_pham')->group(function () {
+            Route::get('/', [SanPhamController::class, 'index'])->name('san_pham');
+            Route::post('/', [SanPhamController::class, 'store'])->name('san_pham.store');
+            Route::put('/', [SanPhamController::class, 'update'])->name('san_pham.update');
+            Route::delete('/', [SanPhamController::class, 'destroy'])->name('san_pham.destroy');
+        });
+    });
+
+    Route::prefix('mau')->group(function () {
+        Route::get('/', [MauController::class, 'index'])->name('mau');
+        Route::post('/', [MauController::class, 'store'])->name('mau.store');
+        Route::put('/', [MauController::class, 'update'])->name('mau.update');
+        Route::delete('/', [MauController::class, 'destroy'])->name('mau.destroy');
+    });
+
+    Route::prefix('kich-thuoc')->group(function () {
+        Route::get('/', [KichThuocController::class, 'index'])->name('kich_thuoc');
+        Route::post('/', [KichThuocController::class, 'store'])->name('kich_thuoc.store');
+        Route::put('/', [KichThuocController::class, 'update'])->name('kich_thuoc.update');
+        Route::delete('/', [KichThuocController::class, 'destroy'])->name('kich_thuoc.destroy');
     });
 });
 

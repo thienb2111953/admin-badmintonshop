@@ -61,14 +61,8 @@ export interface DanhMuc {
     id_danh_muc: number;
     ten_danh_muc: string;
     slug: string;
+    id_thuoc_tinh: string[];
     thuoc_tinhs?: ThuocTinh[];
-  }
-  
-  export interface DanhMucForm {
-    id_danh_muc: number;
-    ten_danh_muc: string;
-    slug: string;
-    id_thuoc_tinh: string[]; // mảng id để submit
   }
 
 export interface ThuocTinh{
@@ -79,4 +73,32 @@ export interface ThuocTinh{
 export interface ThuocTinhChiTiet{
     id_thuoc_tinh_chi_tiet: number,
     ten_thuoc_tinh_chi_tiet: string,
+}
+
+export interface DanhMucThuongHieu {
+    id_danh_muc_thuong_hieu: number;
+    ten_danh_muc_thuong_hieu: string;
+    slug: string;
+    mo_ta: string;
+    id_thuong_hieu: number;
+    id_danh_muc: number;
+}
+
+export interface SanPham {
+    id_san_pham: number;
+    ma_san_pham: string;
+    ten_san_pham: string;
+    mo_ta: string;
+    gia_niem_yet: number | null;
+    gia_ban: number | null;
+}
+
+export interface Mau {
+    id_mau: number;
+    ten_mau: string;
+}
+
+export interface KichThuoc {
+    id_kich_thuoc: number;
+    ten_kich_thuoc: string;
 }

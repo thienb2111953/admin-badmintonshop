@@ -3,40 +3,42 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
-import { ThuongHieu } from '@/types';
-import { danh_muc_thuong_hieu } from '@/routes';
+import { SanPham } from '@/types';
 import { Link } from '@inertiajs/react';
 
-export function columns(
-  onEdit: (row: ThuongHieu) => void,
-  onDelete: (row: ThuongHieu) => void,
-): ColumnDef<ThuongHieu>[] {
+export function columns(onEdit: (row: SanPham) => void, onDelete: (row: SanPham) => void): ColumnDef<SanPham>[] {
   return [
     {
-      accessorKey: 'ma_thuong_hieu',
-      header: ({ column }) => <ColumnHeader column={column} title="Mã - Tên thương hiệu" />,
+      accessorKey: 'ma_san_pham',
+      header: ({ column }) => <ColumnHeader column={column} title="Mã sản phẩm" />,
+    },
+    {
+      accessorKey: 'ten_san_pham',
+      header: ({ column }) => <ColumnHeader column={column} title="Tên sản phẩm" />,
+    },
+    {
+      accessorKey: 'gia_niem_yet',
+      header: ({ column }) => <ColumnHeader column={column} title="Giá niêm yết" />,
       cell: ({ row }) => {
-        const { id_thuong_hieu, ma_thuong_hieu, ten_thuong_hieu } = row.original;
-        return (
-          <Link href={danh_muc_thuong_hieu({ id_thuong_hieu })} className="hover:underline">
-            {ma_thuong_hieu} - {ten_thuong_hieu}
-          </Link>
-        );
+        const raw = row.getValue('gia_niem_yet');
+        const value = Number(raw);
+
+        return isNaN(value) ? '' : value.toLocaleString('vi-VN');
       },
     },
     {
-      accessorKey: 'logo_url',
-      header: ({ column }) => <ColumnHeader column={column} title="Logo" />,
+      accessorKey: 'gia_ban',
+      header: ({ column }) => <ColumnHeader column={column} title="Giá bán" />,
       cell: ({ row }) => {
-        const logoPath = row.original.logo_url ?? '';
-        const fullUrl = logoPath ? `/storage/${logoPath}` : '';
+        const raw = row.getValue('gia_ban');
+        const value = Number(raw);
 
-        return logoPath ? (
-          <img src={fullUrl} alt="Logo" className="h-20 w-20 rounded object-contain" />
-        ) : (
-          <span className="text-gray-400">No logo</span>
-        );
+        return isNaN(value) ? '' : value.toLocaleString('vi-VN');
       },
+    },
+    {
+      accessorKey: 'mo_ta',
+      header: ({ column }) => <ColumnHeader column={column} title="Mô tả" />,
     },
     {
       id: 'actions',

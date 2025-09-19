@@ -15,4 +15,14 @@ class ThuongHieu extends Model
         'ten_thuong_hieu',
         'logo_url',
     ];
+
+    public function danhMucs()
+    {
+        return $this->belongsToMany(
+            DanhMuc::class,
+            'danh_muc_thuong_hieu',
+            'id_thuong_hieu',
+            'id_danh_muc'
+        )->withPivot('id_danh_muc_thuong_hieu')->withTimestamps();
+    }
 }

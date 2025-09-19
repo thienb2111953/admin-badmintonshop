@@ -5,62 +5,54 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Mau;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MauController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return Inertia::render('admin/mau/mau', [
+            'maus' => Mau::all()
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'ten_mau' => 'required|string|max:255'
+        ], [
+            'ten_mau.required' => 'Tên màu không được để trống'
+        ]);
+
+        Mau::create($validated);
+        return redirect()
+            ->back()
+            ->with('success', 'Tạo thành công');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Mau $mau)
+    public function update(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'ten_mau' => 'required|string|max:255'
+        ], [
+            'ten_mau.required' => 'Tên màu không được để trống'
+        ]);
+
+        $mau = Mau::findOrFail($request->id_mau);
+
+        $mau->update($validated);
+        return redirect()
+            ->back()
+            ->with('success', 'cập nhật thành công');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Mau $mau)
+    public function destroy(Request $request)
     {
-        //
-    }
+        $mau = Mau::findOrFail($request->id_mau);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Mau $mau)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Mau $mau)
-    {
-        //
+        $mau->delete();
+        return redirect()
+            ->back()
+            ->with('success', 'Xóa thành công');
     }
 }

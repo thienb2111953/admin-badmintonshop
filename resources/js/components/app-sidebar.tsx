@@ -10,7 +10,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, quyen, thuong_hieu, nguoi_dung, danh_muc, thuoc_tinh } from '@/routes';
+import {
+  dashboard,
+  quyen,
+  thuong_hieu,
+  nguoi_dung,
+  danh_muc,
+  thuoc_tinh,
+  danh_muc_thuong_hieu,
+  mau,
+  kich_thuoc,
+} from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, User, UserLock } from 'lucide-react';
@@ -43,6 +53,18 @@ const mainNavItems: NavItem[] = [
   {
     title: 'Thuộc tính',
     href: thuoc_tinh(),
+  },
+  {
+    title: 'Sản phẩm',
+    href: danh_muc_thuong_hieu(),
+  },
+  {
+    title: 'Màu',
+    href: mau(),
+  },
+  {
+    title: 'Kích thước',
+    href: kich_thuoc(),
   },
 ];
 

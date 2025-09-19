@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { type InertiaFormProps } from '@inertiajs/react';
-import { DanhMucForm } from '@/types';
+import { DanhMuc } from '@/types';
 import { Label } from '@/components/ui/label';
 import { slugify } from 'transliteration';
 import { MultiSelect } from '@/components/multi-select';
@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
   title: string;
   btnTitle: string;
-  form: InertiaFormProps<DanhMucForm>; // nhận form từ cha
+  form: InertiaFormProps<DanhMuc>; // nhận form từ cha
   onSubmit: () => void;
   options: { value: string; label: string }[];
 }

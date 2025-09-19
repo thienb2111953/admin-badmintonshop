@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ThuocTinh;
 use App\Models\ThuocTinhChiTiet;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,6 +13,7 @@ class ThuocTinhChiTietController extends Controller
     public function index($id_thuoc_tinh)
     {
         return Inertia::render('admin/thuoc-tinh-chi-tiet/thuoc-tinh-chi-tiet', [
+            'thuoc_tinh_info' => ThuocTinh::find($id_thuoc_tinh),
             'id_thuoc_tinh' => $id_thuoc_tinh,
             'thuoc_tinh_chi_tiets' => ThuocTinhChiTiet::where('id_thuoc_tinh', $id_thuoc_tinh)->get(),
         ]);

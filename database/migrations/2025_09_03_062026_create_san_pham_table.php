@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('ma_san_pham');
             $table->string('ten_san_pham');
             $table->text('mo_ta')->nullable();
-            $table->decimal('gia_niem_yet')->nullable();
-            $table->decimal('gia_ban')->nullable();
+            $table->decimal('gia_niem_yet', 12, 0)->nullable();
+            $table->decimal('gia_ban', 12, 0)->nullable();
             $table->foreignId('id_danh_muc_thuong_hieu')
                 ->constrained('danh_muc_thuong_hieu', 'id_danh_muc_thuong_hieu')
                 ->onDelete('cascade');

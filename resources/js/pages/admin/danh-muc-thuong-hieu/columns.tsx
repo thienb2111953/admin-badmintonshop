@@ -3,40 +3,34 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
-import { ThuongHieu } from '@/types';
-import { danh_muc_thuong_hieu } from '@/routes';
+import { DanhMucThuongHieu } from '@/types';
 import { Link } from '@inertiajs/react';
+import { san_pham } from '@/routes';
 
 export function columns(
-  onEdit: (row: ThuongHieu) => void,
-  onDelete: (row: ThuongHieu) => void,
-): ColumnDef<ThuongHieu>[] {
+  onEdit: (row: DanhMucThuongHieu) => void,
+  onDelete: (row: DanhMucThuongHieu) => void,
+): ColumnDef<DanhMucThuongHieu>[] {
   return [
     {
-      accessorKey: 'ma_thuong_hieu',
-      header: ({ column }) => <ColumnHeader column={column} title="Mã - Tên thương hiệu" />,
+      accessorKey: 'ten_danh_muc_thuong_hieu',
+      header: ({ column }) => <ColumnHeader column={column} title="Tên danh mục thương hiệu" />,
       cell: ({ row }) => {
-        const { id_thuong_hieu, ma_thuong_hieu, ten_thuong_hieu } = row.original;
+        const rowData = row.original;
         return (
-          <Link href={danh_muc_thuong_hieu({ id_thuong_hieu })} className="hover:underline">
-            {ma_thuong_hieu} - {ten_thuong_hieu}
+          <Link href={san_pham(rowData.id_danh_muc_thuong_hieu)} className="hover:underline">
+            {rowData.ten_danh_muc_thuong_hieu}
           </Link>
         );
       },
     },
     {
-      accessorKey: 'logo_url',
-      header: ({ column }) => <ColumnHeader column={column} title="Logo" />,
-      cell: ({ row }) => {
-        const logoPath = row.original.logo_url ?? '';
-        const fullUrl = logoPath ? `/storage/${logoPath}` : '';
-
-        return logoPath ? (
-          <img src={fullUrl} alt="Logo" className="h-20 w-20 rounded object-contain" />
-        ) : (
-          <span className="text-gray-400">No logo</span>
-        );
-      },
+      accessorKey: 'slug',
+      header: ({ column }) => <ColumnHeader column={column} title="Slug" />,
+    },
+    {
+      accessorKey: 'mo_ta',
+      header: ({ column }) => <ColumnHeader column={column} title="Mô tả" />,
     },
     {
       id: 'actions',

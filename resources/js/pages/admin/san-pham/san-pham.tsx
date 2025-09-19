@@ -1,63 +1,70 @@
 import AppLayout from '@/layouts/app-layout';
+import { columns } from './columns';
 import { DataTable } from '@/components/custom/data-table';
-import { type BreadcrumbItem, DanhMuc, DanhMucForm, ThuocTinh } from '@/types';
+import { type BreadcrumbItem, DanhMucThuongHieu, SanPham } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import { columns } from './columns';
 import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
-import { danh_muc } from '@/routes';
+import { danh_muc_thuong_hieu, san_pham } from '@/routes';
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quản lý Danh mục', href: danh_muc() }];
-
-export default function DanhMucPage({ danh_mucs, thuoc_tinhs }: { danh_mucs: DanhMuc[]; thuoc_tinhs: ThuocTinh[] }) {
+export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPham[]; info_dmth: DanhMucThuongHieu }) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<DanhMuc | null>(null);
+  const [selectedRow, setSelectedRow] = useState<SanPham | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const thuocTinhOptions = thuoc_tinhs.map((thuoc_tinh) => ({
-    value: String(thuoc_tinh.id_thuoc_tinh),
-    label: thuoc_tinh.ten_thuoc_tinh,
-  }));
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: `${info_dmth.ten_danh_muc_thuong_hieu}`, href: danh_muc_thuong_hieu() },
+    {
+      title: `Quản lý sản phẩm`,
+      href: san_pham(info_dmth.ten_danh_muc_thuong_hieu),
+    },
+  ];
 
-  const form = useForm<DanhMuc>({
-    id_danh_muc: 0,
-    ten_danh_muc: '',
-    slug: '',
-    id_thuoc_tinh: [],
+  const form = useForm<SanPham>({
+    id_san_pham: 0,
+    ma_san_pham: '',
+    ten_san_pham: '',
+    mo_ta: '',
+    gia_niem_yet: null,
+    gia_ban: null,
   });
 
   const handleAdd = () => {
     setSelectedRow(null);
     form.setData({
-      id_danh_muc: 0,
-      ten_danh_muc: '',
-      slug: '',
-      id_thuoc_tinh: [],
+      id_san_pham: 0,
+      ma_san_pham: '',
+      ten_san_pham: '',
+      mo_ta: '',
+      gia_niem_yet: null,
+      gia_ban: null,
     });
     setOpenDialog(true);
   };
 
-  const handleEdit = (row: DanhMuc) => {
+  const handleEdit = (row: SanPham) => {
     setSelectedRow(row);
     form.setData({
-      id_danh_muc: row.id_danh_muc,
-      ten_danh_muc: row.ten_danh_muc,
-      slug: row.slug,
-      id_thuoc_tinh: row.thuoc_tinhs?.map((thuoc_tinh) => String(thuoc_tinh.id_thuoc_tinh)) ?? [],
+      id_san_pham: row.id_san_pham,
+      ma_san_pham: row.ma_san_pham,
+      ten_san_pham: row.ten_san_pham,
+      mo_ta: row.mo_ta,
+      gia_niem_yet: row.gia_niem_yet,
+      gia_ban: row.gia_ban,
     });
     setOpenDialog(true);
   };
 
-  const handleDelete = (row: DanhMuc) => {
+  const handleDelete = (row: SanPham) => {
     setSelectedRow(row);
     setOpenConfirm(true);
   };
 
   const confirmDelete = () => {
-    router.delete(route('danh_muc.destroy'), {
-      data: { id_danh_muc: selectedRow?.id_danh_muc },
+    router.delete(route('san_pham.destroy', { id_danh_muc_thuong_hieu: info_dmth.id_danh_muc_thuong_hieu }), {
+      data: { id_san_pham: selectedRow?.id_san_pham },
       preserveScroll: true,
       onSuccess: () => {
         toast.success('Xóa thành công!');
@@ -69,7 +76,7 @@ export default function DanhMucPage({ danh_mucs, thuoc_tinhs }: { danh_mucs: Dan
 
   const handleSubmit = () => {
     if (selectedRow) {
-      form.put(route('danh_muc.update'), {
+      form.put(route('san_pham.update', { id_danh_muc_thuong_hieu: info_dmth.id_danh_muc_thuong_hieu }), {
         onSuccess: () => {
           toast.success('Cập nhật thành công!');
           setOpenDialog(false);
@@ -77,7 +84,7 @@ export default function DanhMucPage({ danh_mucs, thuoc_tinhs }: { danh_mucs: Dan
         onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
       });
     } else {
-      form.post(route('danh_muc.store'), {
+      form.post(route('san_pham.store', { id_danh_muc_thuong_hieu: info_dmth.id_danh_muc_thuong_hieu }), {
         onSuccess: () => {
           toast.success('Tạo mới thành công!');
           setOpenDialog(false);
@@ -89,20 +96,19 @@ export default function DanhMucPage({ danh_mucs, thuoc_tinhs }: { danh_mucs: Dan
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Quản lý Quyền" />
+      <Head title="Quản lý Sản phẩm" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={danh_mucs} onAdd={handleAdd} />
+        <DataTable columns={columns(handleEdit, handleDelete)} data={san_phams} onAdd={handleAdd} />
       </div>
 
       <ModalDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        onSubmit={handleSubmit}
+        title={selectedRow ? 'Sửa Sản phẩm' : 'Thêm Sản phẩm'}
+        btnTitle={selectedRow ? 'Sửa' : 'Thêm'}
         form={form}
-        options={thuocTinhOptions}
-        title={selectedRow ? 'Cập nhật người dùng' : 'Thêm người dùng'}
-        btnTitle={selectedRow ? 'Cập nhật' : 'Thêm'}
+        onSubmit={handleSubmit}
       />
 
       <DialogConfirmDelete open={openConfirm} onClose={() => setOpenConfirm(false)} onConfirm={confirmDelete} />

@@ -5,62 +5,54 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\KichThuoc;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class KichThuocController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return Inertia::render('admin/kich-thuoc/kich-thuoc', [
+            'kich_thuocs' => KichThuoc::all()
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'ten_kich_thuoc' => 'required|string|max:255'
+        ], [
+            'ten_kich_thuoc.required' => 'Tên kích thước không được để trống'
+        ]);
+
+        KichThuoc::create($validated);
+        return redirect()
+            ->back()
+            ->with('success', 'Tạo thành công');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(KichThuoc $kichThuoc)
+    public function update(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'ten_kich_thuoc' => 'required|string|max:255'
+        ], [
+            'ten_kich_thuoc.required' => 'Tên kích thước không được để trống'
+        ]);
+
+        $kich_thuoc = KichThuoc::findOrFail($request->id_kich_thuoc);
+
+        $kich_thuoc->update($validated);
+        return redirect()
+            ->back()
+            ->with('success', 'cập nhật thành công');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(KichThuoc $kichThuoc)
+    public function destroy(Request $request)
     {
-        //
-    }
+        $kich_thuoc = KichThuoc::findOrFail($request->id_kich_thuoc);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, KichThuoc $kichThuoc)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(KichThuoc $kichThuoc)
-    {
-        //
+        $kich_thuoc->delete();
+        return redirect()
+            ->back()
+            ->with('success', 'Xóa thành công');
     }
 }

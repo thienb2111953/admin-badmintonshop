@@ -26,4 +26,15 @@ class DanhMuc extends Model
         )->withPivot('id_danh_muc_thuoc_tinh')
             ->withTimestamps();
     }
+
+    public function thuongHieus()
+    {
+        return $this->belongsToMany(
+            ThuongHieu::class,
+            'danh_muc_thuong_hieu',
+            'id_thuong_hieu',
+            'id_danh_muc'
+        )->withPivot('id_danh_muc_thuong_hieu')
+            ->withTimestamps();
+    }
 }

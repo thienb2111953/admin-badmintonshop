@@ -1,29 +1,29 @@
 import AppLayout from '@/layouts/app-layout';
 import { columns } from './columns';
 import { DataTable } from '@/components/custom/data-table';
-import { type BreadcrumbItem, ThuocTinhChiTiet } from '@/types';
+import { type BreadcrumbItem, ThuocTinh, ThuocTinhChiTiet } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
 import { thuoc_tinh, thuoc_tinh_chi_tiet } from '@/routes';
-import { usePage } from '@inertiajs/react';
 
 export default function ThuocTinhChiTietPage({
+  thuoc_tinh_info,
   id_thuoc_tinh,
   thuoc_tinh_chi_tiets,
 }: {
+  thuoc_tinh_info: ThuocTinh;
   id_thuoc_tinh: number;
   thuoc_tinh_chi_tiets: ThuocTinhChiTiet[];
 }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<ThuocTinhChiTiet | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
-
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Quản lý thuộc tính', href: thuoc_tinh() },
-    { title: 'Chi tiết', href: thuoc_tinh_chi_tiet({ id_thuoc_tinh }) },
+    { title: `${thuoc_tinh_info.ten_thuoc_tinh}`, href: thuoc_tinh_chi_tiet({ id_thuoc_tinh }) },
   ];
 
   const form = useForm<ThuocTinhChiTiet>({
@@ -37,7 +37,6 @@ export default function ThuocTinhChiTietPage({
     form.setData({
       ten_thuoc_tinh_chi_tiet: '',
     });
-    console.log(form.data);
     setOpenDialog(true);
   };
 
