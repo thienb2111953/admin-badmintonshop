@@ -13,19 +13,11 @@ return new class extends Migration
     {
         Schema::create('san_pham_chi_tiet', function (Blueprint $table) {
             $table->id('id_san_pham_chi_tiet');
-            $table->string('ten_san_pham_chi_tiet');
             $table->string('slug');
+            $table->string('ten_mau')->nullable();
+            $table->string('ten_kich_thuoc')->nullable();
             $table->foreignId('id_san_pham')
                 ->constrained('san_pham', 'id_san_pham')
-                ->onDelete('cascade');
-            $table->foreignId('id_mau')
-                ->constrained('mau', 'id_mau')
-                ->onDelete('cascade');
-            $table->foreignId('id_kich_thuoc')
-                ->constrained('kich_thuoc', 'id_kich_thuoc')
-                ->onDelete('cascade');
-            $table->foreignId('id_anh_san_pham')
-                ->constrained('anh_san_pham', 'id_anh_san_pham')
                 ->onDelete('cascade');
             $table->timestamps();
         });

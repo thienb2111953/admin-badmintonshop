@@ -12,18 +12,18 @@ class SanPhamChiTiet extends Model
 
     protected $fillable = [
         'id_san_pham',
-        'id_mau',
-        'id_kich_thuoc',
-        'id_anh_san_pham',
+        'ten_mau',
+        'ten_kich_thuoc',
+        'so_luong_ton'
     ];
 
-    public function sanPham()
+    public function anhSanPham()
     {
-        return $this->belongsTo(SanPham::class, 'id_san_pham', 'id_san_pham');
+        return $this->hasMany(AnhSanPham::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
     }
 
-    public function mau()
+    public function tonKho()
     {
-        return $this->hasMany(Mau::class, 'id_mau', 'id_mau');
+        return $this->hasOne(SanPhamTonKho::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
     }
 }

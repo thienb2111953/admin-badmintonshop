@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\KichThuocController;
 use App\Http\Controllers\Admin\MauController;
 use \App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Admin\NguoiDungController;
+use App\Http\Controllers\Admin\SanPhamChiTietController;
 use App\Http\Controllers\Admin\SanPhamController;
 use App\Http\Controllers\Admin\ThuocTinhChiTietController;
 use App\Http\Controllers\Admin\ThuocTinhController;
@@ -73,12 +74,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/', [DanhMucThuongHieuController::class, 'update'])->name('danh_muc_thuong_hieu.update');
         Route::delete('/', [DanhMucThuongHieuController::class, 'destroy'])->name('danh_muc_thuong_hieu.destroy');
 
-        Route::prefix('{id_danh_muc_thuong_hieu}/san_pham')->group(function () {
+        Route::prefix('{id_danh_muc_thuong_hieu}/san-pham')->group(function () {
             Route::get('/', [SanPhamController::class, 'index'])->name('san_pham');
             Route::post('/', [SanPhamController::class, 'store'])->name('san_pham.store');
             Route::put('/', [SanPhamController::class, 'update'])->name('san_pham.update');
             Route::delete('/', [SanPhamController::class, 'destroy'])->name('san_pham.destroy');
         });
+    });
+
+    Route::prefix('san-pham/{id_san_pham}')->group(function () {
+        Route::get('/', [SanPhamChiTietController::class, 'index'])->name('san_pham_chi_tiet');
+        Route::post('/', [SanPhamChiTietController::class, 'store'])->name('san_pham_chi_tiet.store');
+        Route::put('/', [SanPhamChiTietController::class, 'update'])->name('san_pham_chi_tiet.update');
+        Route::delete('/', [SanPhamChiTietController::class, 'destroy'])->name('san_pham_chi_tiet.destroy');
     });
 
     Route::prefix('mau')->group(function () {

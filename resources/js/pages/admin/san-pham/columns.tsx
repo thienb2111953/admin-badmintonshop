@@ -11,6 +11,19 @@ export function columns(onEdit: (row: SanPham) => void, onDelete: (row: SanPham)
     {
       accessorKey: 'ma_san_pham',
       header: ({ column }) => <ColumnHeader column={column} title="Mã sản phẩm" />,
+      cell: ({ row }) => {
+        const rowData = row.original;
+        return (
+          <Link
+            href={route('san_pham_chi_tiet', {
+              id_san_pham: rowData.id_san_pham,
+            })}
+            className="font-bold hover:underline"
+          >
+            {rowData.ma_san_pham}
+          </Link>
+        );
+      },
     },
     {
       accessorKey: 'ten_san_pham',

@@ -15,8 +15,10 @@ return new class extends Migration
         Schema::create('anh_san_pham', function (Blueprint $table) {
             $table->id('id_anh_san_pham');
             $table->string('anh_url');
-            $table->integer('chieu_dai')->nullable();
-            $table->integer('chieu_rong')->nullable();
+            $table->integer('thu_tu');
+            $table->foreignId('id_san_pham_chi_tiet')
+                ->constrained('san_pham_chi_tiet', 'id_san_pham_chi_tiet')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

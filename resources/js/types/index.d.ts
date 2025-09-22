@@ -93,12 +93,16 @@ export interface SanPham {
     gia_ban: number | null;
 }
 
-export interface Mau {
-    id_mau: number;
+export interface SanPhamChiTiet {
+    id_san_pham_chi_tiet: number;
+    ten_kich_thuoc: string;
     ten_mau: string;
+    so_luong_ton: number;
 }
 
-export interface KichThuoc {
-    id_kich_thuoc: number;
-    ten_kich_thuoc: string;
+export interface AnhSanPham {
+    id_san_pham_chi_tiet: number;
+    ten_mau: string;
+    files_anh_san_pham: File[];
+    files_anh_san_pham_urls: string[];
 }
