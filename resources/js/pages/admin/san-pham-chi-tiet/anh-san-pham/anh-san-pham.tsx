@@ -68,7 +68,6 @@ export default function AnhSanPhamPage({
 
   const handleSubmit = () => {
     if (selectedRow) {
-      console.log(form.data);
       router.post(
         route('anh_san_pham.update', { id_san_pham: san_pham_info.id_san_pham }),
         { _method: 'put', ...form.data },
