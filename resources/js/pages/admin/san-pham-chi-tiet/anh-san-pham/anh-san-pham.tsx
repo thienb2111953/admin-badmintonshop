@@ -19,6 +19,7 @@ export default function AnhSanPhamPage({
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const form = useForm<AnhSanPham>({
+    id_anh_san_pham: 0,
     id_san_pham_chi_tiet: 0,
     ten_mau: '',
     files_anh_san_pham: [],
@@ -28,6 +29,7 @@ export default function AnhSanPhamPage({
   const handleAdd = () => {
     setSelectedRow(null);
     form.setData({
+      id_san_pham_chi_tiet: 0,
       ten_mau: '',
       files_anh_san_pham: [],
       files_anh_san_pham_urls: [],
@@ -38,6 +40,7 @@ export default function AnhSanPhamPage({
   const handleEdit = (row: AnhSanPham) => {
     setSelectedRow(row);
     form.setData({
+      id_anh_san_pham: row.id_anh_san_pham,
       id_san_pham_chi_tiet: row.id_san_pham_chi_tiet,
       ten_mau: row.ten_mau,
       files_anh_san_pham: [],
@@ -52,7 +55,7 @@ export default function AnhSanPhamPage({
   };
 
   const confirmDelete = () => {
-    router.delete(route('san_pham_chi_tiet.destroy', { id_san_pham: san_pham_info.id_san_pham }), {
+    router.delete(route('anh_san_pham.destroy', { id_san_pham: san_pham_info.id_san_pham }), {
       data: { id_san_pham_chi_tiet: selectedRow?.id_san_pham_chi_tiet },
       preserveScroll: true,
       onSuccess: () => {
@@ -66,7 +69,7 @@ export default function AnhSanPhamPage({
   const handleSubmit = () => {
     if (selectedRow) {
       router.post(
-        route('san_pham_chi_tiet.update', { id_san_pham: san_pham_info.id_san_pham }),
+        route('anh_san_pham.update', { id_san_pham: san_pham_info.id_san_pham }),
         { _method: 'put', ...form.data },
         {
           forceFormData: true,
@@ -78,7 +81,7 @@ export default function AnhSanPhamPage({
         },
       );
     } else {
-      form.post(route('san_pham_chi_tiet.store', { id_san_pham: san_pham_info.id_san_pham }), {
+      form.post(route('anh_san_pham.store', { id_san_pham: san_pham_info.id_san_pham }), {
         forceFormData: true,
         onSuccess: () => {
           toast.success('Tạo mới thành công!');

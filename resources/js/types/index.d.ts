@@ -101,6 +101,7 @@ export interface SanPhamChiTiet {
 }
 
 export interface AnhSanPham {
+    id_anh_san_pham: number;
     id_san_pham_chi_tiet: number;
     ten_mau: string;
     files_anh_san_pham: File[];

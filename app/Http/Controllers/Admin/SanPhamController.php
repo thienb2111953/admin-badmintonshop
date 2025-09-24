@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DanhMucThuongHieu;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Inertia\Inertia;
 
 class SanPhamController extends Controller

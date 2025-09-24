@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AnhSanPhamController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DanhMucController;
@@ -87,7 +88,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/', [SanPhamChiTietController::class, 'store'])->name('san_pham_chi_tiet.store');
         Route::put('/', [SanPhamChiTietController::class, 'update'])->name('san_pham_chi_tiet.update');
         Route::delete('/', [SanPhamChiTietController::class, 'destroy'])->name('san_pham_chi_tiet.destroy');
+
+        Route::prefix('anh-san-pham')->group(function () {
+            Route::post('/', [AnhSanPhamController::class, 'store'])->name('anh_san_pham.store');
+            Route::put('/', [AnhSanPhamController::class, 'update'])->name('anh_san_pham.update');
+            Route::delete('/', [AnhSanPhamController::class, 'destroy'])->name('anh_san_pham.destroy');
+        });
     });
+
 
     Route::prefix('mau')->group(function () {
         Route::get('/', [MauController::class, 'index'])->name('mau');

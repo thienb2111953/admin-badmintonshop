@@ -55,6 +55,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
               <Input
                 id="ten_mau"
                 placeholder="Màu"
+                disabled
                 value={data.ten_mau ?? ''}
                 onChange={(e) => setData('ten_mau', e.target.value)}
               />

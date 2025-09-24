@@ -30,7 +30,7 @@ export default function SanPhamChiTietPage({
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-80 grid-cols-2">
             <TabsTrigger value="ton-kho">Tồn kho</TabsTrigger>
             <TabsTrigger value="anh-san-pham">Ảnh sản phẩm</TabsTrigger>
           </TabsList>
