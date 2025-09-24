@@ -15,7 +15,7 @@ export function columns(onEdit: (row: ThuocTinh) => void, onDelete: (row: ThuocT
       cell: ({ row }) => {
         const rowData = row.original;
         return (
-          <Link href={thuoc_tinh_chi_tiet(rowData.id_thuoc_tinh)} className="hover:underline">
+          <Link href={thuoc_tinh_chi_tiet(rowData.id_thuoc_tinh)} className="font-bold hover:underline">
             {rowData.ten_thuoc_tinh}
           </Link>
         );

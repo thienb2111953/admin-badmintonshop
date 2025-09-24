@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
 import { ThuongHieu } from '@/types';
-import { danh_muc_thuong_hieu } from '@/routes';
 import { Link } from '@inertiajs/react';
 
 export function columns(
@@ -16,11 +15,11 @@ export function columns(
       accessorKey: 'ma_thuong_hieu',
       header: ({ column }) => <ColumnHeader column={column} title="Mã - Tên thương hiệu" />,
       cell: ({ row }) => {
-        const { id_thuong_hieu, ma_thuong_hieu, ten_thuong_hieu } = row.original;
+        const { ma_thuong_hieu, ten_thuong_hieu } = row.original;
         return (
-          <Link href={danh_muc_thuong_hieu({ id_thuong_hieu })} className="hover:underline">
+          <span>
             {ma_thuong_hieu} - {ten_thuong_hieu}
-          </Link>
+          </span>
         );
       },
     },

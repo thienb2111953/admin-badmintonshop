@@ -9,10 +9,7 @@ import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
 import { dashboard, nguoi_dung, thuong_hieu } from '@/routes';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Quản lý á', href: thuong_hieu() },
-  { title: 'Quản lý người dùng', href: nguoi_dung() },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quản lý người dùng', href: nguoi_dung() }];
 
 export default function NguoiDungPage({ users }: { users: User[] }) {
   const [openDialog, setOpenDialog] = useState(false);

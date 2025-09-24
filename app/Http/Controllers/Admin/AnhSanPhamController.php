@@ -18,7 +18,7 @@ class AnhSanPhamController extends Controller
         $validated = $request->validate([
             'ten_mau'              => 'nullable|string',
             'files_anh_san_pham'   => 'nullable|array',
-            'files_anh_san_pham.*' => 'mimes:jpg,jpeg,png|max:2048',
+            'files_anh_san_pham.*' => 'mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'files_anh_san_pham.*.mimes' => 'Hình ảnh phải có định dạng: jpg, jpeg, png',
             'files_anh_san_pham.*.max'   => 'Kích thước ảnh tối đa 2MB.',
@@ -46,31 +46,53 @@ class AnhSanPhamController extends Controller
         return redirect()->back()->with('success', 'Thêm thuộc tính chi tiết thành công');
     }
 
-
     public function update(Request $request, $id_san_pham)
     {
         $validated = $request->validate([
-            'ten_mau'              => 'nullable|string',
-            'files_anh_san_pham'   => 'nullable|array',
-            'files_anh_san_pham.*' => 'mimes:jpg,jpeg,png|max:2048',
-        ], [
-            'files_anh_san_pham.*.mimes' => 'Hình ảnh phải có định dạng: jpg, jpeg, png',
-            'files_anh_san_pham.*.max'   => 'Kích thước ảnh tối đa 2MB.',
+            'ten_mau'                     => 'nullable|string',
+            'files_anh_san_pham_new'      => 'nullable|array',
+            'files_anh_san_pham_new.*.file' => 'mimes:jpg,jpeg,png,webp|max:2048',
+            'files_anh_san_pham_new.*.thu_tu' => 'nullable|integer',
+            'path_anh_san_pham_old'       => 'nullable|array',
         ]);
 
-        // Upload lại ảnh mới
-        if ($request->hasFile('files_anh_san_pham')) {
-            // Xoá ảnh cũ (DB + Storage)
-            $ds_anh_cu = AnhSanPham::where('id_san_pham_chi_tiet', $request->id_san_pham_chi_tiet)->get();
+        // lặp qua tất cả ảnh cũ gửi qua -> nếu ds ảnh cũ từ DB ko tồn tại trong ds ảnh cũ gửi qua thì xóa, nếu tồn tại thì cập nhật 
+        // Lấy danh sách ảnh cũ trong DB
+        $ds_anh_cu = AnhSanPham::where('id_san_pham_chi_tiet', $request->id_san_pham_chi_tiet)->get();
 
-            foreach ($ds_anh_cu as $anh) {
+        $ids_giu_lai = collect($request->path_anh_san_pham_old ?? [])
+            ->pluck('id_anh_san_pham')
+            ->filter()
+            ->toArray();
+
+        // Xử lý từng ảnh trong DB
+        foreach ($ds_anh_cu as $anh) {
+            if (!in_array($anh->id_anh_san_pham, $ids_giu_lai)) {
+                // Nếu không còn trong request → xoá
                 Storage::disk('public')->delete($anh->anh_url);
                 $anh->delete();
+            } else {
+                // Nếu còn giữ lại → update thứ tự
+                $fileData = collect($request->path_anh_san_pham_old)
+                    ->firstWhere('id_anh_san_pham', $anh->id_anh_san_pham);
+
+                $anh->update([
+                    'thu_tu' => $fileData['thu_tu'] ?? null,
+                ]);
             }
+        }
 
-            $san_pham = SanPham::find($id_san_pham);
 
-            foreach ($request->file('files_anh_san_pham') as $file) {
+        // 2. Upload ảnh mới
+        if ($request->filled('files_anh_san_pham_new')) {
+            $san_pham = SanPham::findOrFail($id_san_pham);
+
+            foreach ($request->files_anh_san_pham_new as $item) {
+                if (!isset($item['file']) || !$item['file'] instanceof \Illuminate\Http\UploadedFile) {
+                    continue;
+                }
+
+                $file = $item['file'];
                 $ten  = $san_pham->ma_san_pham . '_' . Str::slug(($validated['ten_mau'] ?? ''));
                 $time = now()->format('Ymd_His');
                 $unique = uniqid();
@@ -81,13 +103,16 @@ class AnhSanPhamController extends Controller
 
                 AnhSanPham::create([
                     'id_san_pham_chi_tiet' => $request->id_san_pham_chi_tiet,
-                    'anh_url'     => $path,
+                    'anh_url'  => $path,
+                    'thu_tu'   => $item['thu_tu'] ?? null,
                 ]);
             }
         }
 
         return redirect()->back()->with('success', 'Cập nhật chi tiết sản phẩm thành công');
     }
+
+
 
     public function destroy(Request $request, $id_san_pham)
     {

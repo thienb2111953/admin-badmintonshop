@@ -2,14 +2,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { type InertiaFormProps } from '@inertiajs/react';
-import { Mau } from '@/types';
+import { CaiDat } from '@/types';
 import { Label } from '@/components/ui/label';
 interface Props {
   open: boolean;
   onClose: () => void;
   title: string;
   btnTitle: string;
-  form: InertiaFormProps<Mau>;
+  form: InertiaFormProps<CaiDat>;
   onSubmit: () => void;
 }
 
@@ -31,14 +31,24 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
         <form onSubmit={handleFormSubmit} className="mt-4 space-y-4">
           <div className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="ten_mau">Tên màu</Label>
+              <Label htmlFor="ten_cai_dat">Tên cài đặt</Label>
               <Input
-                id="ten_mau"
-                placeholder="Tên màu"
-                value={data.ten_mau ?? ''}
-                onChange={(e) => setData('ten_mau', e.target.value)}
+                id="ten_cai_dat"
+                placeholder="Tên cài đặt"
+                value={data.ten_cai_dat ?? ''}
+                onChange={(e) => setData('ten_cai_dat', e.target.value)}
               />
-              {errors.ten_mau && <p className="text-red-500">{errors.ten_mau}</p>}
+              {errors.ten_cai_dat && <p className="text-red-500">{errors.ten_cai_dat}</p>}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="gia_tri">Giá trị</Label>
+              <Input
+                id="gia_tri"
+                placeholder="Giá trị"
+                value={data.gia_tri ?? ''}
+                onChange={(e) => setData('gia_tri', e.target.value)}
+              />
+              {errors.gia_tri && <p className="text-red-500">{errors.gia_tri}</p>}
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-4">

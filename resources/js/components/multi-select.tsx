@@ -299,7 +299,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       placeholder = 'Select options',
       animation = 0,
       animationConfig,
-      maxCount = 3,
+      maxCount = 10,
       modalPopover = false,
       asChild = false,
       className,

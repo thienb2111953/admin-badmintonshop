@@ -22,8 +22,8 @@ export default function AnhSanPhamPage({
     id_anh_san_pham: 0,
     id_san_pham_chi_tiet: 0,
     ten_mau: '',
-    files_anh_san_pham: [],
-    files_anh_san_pham_urls: [],
+    files_anh_san_pham_new: [],
+    path_anh_san_pham_old: [],
   });
 
   const handleAdd = () => {
@@ -31,8 +31,8 @@ export default function AnhSanPhamPage({
     form.setData({
       id_san_pham_chi_tiet: 0,
       ten_mau: '',
-      files_anh_san_pham: [],
-      files_anh_san_pham_urls: [],
+      files_anh_san_pham_new: [],
+      path_anh_san_pham_old: [],
     });
     setOpenDialog(true);
   };
@@ -43,8 +43,8 @@ export default function AnhSanPhamPage({
       id_anh_san_pham: row.id_anh_san_pham,
       id_san_pham_chi_tiet: row.id_san_pham_chi_tiet,
       ten_mau: row.ten_mau,
-      files_anh_san_pham: [],
-      files_anh_san_pham_urls: row.files_anh_san_pham,
+      files_anh_san_pham_new: [],
+      path_anh_san_pham_old: row.path_anh_san_pham_old,
     });
     setOpenDialog(true);
   };
@@ -68,6 +68,7 @@ export default function AnhSanPhamPage({
 
   const handleSubmit = () => {
     if (selectedRow) {
+      console.log(form.data);
       router.post(
         route('anh_san_pham.update', { id_san_pham: san_pham_info.id_san_pham }),
         { _method: 'put', ...form.data },

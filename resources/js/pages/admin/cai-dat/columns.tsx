@@ -3,13 +3,17 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
-import { Mau } from '@/types';
+import { CaiDat } from '@/types';
 
-export function columns(onEdit: (row: Mau) => void, onDelete: (row: Mau) => void): ColumnDef<Mau>[] {
+export function columns(onEdit: (row: CaiDat) => void, onDelete: (row: CaiDat) => void): ColumnDef<CaiDat>[] {
   return [
     {
-      accessorKey: 'ten_mau',
-      header: ({ column }) => <ColumnHeader column={column} title="Tên màu" />,
+      accessorKey: 'ten_cai_dat',
+      header: ({ column }) => <ColumnHeader column={column} title="Tên cài đặt" />,
+    },
+    {
+      accessorKey: 'gia_tri',
+      header: ({ column }) => <ColumnHeader column={column} title="Giá trị" />,
     },
     {
       id: 'actions',

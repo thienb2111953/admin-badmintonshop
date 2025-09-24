@@ -69,7 +69,7 @@ export function ModalDialog({ open, onClose, onSubmit, form, title, btnTitle, op
                 placeholder="Chọn giá trị"
                 disabled={!options.length}
                 variant="inverted"
-                animation={2}
+                // animation={2}
               />
             </div>
           </div>

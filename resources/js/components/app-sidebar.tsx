@@ -17,13 +17,12 @@ import {
   nguoi_dung,
   danh_muc,
   thuoc_tinh,
-  danh_muc_thuong_hieu,
-  mau,
-  kich_thuoc,
+  san_pham_thuong_hieu,
+  cai_dat,
 } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, User, UserLock } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, User, UserLock, Settings, ChevronDown } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -43,28 +42,31 @@ const mainNavItems: NavItem[] = [
     icon: UserLock,
   },
   {
-    title: 'Thương hiệu',
-    href: thuong_hieu(),
+    title: 'Cài đặt',
+    href: cai_dat(),
+    icon: Settings,
   },
   {
-    title: 'Danh mục',
-    href: danh_muc(),
-  },
-  {
-    title: 'Thuộc tính',
-    href: thuoc_tinh(),
+    title: 'Quản lý thông tin',
+    icon: Folder,
+    items: [
+      {
+        title: 'Thương hiệu',
+        href: thuong_hieu(),
+      },
+      {
+        title: 'Danh mục',
+        href: danh_muc(),
+      },
+      {
+        title: 'Thuộc tính',
+        href: thuoc_tinh(),
+      },
+    ],
   },
   {
     title: 'Sản phẩm',
-    href: danh_muc_thuong_hieu(),
-  },
-  {
-    title: 'Màu',
-    href: mau(),
-  },
-  {
-    title: 'Kích thước',
-    href: kich_thuoc(),
+    href: san_pham_thuong_hieu(),
   },
 ];
 

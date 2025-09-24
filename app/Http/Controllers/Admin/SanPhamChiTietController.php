@@ -25,10 +25,15 @@ class SanPhamChiTietController extends Controller
                 return [
                     'id_san_pham_chi_tiet' => $items->first()->id_san_pham_chi_tiet,
                     'ten_mau' => $items->first()->ten_mau,
-                    // 'ten_kich_thuoc' => $items->pluck('ten_kich_thuoc')->implode(', '), // chuỗi
-                    // 'ten_kich_thuoc' => $items->pluck('ten_kich_thuoc')->toArray(), // mảng
-                    'files_anh_san_pham' => $items->flatMap(function ($item) {
-                        return $item->anhSanPham->pluck('anh_url');
+                    'path_anh_san_pham_old' => $items->flatMap(function ($item) {
+                        return $item->anhSanPham->map(function ($anh) {
+                            return [
+                                'id_anh_san_pham' => $anh->id_anh_san_pham,
+                                'id_san_pham_chi_tiet' => $anh->id_san_pham_chi_tiet,
+                                'anh_url' => $anh->anh_url,
+                                'thu_tu' => $anh->thu_tu
+                            ];
+                        });
                     })->values()->toArray(),
                 ];
             })
@@ -90,6 +95,4 @@ class SanPhamChiTietController extends Controller
 
         return redirect()->back()->with('success', 'Xóa chi tiết thành công');
     }
-
-   
 }

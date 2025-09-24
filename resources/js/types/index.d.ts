@@ -20,6 +20,7 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    items?: NavItem[];
 }
 
 export interface SharedData {
@@ -104,6 +105,12 @@ export interface AnhSanPham {
     id_anh_san_pham: number;
     id_san_pham_chi_tiet: number;
     ten_mau: string;
-    files_anh_san_pham: File[];
-    files_anh_san_pham_urls: string[];
+    files_anh_san_pham_new: File[];
+    path_anh_san_pham_old: string[];
+}
+
+export interface CaiDat {
+    id_cai_dat: number;
+    ten_cai_dat: string;
+    gia_tri: string;
 }

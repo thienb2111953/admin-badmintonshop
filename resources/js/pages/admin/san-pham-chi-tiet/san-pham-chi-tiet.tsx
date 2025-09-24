@@ -3,7 +3,7 @@ import { type BreadcrumbItem, SanPham, AnhSanPham, SanPhamChiTiet } from '@/type
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { danh_muc_thuong_hieu, san_pham, san_pham_chi_tiet } from '@/routes';
+import { san_pham_thuong_hieu, san_pham, san_pham_chi_tiet } from '@/routes';
 import AnhSanPhamPage from './anh-san-pham/anh-san-pham';
 import TonKhoPage from './ton-kho/ton-kho';
 
@@ -19,8 +19,11 @@ export default function SanPhamChiTietPage({
   const [activeTab, setActiveTab] = useState('ton-kho');
 
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: san_pham_info.danh_muc_thuong_hieu.ten_danh_muc_thuong_hieu, href: danh_muc_thuong_hieu() },
-    { title: san_pham_info.ma_san_pham, href: san_pham(san_pham_info.id_danh_muc_thuong_hieu) },
+    { title: san_pham_info.danh_muc_thuong_hieu.ten_danh_muc_thuong_hieu, href: san_pham_thuong_hieu() },
+    {
+      title: `${san_pham_info.ma_san_pham} - ${san_pham_info.ten_san_pham}`,
+      href: san_pham(san_pham_info.id_danh_muc_thuong_hieu),
+    },
     { title: 'Quản lý sản phẩm chi tiết', href: san_pham_chi_tiet(san_pham_info.id_san_pham) },
   ];
 

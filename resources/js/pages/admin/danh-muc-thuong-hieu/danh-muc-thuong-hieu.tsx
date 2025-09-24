@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
-import { danh_muc_thuong_hieu } from '@/routes';
+import { san_pham_thuong_hieu } from '@/routes';
 
 export default function DanhMucThuongHieuPage({
   danh_muc_thuong_hieus,
@@ -22,7 +22,7 @@ export default function DanhMucThuongHieuPage({
   const [selectedRow, setSelectedRow] = useState<DanhMucThuongHieu | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const breadcrumbs: BreadcrumbItem[] = [{ title: `Quản lý Danh mục Thương hiệu`, href: danh_muc_thuong_hieu() }];
+  const breadcrumbs: BreadcrumbItem[] = [{ title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() }];
 
   const form = useForm<DanhMucThuongHieu>({
     id_danh_muc_thuong_hieu: 0,

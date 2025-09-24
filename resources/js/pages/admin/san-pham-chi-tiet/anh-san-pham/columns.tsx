@@ -16,16 +16,17 @@ export function Columns(
       header: ({ column }) => <ColumnHeader column={column} title="Màu" />,
     },
     {
-      accessorKey: 'files_anh_san_pham',
+      accessorKey: 'path_anh_san_pham_old',
       header: ({ column }) => <ColumnHeader column={column} title="Ảnh sản phẩm" />,
       cell: ({ row }) => {
-        const files: string[] = row.original.files_anh_san_pham || [];
+        const files: { id_anh_san_pham: number; anh_url: string }[] = row.original.path_anh_san_pham_old || [];
+
         return (
           <div className="flex flex-wrap gap-2">
-            {files.map((url, index) => (
+            {files.map((file, index) => (
               <img
-                key={index}
-                src={`/storage/${url}`} // đúng đường dẫn public/storage
+                key={file.id_anh_san_pham || index}
+                src={`/storage/${file.anh_url}`}
                 alt={`Ảnh sản phẩm ${index + 1}`}
                 className="h-16 w-16 rounded border object-cover"
               />

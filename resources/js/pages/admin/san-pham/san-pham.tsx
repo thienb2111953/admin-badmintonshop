@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
-import { danh_muc_thuong_hieu, san_pham } from '@/routes';
+import { san_pham_thuong_hieu, san_pham } from '@/routes';
 
 export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPham[]; info_dmth: DanhMucThuongHieu }) {
   const [openDialog, setOpenDialog] = useState(false);
@@ -15,7 +15,7 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: `${info_dmth.ten_danh_muc_thuong_hieu}`, href: danh_muc_thuong_hieu() },
+    { title: `${info_dmth.ten_danh_muc_thuong_hieu}`, href: san_pham_thuong_hieu() },
     {
       title: `Quản lý sản phẩm`,
       href: san_pham(info_dmth.ten_danh_muc_thuong_hieu),

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AnhSanPhamController;
+use App\Http\Controllers\Admin\CaiDatController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DanhMucController;
@@ -69,8 +70,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-    Route::prefix('danh-muc-thuong-hieu')->group(function () {
-        Route::get('/', [DanhMucThuongHieuController::class, 'index'])->name('danh_muc_thuong_hieu');
+    Route::prefix('san-pham-thuong-hieu')->group(function () {
+        Route::get('/', [DanhMucThuongHieuController::class, 'index'])->name('san_pham_thuong_hieu');
         Route::post('/', [DanhMucThuongHieuController::class, 'store'])->name('danh_muc_thuong_hieu.store');
         Route::put('/', [DanhMucThuongHieuController::class, 'update'])->name('danh_muc_thuong_hieu.update');
         Route::delete('/', [DanhMucThuongHieuController::class, 'destroy'])->name('danh_muc_thuong_hieu.destroy');
@@ -96,19 +97,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-
-    Route::prefix('mau')->group(function () {
-        Route::get('/', [MauController::class, 'index'])->name('mau');
-        Route::post('/', [MauController::class, 'store'])->name('mau.store');
-        Route::put('/', [MauController::class, 'update'])->name('mau.update');
-        Route::delete('/', [MauController::class, 'destroy'])->name('mau.destroy');
-    });
-
-    Route::prefix('kich-thuoc')->group(function () {
-        Route::get('/', [KichThuocController::class, 'index'])->name('kich_thuoc');
-        Route::post('/', [KichThuocController::class, 'store'])->name('kich_thuoc.store');
-        Route::put('/', [KichThuocController::class, 'update'])->name('kich_thuoc.update');
-        Route::delete('/', [KichThuocController::class, 'destroy'])->name('kich_thuoc.destroy');
+    Route::prefix('cai-dat')->group(function () {
+        Route::get('/', [CaiDatController::class, 'index'])->name('cai_dat');
+        Route::post('/', [CaiDatController::class, 'store'])->name('cai_dat.store');
+        Route::put('/', [CaiDatController::class, 'update'])->name('cai_dat.update');
+        Route::delete('/', [CaiDatController::class, 'destroy'])->name('cai_dat.destroy');
     });
 });
 

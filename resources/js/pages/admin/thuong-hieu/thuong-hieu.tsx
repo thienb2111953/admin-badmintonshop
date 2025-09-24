@@ -7,12 +7,9 @@ import { useState } from 'react';
 import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
-import { quyen, thuong_hieu } from '@/routes';
+import { thuong_hieu } from '@/routes';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Quản lý á', href: thuong_hieu() },
-  { title: 'Quản lý người dùng', href: quyen() },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quản lý Thương hiệu', href: thuong_hieu() }];
 
 export default function ThuongHieuPage({ thuong_hieus }: { thuong_hieus: ThuongHieu[] }) {
   const [openDialog, setOpenDialog] = useState(false);

@@ -18,7 +18,7 @@ export function columns(
       cell: ({ row }) => {
         const rowData = row.original;
         return (
-          <Link href={san_pham(rowData.id_danh_muc_thuong_hieu)} className="hover:underline">
+          <Link href={san_pham(rowData.id_danh_muc_thuong_hieu)} className="font-bold hover:underline">
             {rowData.ten_danh_muc_thuong_hieu}
           </Link>
         );
