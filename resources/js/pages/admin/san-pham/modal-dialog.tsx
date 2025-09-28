@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Combobox } from '@/components/ui/combobox';
 import { slugify } from 'transliteration';
 import { useEffect } from 'react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface Props {
   open: boolean;
@@ -102,7 +103,23 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
                 value={data.mo_ta ?? ''}
                 onChange={(e) => setData('mo_ta', e.target.value)}
               />
+
               {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
+            </div>
+
+            <div className="grid gap-3">
+              <Label htmlFor="trang_thai">Trạng thái</Label>
+              <RadioGroup defaultValue="dang-san-xuat" onValueChange={(val) => setData('trang_thai', val)}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Đang sản xuất" id="dang-san-xuat" />
+                  <Label htmlFor="dang-san-xuat">Đang sản xuất</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Hết sản xuất" id="het-san-xuat" />
+                  <Label htmlFor="het-san-xuat">Hết sản xuất</Label>
+                </div>
+              </RadioGroup>
+              {errors.trang_thai && <p className="text-red-500">{errors.trang_thai}</p>}
             </div>
           </div>
 

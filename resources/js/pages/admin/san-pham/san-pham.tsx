@@ -29,6 +29,7 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
     mo_ta: '',
     gia_niem_yet: null,
     gia_ban: null,
+    trang_thai: '',
   });
 
   const handleAdd = () => {
@@ -40,6 +41,7 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
       mo_ta: '',
       gia_niem_yet: null,
       gia_ban: null,
+      trang_thai: '',
     });
     setOpenDialog(true);
   };
@@ -53,6 +55,7 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
       mo_ta: row.mo_ta,
       gia_niem_yet: row.gia_niem_yet,
       gia_ban: row.gia_ban,
+      trang_thai: row.trang_thai,
     });
     setOpenDialog(true);
   };

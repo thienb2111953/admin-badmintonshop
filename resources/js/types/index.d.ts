@@ -52,7 +52,6 @@ export interface Quyen {
 
 export interface ThuongHieu{
     id_thuong_hieu: number;
-    ma_thuong_hieu: string;
     ten_thuong_hieu: string;
     logo_url: string | null;
     file_logo: File | null;
@@ -85,6 +84,22 @@ export interface DanhMucThuongHieu {
     id_danh_muc: number;
 }
 
+export interface Mau {
+    id_mau: number;
+    ten_mau: string;
+  }
+  
+export interface KichThuoc {
+    id_kich_thuoc: number;
+    ten_kich_thuoc: string;
+}
+
+export interface Kho {
+    id_san_pham_ton_kho: number;
+    so_luong_nhap: number;
+    ngay_nhap: date;
+}
+
 export interface SanPham {
     id_san_pham: number;
     ma_san_pham: string;
@@ -92,14 +107,19 @@ export interface SanPham {
     mo_ta: string;
     gia_niem_yet: number | null;
     gia_ban: number | null;
+    trang_thai: string;
 }
 
 export interface SanPhamChiTiet {
     id_san_pham_chi_tiet: number;
-    ten_kich_thuoc: string;
-    ten_mau: string;
-    so_luong_ton: number;
-}
+    slug: string;
+    id_san_pham: number;
+    id_mau: number;
+    id_kich_thuoc: number;
+    mau?: Mau;
+    kich_thuoc?: KichThuoc;
+    kho?: Kho;
+  }
 
 export interface AnhSanPham {
     id_anh_san_pham: number;

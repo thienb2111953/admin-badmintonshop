@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, SanPham, AnhSanPham, SanPhamChiTiet } from '@/types';
+import { type BreadcrumbItem, SanPham, AnhSanPham, SanPhamChiTiet, Mau, KichThuoc } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -11,11 +11,17 @@ export default function SanPhamChiTietPage({
   san_pham_info,
   anh_san_phams,
   san_pham_chi_tiets,
+  maus,
+  kich_thuocs,
 }: {
   san_pham_info: SanPham;
   anh_san_phams: AnhSanPham[];
   san_pham_chi_tiets: SanPhamChiTiet[];
+  maus: Mau[];
+  kich_thuocs: KichThuoc[];
 }) {
+  console.log(san_pham_chi_tiets);
+
   const [activeTab, setActiveTab] = useState('ton-kho');
 
   const breadcrumbs: BreadcrumbItem[] = [
@@ -43,7 +49,12 @@ export default function SanPhamChiTietPage({
           </TabsContent>
 
           <TabsContent value="ton-kho" className="space-y-4">
-            <TonKhoPage san_pham_chi_tiets={san_pham_chi_tiets} san_pham_info={san_pham_info} />
+            <TonKhoPage
+              san_pham_chi_tiets={san_pham_chi_tiets}
+              san_pham_info={san_pham_info}
+              maus={maus}
+              kich_thuocs={kich_thuocs}
+            />
           </TabsContent>
         </Tabs>
       </div>

@@ -30,6 +30,7 @@ class SanPhamController extends Controller
             'mo_ta' => 'nullable|string',
             'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
             'gia_ban'      => 'nullable|integer|min:0|max:999999999999',
+            'trang_thai' => 'nullable|string',
         ], [
             'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
             'ten_san_pham.required' => 'Tên sản phẩm không được để trống',
@@ -52,6 +53,7 @@ class SanPhamController extends Controller
             'mo_ta' => 'nullable|string',
             'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
             'gia_ban'      => 'nullable|integer|min:0|max:999999999999',
+            'trang_thai' => 'nullable|string',
         ], [
             'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
             'ten_san_pham.required' => 'Tên sản phẩm không được để trống',

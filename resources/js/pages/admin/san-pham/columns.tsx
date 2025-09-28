@@ -50,6 +50,10 @@ export function columns(onEdit: (row: SanPham) => void, onDelete: (row: SanPham)
       },
     },
     {
+      accessorKey: 'trang_thai',
+      header: ({ column }) => <ColumnHeader column={column} title="Trạng thái" />,
+    },
+    {
       accessorKey: 'mo_ta',
       header: ({ column }) => <ColumnHeader column={column} title="Mô tả" />,
     },

@@ -16,6 +16,7 @@ class SanPham extends Model
         'mo_ta',
         'gia_niem_yet',
         'gia_ban',
+        'trang_thai',
         'id_danh_muc_thuong_hieu'
     ];
 

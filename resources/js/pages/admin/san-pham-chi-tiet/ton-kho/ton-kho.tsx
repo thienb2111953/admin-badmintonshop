@@ -5,14 +5,18 @@ import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
 import { router, useForm } from '@inertiajs/react';
-import { SanPham, SanPhamChiTiet } from '@/types';
+import { KichThuoc, Mau, SanPham, SanPhamChiTiet } from '@/types';
 
 export default function TonKhoPage({
   san_pham_chi_tiets,
   san_pham_info,
+  maus,
+  kich_thuocs,
 }: {
   san_pham_chi_tiets: SanPhamChiTiet[];
   san_pham_info: SanPham;
+  maus: Mau[];
+  kich_thuocs: KichThuoc[];
 }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<SanPhamChiTiet | null>(null);
@@ -20,9 +24,10 @@ export default function TonKhoPage({
 
   const form = useForm<SanPhamChiTiet>({
     id_san_pham_chi_tiet: 0,
-    ten_kich_thuoc: '',
-    ten_mau: '',
-    so_luong_ton: '',
+    id_mau: 0,
+    id_kich_thuoc: 0,
+    so_luong_nhap: 0,
+    ngay_nhap: '',
   });
 
   const handleAdd = () => {
@@ -31,7 +36,8 @@ export default function TonKhoPage({
       id_san_pham_chi_tiet: 0,
       ten_kich_thuoc: '',
       ten_mau: '',
-      so_luong_ton: '',
+      so_luong_nhap: '',
+      ngay_nhap: '',
     });
     setOpenDialog(true);
   };
@@ -40,9 +46,10 @@ export default function TonKhoPage({
     setSelectedRow(row);
     form.setData({
       id_san_pham_chi_tiet: row.id_san_pham_chi_tiet,
-      ten_kich_thuoc: row.ten_kich_thuoc,
-      ten_mau: row.ten_mau,
-      so_luong_ton: row.so_luong_ton,
+      id_mau: row.id_mau,
+      id_kich_thuoc: row.id_kich_thuoc,
+      so_luong_nhap: row.kho?.[0]?.so_luong_nhap ?? 0,
+      ngay_nhap: row.kho?.[0]?.ngay_nhap,
     });
     setOpenDialog(true);
   };
@@ -95,6 +102,8 @@ export default function TonKhoPage({
         btnTitle={selectedRow ? 'Sửa' : 'Thêm'}
         form={form}
         onSubmit={handleSubmit}
+        mauOptions={maus}
+        kichThuocOptions={kich_thuocs}
       />
 
       <DialogConfirmDelete open={openConfirm} onClose={() => setOpenConfirm(false)} onConfirm={confirmDelete} />

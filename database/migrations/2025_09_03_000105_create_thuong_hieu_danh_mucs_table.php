@@ -16,11 +16,10 @@ return new class extends Migration
             $table->string('ten_danh_muc_thuong_hieu');
             $table->string('slug')->nullable();
             $table->text('mo_ta')->nullable();
-            $table->unsignedBigInteger('id_thuong_hieu');
-            $table->foreign('id_thuong_hieu')
-                ->references('id_thuong_hieu')
-                ->on('thuong_hieu')
-                ->onDelete('cascade');
+            $table->foreignId('id_thuong_hieu')
+                ->nullable()
+                ->constrained('thuong_hieu', 'id_thuong_hieu')
+                ->nullOnDelete();
             $table->unsignedBigInteger('id_danh_muc');
             $table->foreign('id_danh_muc')
                 ->references('id_danh_muc')

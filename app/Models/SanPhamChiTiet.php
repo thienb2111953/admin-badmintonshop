@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Admin\KhoController;
+use App\Http\Controllers\Admin\MauController;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SanPhamChiTiet extends Model
 {
@@ -11,19 +15,29 @@ class SanPhamChiTiet extends Model
     public $incrementing = true;
 
     protected $fillable = [
+        'slug',
         'id_san_pham',
-        'ten_mau',
-        'ten_kich_thuoc',
-        'so_luong_ton'
+        'id_mau',
+        'id_kich_thuoc',
     ];
 
-    public function anhSanPham()
+    public function anhSanPham(): HasMany
     {
         return $this->hasMany(AnhSanPham::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
     }
 
-    public function tonKho()
+    public function kho(): HasMany
     {
-        return $this->hasOne(SanPhamTonKho::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
+        return $this->hasMany(Kho::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
+    }
+
+    public function mau(): BelongsTo
+    {
+        return $this->belongsTo(Mau::class, 'id_mau', 'id_mau');
+    }
+
+    public function kichThuoc(): BelongsTo
+    {
+        return $this->belongsTo(KichThuoc::class, 'id_kich_thuoc', 'id_kich_thuoc');
     }
 }

@@ -31,16 +31,6 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
         <form onSubmit={handleFormSubmit} className="mt-4 space-y-4">
           <div className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="ma_thuong_hieu">Mã thương hiệu</Label>
-              <Input
-                id="ma_thuong_hieu"
-                placeholder="Mã thương hiệu"
-                value={data.ma_thuong_hieu ?? ''}
-                onChange={(e) => setData('ma_thuong_hieu', e.target.value)}
-              />
-              {errors.ma_thuong_hieu && <p className="text-red-500">{errors.ma_thuong_hieu}</p>}
-            </div>
-            <div className="grid gap-3">
               <Label htmlFor="ten_thuong_hieu">Tên thương hiệu</Label>
               <Input
                 id="ten_thuong_hieu"

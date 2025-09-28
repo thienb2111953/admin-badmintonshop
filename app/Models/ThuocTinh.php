@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ThuocTinh extends Model
 {
+    use HasFactory;
+
     protected $table = 'thuoc_tinh';
     protected $primaryKey = 'id_thuoc_tinh';
     public $incrementing = true;

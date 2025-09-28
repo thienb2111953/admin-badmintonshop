@@ -56,6 +56,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/', [DanhMucController::class, 'destroy'])->name('danh_muc.destroy');
     });
 
+    Route::prefix('mau')->group(function () {
+        Route::get('/', [MauController::class, 'index'])->name('mau');
+        Route::post('/', [MauController::class, 'store'])->name('mau.store');
+        Route::put('/', [MauController::class, 'update'])->name('mau.update');
+        Route::delete('/', [MauController::class, 'destroy'])->name('mau.destroy');
+    });
+
+    Route::prefix('kich-thuoc')->group(function () {
+        Route::get('/', [KichThuocController::class, 'index'])->name('kich_thuoc');
+        Route::post('/', [KichThuocController::class, 'store'])->name('kich_thuoc.store');
+        Route::put('/', [KichThuocController::class, 'update'])->name('kich_thuoc.update');
+        Route::delete('/', [KichThuocController::class, 'destroy'])->name('kich_thuoc.destroy');
+    });
+
     Route::prefix('thuoc-tinh')->group(function () {
         Route::get('/', [ThuocTinhController::class, 'index'])->name('thuoc_tinh');
         Route::post('/', [ThuocTinhController::class, 'store'])->name('thuoc_tinh.store');

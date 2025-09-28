@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mau extends Model
 {
@@ -14,7 +15,7 @@ class Mau extends Model
         'ten_mau',
     ];
 
-    public function sanPhamChiTiet()
+    public function sanPhamChiTiet(): HasMany
     {
         return $this->hasMany(SanPhamChiTiet::class, 'id_mau', 'id_mau');
     }

@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'sdt' => fake()->numerify('0977######'),
-            'ngay_sinh' => fake()->date('Y-m-d','-18 years') // ngày sinh ngẫu nhiên, >=18 tuổi
+            'ngay_sinh' => fake()->date('Y-m-d', '-18 years') // ngày sinh ngẫu nhiên, >=18 tuổi
         ];
     }
 
@@ -39,7 +39,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

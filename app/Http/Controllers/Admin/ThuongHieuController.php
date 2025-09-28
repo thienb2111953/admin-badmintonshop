@@ -22,7 +22,6 @@ class ThuongHieuController extends Controller
     {
         $validatedData = $request->validate([
             'ten_thuong_hieu' => 'required|string',
-            'ma_thuong_hieu' => 'required|string',
             'logo_url'        => 'nullable|string',
             'file_logo'        => 'nullable|mimes:jpg,jpeg,png|max:2048',
         ], [
@@ -51,7 +50,6 @@ class ThuongHieuController extends Controller
     {
         $validatedData = $request->validate([
             'ten_thuong_hieu' => 'required|string',
-            'ma_thuong_hieu' => 'required|string',
             'logo_url'        => 'nullable|string',
             'file_logo'        => 'nullable|mimes:jpg,jpeg,png|max:2048',
         ], [

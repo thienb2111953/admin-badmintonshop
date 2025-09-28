@@ -19,6 +19,8 @@ import {
   thuoc_tinh,
   san_pham_thuong_hieu,
   cai_dat,
+  mau,
+  kich_thuoc,
 } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -61,6 +63,14 @@ const mainNavItems: NavItem[] = [
       {
         title: 'Thuộc tính',
         href: thuoc_tinh(),
+      },
+      {
+        title: 'Màu',
+        href: mau(),
+      },
+      {
+        title: 'Kích thước',
+        href: kich_thuoc(),
       },
     ],
   },

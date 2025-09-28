@@ -11,7 +11,6 @@ class ThuongHieu extends Model
     public $incrementing = true;
 
     protected $fillable = [
-        'ma_thuong_hieu',
         'ten_thuong_hieu',
         'logo_url',
     ];

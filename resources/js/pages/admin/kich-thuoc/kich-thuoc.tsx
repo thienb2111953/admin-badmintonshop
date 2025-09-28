@@ -76,7 +76,7 @@ export default function KichThuocPage({ kich_thuocs }: { kich_thuocs: KichThuoc[
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Quản lý Thuộc tính" />
+      <Head title="Quản lý Kích thước" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         <DataTable columns={columns(handleEdit, handleDelete)} data={kich_thuocs} onAdd={handleAdd} />
