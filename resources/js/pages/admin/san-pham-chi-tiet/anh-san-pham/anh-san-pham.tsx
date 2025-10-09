@@ -94,7 +94,12 @@ export default function AnhSanPhamPage({
 
   return (
     <>
-      <DataTable columns={Columns(handleEdit, handleDelete)} data={anh_san_phams} onAdd={handleAdd} />
+      <DataTable
+        columns={Columns(handleEdit, handleDelete)}
+        data={anh_san_phams}
+        onAdd={handleAdd}
+        addVisibility={false}
+      />
 
       <ModalDialog
         open={openDialog}

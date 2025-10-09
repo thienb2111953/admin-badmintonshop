@@ -104,7 +104,6 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         <DataTable columns={columns(handleEdit, handleDelete)} data={san_phams} onAdd={handleAdd} />
-        <RichEditor />
       </div>
 
       <ModalDialog

@@ -23,6 +23,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onAdd: () => void;
+  addVisibility?: boolean;
   onDeleteSelected?: (selectedRows: TData[]) => void; // truyền cả row chứ không chỉ id
   tableInstanceRef?: (table: ReturnType<typeof useReactTable<TData>>) => void;
 }
@@ -31,6 +32,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   onAdd,
+  addVisibility = true,
   onDeleteSelected,
   tableInstanceRef,
 }: DataTableProps<TData, TValue>) {
@@ -78,7 +80,7 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center justify-between py-4">
         <div className="item-left">
-          <Button onClick={onAdd}>
+          <Button onClick={onAdd} className={addVisibility ? '' : 'hidden'}>
             <Plus className="h-4 w-4" />
             <Label>Thêm</Label>
           </Button>

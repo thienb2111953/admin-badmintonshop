@@ -102,7 +102,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, ma
                     onSelect={(selectedDate) => {
                       if (!selectedDate) return;
                       setDate(selectedDate);
-                      setData('ngay_nhap', selectedDate.toISOString().slice(0, 10)); // yyyy-MM-dd
+                      setData('ngay_nhap', format(selectedDate, 'yyyy-MM-dd'));
                       setOpenDate(false);
                     }}
                   />

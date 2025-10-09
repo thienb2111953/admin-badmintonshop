@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { type BreadcrumbItem, DanhMuc, DanhMucThuongHieu, ThuongHieu } from '@/types';
 import { san_pham_thuong_hieu } from '@/routes';
 import EditorPage from '@/pages/editor-00';
+import { RichEditor } from '@/components/blocks/editor-00/editor';
 
 export default function CreatePage({
   thuong_hieus,
@@ -137,12 +138,11 @@ export default function CreatePage({
               />
               {errors.slug && <p className="text-red-500">{errors.slug}</p>}
             </div>
-
-            <div className="grid gap-3">
-              <Label htmlFor="mo_ta">Mô tả</Label>
-              <EditorPage value={data.mo_ta} onChange={(val) => setData('mo_ta', val)} />
-              {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
-            </div>
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="mo_ta">Mô tả</Label>
+            <RichEditor value={data.mo_ta} onChange={(val) => setData('mo_ta', val)} />
+            {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
           </div>
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => router.visit(route('danh_muc_thuong_hieu.index'))}>
