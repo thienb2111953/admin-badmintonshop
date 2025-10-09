@@ -4,33 +4,33 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('san_pham', function (Blueprint $table) {
-            $table->id('id_san_pham');
-            $table->string('ma_san_pham');
-            $table->string('ten_san_pham');
-            $table->text('mo_ta')->nullable();
-            $table->decimal('gia_niem_yet', 12, 0)->nullable();
-            $table->decimal('gia_ban', 12, 0)->nullable();
-            $table->string('trang_thai')->default('Đang sản xuất');
-            $table->foreignId('id_danh_muc_thuong_hieu')
-                ->constrained('danh_muc_thuong_hieu', 'id_danh_muc_thuong_hieu')
-                ->onDelete('cascade');
-            $table->timestamps();
-        });
-    }
+return new class extends Migration {
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::create('san_pham', function (Blueprint $table) {
+      $table->id('id_san_pham');
+      $table->string('ma_san_pham');
+      $table->string('ten_san_pham');
+      $table->text('mo_ta')->nullable();
+      $table->decimal('gia_niem_yet', 12, 0)->nullable();
+      $table->decimal('gia_ban', 12, 0)->nullable();
+      $table->string('trang_thai')->default('Đang sản xuất');
+      $table
+        ->foreignId('id_danh_muc_thuong_hieu')
+        ->constrained('danh_muc_thuong_hieu', 'id_danh_muc_thuong_hieu')
+        ->onDelete('cascade');
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('san_pham');
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('san_pham');
+  }
 };

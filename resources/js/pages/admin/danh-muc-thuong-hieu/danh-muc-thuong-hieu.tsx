@@ -22,7 +22,13 @@ export default function DanhMucThuongHieuPage({
   const [selectedRow, setSelectedRow] = useState<DanhMucThuongHieu | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const breadcrumbs: BreadcrumbItem[] = [{ title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() }];
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() },
+    {
+      title: 'Thêm',
+      href: '#',
+    },
+  ];
 
   const form = useForm<DanhMucThuongHieu>({
     id_danh_muc_thuong_hieu: 0,
@@ -34,16 +40,17 @@ export default function DanhMucThuongHieuPage({
   });
 
   const handleAdd = () => {
-    setSelectedRow(null);
-    form.setData({
-      id_danh_muc_thuong_hieu: 0,
-      ten_danh_muc_thuong_hieu: '',
-      slug: '',
-      mo_ta: '',
-      id_danh_muc: 0,
-      id_thuong_hieu: 0,
-    });
-    setOpenDialog(true);
+    router.visit(route('danh_muc_thuong_hieu.storeView'));
+    // setSelectedRow(null);
+    // form.setData({
+    //   id_danh_muc_thuong_hieu: 0,
+    //   ten_danh_muc_thuong_hieu: '',
+    //   slug: '',
+    //   mo_ta: '',
+    //   id_danh_muc: 0,
+    //   id_thuong_hieu: 0,
+    // });
+    // setOpenDialog(true);
   };
 
   const handleEdit = (row: DanhMucThuongHieu) => {
