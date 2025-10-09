@@ -41,29 +41,10 @@ export default function DanhMucThuongHieuPage({
 
   const handleAdd = () => {
     router.visit(route('danh_muc_thuong_hieu.storeView'));
-    // setSelectedRow(null);
-    // form.setData({
-    //   id_danh_muc_thuong_hieu: 0,
-    //   ten_danh_muc_thuong_hieu: '',
-    //   slug: '',
-    //   mo_ta: '',
-    //   id_danh_muc: 0,
-    //   id_thuong_hieu: 0,
-    // });
-    // setOpenDialog(true);
   };
 
   const handleEdit = (row: DanhMucThuongHieu) => {
-    setSelectedRow(row);
-    form.setData({
-      id_danh_muc_thuong_hieu: row.id_danh_muc_thuong_hieu,
-      ten_danh_muc_thuong_hieu: row.ten_danh_muc_thuong_hieu,
-      slug: row.slug,
-      mo_ta: row.mo_ta,
-      id_danh_muc: row.id_danh_muc,
-      id_thuong_hieu: row.id_thuong_hieu,
-    });
-    setOpenDialog(true);
+    router.visit(route('danh_muc_thuong_hieu.updateView', { id: row.id_danh_muc_thuong_hieu }));
   };
 
   const handleDelete = (row: DanhMucThuongHieu) => {

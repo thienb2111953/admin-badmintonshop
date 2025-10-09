@@ -48,7 +48,7 @@ class DanhMucThuongHieuController extends Controller
     $validated = $request->validate(
       [
         'ten_danh_muc_thuong_hieu' => 'required|string|max:255',
-        'slug' => 'required|string|max:255',
+        'slug' => 'required|string',
         'mo_ta' => 'nullable|string',
         'id_danh_muc' => 'required|integer',
         'id_thuong_hieu' => 'required|integer',
@@ -64,7 +64,20 @@ class DanhMucThuongHieuController extends Controller
 
     DanhMucThuongHieu::create($validated);
 
-    return redirect()->back()->with('success', 'Tạo thành công');
+    return redirect()->route('san_pham_thuong_hieu')->with('success', 'Tạo thành công');
+  }
+
+  public function updateView($id)
+  {
+    $danh_mucs = DanhMuc::all();
+    $thuong_hieus = ThuongHieu::all();
+    $danh_muc_thuong_hieu = DanhMucThuongHieu::findOrFail($id);
+
+    return Inertia::render('admin/danh-muc-thuong-hieu/them-moi', [
+      'danh_mucs' => $danh_mucs,
+      'thuong_hieus' => $thuong_hieus,
+      'danh_muc_thuong_hieu' => $danh_muc_thuong_hieu,
+    ]);
   }
 
   public function update(Request $request)
@@ -72,7 +85,7 @@ class DanhMucThuongHieuController extends Controller
     $validated = $request->validate(
       [
         'ten_danh_muc_thuong_hieu' => 'required|string|max:255',
-        'slug' => 'required|string|max:255',
+        'slug' => 'required|string',
         'mo_ta' => 'nullable|string',
         'id_danh_muc' => 'required|integer',
         'id_thuong_hieu' => 'required|integer',
@@ -90,7 +103,7 @@ class DanhMucThuongHieuController extends Controller
 
     $danh_muc_thuoc_tinh->update($validated);
 
-    return redirect()->back()->with('success', 'Cập nhật thành công');
+    return redirect()->route('san_pham_thuong_hieu')->with('success', 'Cập nhật thành công');
   }
 
   public function destroy(Request $request)

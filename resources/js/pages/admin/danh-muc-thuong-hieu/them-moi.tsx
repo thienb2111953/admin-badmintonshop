@@ -9,17 +9,26 @@ import { slugify } from 'transliteration';
 import { useEffect } from 'react';
 import { type BreadcrumbItem, DanhMuc, DanhMucThuongHieu, ThuongHieu } from '@/types';
 import { san_pham_thuong_hieu } from '@/routes';
+import EditorPage from '@/pages/editor-00';
 
-export default function CreatePage({ thuong_hieus, danh_mucs }: { thuong_hieus: ThuongHieu[]; danh_mucs: DanhMuc[] }) {
+export default function CreatePage({
+  thuong_hieus,
+  danh_mucs,
+  danh_muc_thuong_hieu,
+}: {
+  thuong_hieus: ThuongHieu[];
+  danh_mucs: DanhMuc[];
+  danh_muc_thuong_hieu?: DanhMucThuongHieu;
+}) {
   const breadcrumbs: BreadcrumbItem[] = [{ title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() }];
 
   const form = useForm({
-    id_danh_muc_thuong_hieu: 0,
-    ten_danh_muc_thuong_hieu: '',
-    slug: '',
-    mo_ta: '',
-    id_danh_muc: 0,
-    id_thuong_hieu: 0,
+    id_danh_muc_thuong_hieu: danh_muc_thuong_hieu?.id_danh_muc_thuong_hieu ?? 0,
+    ten_danh_muc_thuong_hieu: danh_muc_thuong_hieu?.ten_danh_muc_thuong_hieu ?? '',
+    slug: danh_muc_thuong_hieu?.slug ?? '',
+    mo_ta: danh_muc_thuong_hieu?.mo_ta ?? '',
+    id_danh_muc: danh_muc_thuong_hieu?.id_danh_muc ?? 0,
+    id_thuong_hieu: danh_muc_thuong_hieu?.id_thuong_hieu ?? 0,
   });
 
   const { data, setData, errors, processing } = form;
@@ -43,21 +52,33 @@ export default function CreatePage({ thuong_hieus, danh_mucs }: { thuong_hieus: 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    form.post(route('danh_muc_thuong_hieu.store'), {
-      onSuccess: () => {
-        toast.success('Tạo mới thành công!');
-        router.visit(route('danh_muc_thuong_hieu.index'));
-      },
-      onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
-    });
+    if (data.id_danh_muc_thuong_hieu && data.id_danh_muc_thuong_hieu !== 0) {
+      // Update
+      form.put(route('danh_muc_thuong_hieu.update', { id: data.id_danh_muc_thuong_hieu }), {
+        onSuccess: () => {
+          toast.success('Cập nhật thành công!');
+        },
+        onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
+      });
+    } else {
+      // Create
+      form.post(route('danh_muc_thuong_hieu.store'), {
+        onSuccess: () => {
+          toast.success('Tạo mới thành công!');
+        },
+        onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
+      });
+    }
   };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Thêm Danh mục Thương hiệu" />
+      <Head title={data.id_danh_muc_thuong_hieu ? 'Cập nhật Danh mục Thương hiệu' : 'Thêm Danh mục Thương hiệu'} />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <h1 className="mb-6 text-xl font-bold">Thêm Danh mục Thương hiệu</h1>
+        <h1 className="mb-6 text-xl font-bold">
+          {data.id_danh_muc_thuong_hieu ? 'Cập nhật Danh mục Thương hiệu' : 'Thêm Danh mục Thương hiệu'}
+        </h1>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-2 gap-6">
             <div className="grid gap-3">
@@ -119,12 +140,7 @@ export default function CreatePage({ thuong_hieus, danh_mucs }: { thuong_hieus: 
 
             <div className="grid gap-3">
               <Label htmlFor="mo_ta">Mô tả</Label>
-              <Input
-                id="mo_ta"
-                placeholder="Mô tả"
-                value={data.mo_ta ?? ''}
-                onChange={(e) => setData('mo_ta', e.target.value)}
-              />
+              <EditorPage value={data.mo_ta} onChange={(val) => setData('mo_ta', val)} />
               {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
             </div>
           </div>
@@ -133,7 +149,7 @@ export default function CreatePage({ thuong_hieus, danh_mucs }: { thuong_hieus: 
               Hủy
             </Button>
             <Button type="submit" disabled={processing}>
-              Thêm
+              {data.id_danh_muc_thuong_hieu ? 'Cập nhật' : 'Thêm'}
             </Button>
           </div>
         </form>
