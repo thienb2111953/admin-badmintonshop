@@ -8,6 +8,7 @@ import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
 import { san_pham_thuong_hieu, san_pham } from '@/routes';
+import { RichEditor } from '@/components/blocks/editor-00/editor';
 
 export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPham[]; info_dmth: DanhMucThuongHieu }) {
   const [openDialog, setOpenDialog] = useState(false);
@@ -103,6 +104,7 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         <DataTable columns={columns(handleEdit, handleDelete)} data={san_phams} onAdd={handleAdd} />
+        <RichEditor />
       </div>
 
       <ModalDialog
