@@ -6,7 +6,6 @@ import {
   TEXT_FORMAT_TRANSFORMERS,
   TEXT_MATCH_TRANSFORMERS,
 } from "@lexical/markdown"
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin"
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin"
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin"
 import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin"
@@ -24,14 +23,7 @@ import { ContentEditable } from "@/components/editor/editor-ui/content-editable"
 import { ActionsPlugin } from "@/components/editor/plugins/actions/actions-plugin"
 import { ClearEditorActionPlugin } from "@/components/editor/plugins/actions/clear-editor-plugin"
 import { CounterCharacterPlugin } from "@/components/editor/plugins/actions/counter-character-plugin"
-import { EditModeTogglePlugin } from "@/components/editor/plugins/actions/edit-mode-toggle-plugin"
-import { ImportExportPlugin } from "@/components/editor/plugins/actions/import-export-plugin"
-import { MarkdownTogglePlugin } from "@/components/editor/plugins/actions/markdown-toggle-plugin"
-import { ShareContentPlugin } from "@/components/editor/plugins/actions/share-content-plugin"
-import { SpeechToTextPlugin } from "@/components/editor/plugins/actions/speech-to-text-plugin"
-import { TreeViewPlugin } from "@/components/editor/plugins/actions/tree-view-plugin"
 import { AutoLinkPlugin } from "@/components/editor/plugins/auto-link-plugin"
-import { AutocompletePlugin } from "@/components/editor/plugins/autocomplete-plugin"
 import { CodeActionMenuPlugin } from "@/components/editor/plugins/code-action-menu-plugin"
 import { CodeHighlightPlugin } from "@/components/editor/plugins/code-highlight-plugin"
 import { ContextMenuPlugin } from "@/components/editor/plugins/context-menu-plugin"
@@ -75,7 +67,6 @@ import { HistoryToolbarPlugin } from "@/components/editor/plugins/toolbar/histor
 import { LinkToolbarPlugin } from "@/components/editor/plugins/toolbar/link-toolbar-plugin"
 import { SubSuperToolbarPlugin } from "@/components/editor/plugins/toolbar/subsuper-toolbar-plugin"
 import { ToolbarPlugin } from "@/components/editor/plugins/toolbar/toolbar-plugin"
-import { TypingPerfPlugin } from "@/components/editor/plugins/typing-pref-plugin"
 import { EMOJI } from "@/components/editor/transformers/markdown-emoji-transformer"
 import { HR } from "@/components/editor/transformers/markdown-hr-transformer"
 import { IMAGE } from "@/components/editor/transformers/markdown-image-transformer"
@@ -84,7 +75,7 @@ import { TWEET } from "@/components/editor/transformers/markdown-tweet-transform
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Separator } from "@/components/ui/separator"
 
-const placeholder = "Press / for commands..."
+const placeholder = "Nội dung mô tả..."
 
 export function Plugins({}) {
   const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -147,7 +138,6 @@ export function Plugins({}) {
         )}
       </ToolbarPlugin>
       <div className="relative">
-        <AutoFocusPlugin />
         <RichTextPlugin
           contentEditable={
             <div className="">
@@ -199,9 +189,7 @@ export function Plugins({}) {
             ...TEXT_MATCH_TRANSFORMERS,
           ]}
         />
-        <TypingPerfPlugin />
         <TabFocusPlugin />
-        <AutocompletePlugin />
         <AutoLinkPlugin />
         <LinkPlugin />
 
@@ -228,30 +216,10 @@ export function Plugins({}) {
             <CounterCharacterPlugin charset="UTF-16" />
           </div>
           <div className="flex flex-1 justify-end">
-            <SpeechToTextPlugin />
-            <ShareContentPlugin />
-            <ImportExportPlugin />
-            <MarkdownTogglePlugin
-              shouldPreserveNewLinesInMarkdown={true}
-              transformers={[
-                TABLE,
-                HR,
-                IMAGE,
-                EMOJI,
-                TWEET,
-                CHECK_LIST,
-                ...ELEMENT_TRANSFORMERS,
-                ...MULTILINE_ELEMENT_TRANSFORMERS,
-                ...TEXT_FORMAT_TRANSFORMERS,
-                ...TEXT_MATCH_TRANSFORMERS,
-              ]}
-            />
-            <EditModeTogglePlugin />
             <>
               <ClearEditorActionPlugin />
               <ClearEditorPlugin />
             </>
-            <TreeViewPlugin />
           </div>
         </div>
       </ActionsPlugin>
