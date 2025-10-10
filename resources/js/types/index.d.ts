@@ -1,5 +1,6 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
+import { RouteDefinition } from '@/wayfinder';
 
 export interface Auth {
     user: User;
@@ -7,7 +8,7 @@ export interface Auth {
 
 export interface BreadcrumbItem {
     title: string;
-    href: string;
+    href: RouteDefinition<string> | string;
 }
 
 export interface NavGroup {
@@ -17,7 +18,7 @@ export interface NavGroup {
 
 export interface NavItem {
     title: string;
-    href: NonNullable<InertiaLinkProps['href']>;
+    href?: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
     items?: NavItem[];
@@ -88,7 +89,7 @@ export interface Mau {
     id_mau: number;
     ten_mau: string;
   }
-  
+
 export interface KichThuoc {
     id_kich_thuoc: number;
     ten_kich_thuoc: string;

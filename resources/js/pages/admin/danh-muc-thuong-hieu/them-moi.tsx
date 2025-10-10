@@ -6,11 +6,41 @@ import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { toast } from 'sonner';
 import { slugify } from 'transliteration';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { type BreadcrumbItem, DanhMuc, DanhMucThuongHieu, ThuongHieu } from '@/types';
 import { san_pham_thuong_hieu } from '@/routes';
-import EditorPage from '@/pages/editor-00';
-import { RichEditor } from '@/components/blocks/editor-00/editor';
+import { Editor } from '@/components/blocks/editor-x/editor';
+import { SerializedEditorState } from 'lexical';
+
+export const initialValue = {
+  root: {
+    children: [
+      {
+        children: [
+          {
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            text: '',
+            type: 'text',
+            version: 1,
+          },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+      },
+    ],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    type: 'root',
+    version: 1,
+  },
+} as unknown as SerializedEditorState;
 
 export default function CreatePage({
   thuong_hieus,
@@ -71,6 +101,8 @@ export default function CreatePage({
       });
     }
   };
+
+  const [editorState, setEditorState] = useState<SerializedEditorState>(initialValue);
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -141,7 +173,7 @@ export default function CreatePage({
           </div>
           <div className="grid gap-3">
             <Label htmlFor="mo_ta">Mô tả</Label>
-            <RichEditor value={data.mo_ta} onChange={(val) => setData('mo_ta', val)} />
+            <Editor editorSerializedState={editorState} onSerializedChange={(value) => setEditorState(value)} />
             {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
           </div>
           <div className="flex justify-end gap-3 pt-4">
