@@ -1,92 +1,91 @@
-import { useState } from "react"
+import { useState } from 'react';
 import {
   CHECK_LIST,
   ELEMENT_TRANSFORMERS,
   MULTILINE_ELEMENT_TRANSFORMERS,
   TEXT_FORMAT_TRANSFORMERS,
   TEXT_MATCH_TRANSFORMERS,
-} from "@lexical/markdown"
-import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin"
-import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin"
-import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin"
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
-import { HashtagPlugin } from "@lexical/react/LexicalHashtagPlugin"
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin"
-import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin"
-import { ListPlugin } from "@lexical/react/LexicalListPlugin"
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin"
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
-import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin"
-import { TablePlugin } from "@lexical/react/LexicalTablePlugin"
+} from '@lexical/markdown';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
+import { ClickableLinkPlugin } from '@lexical/react/LexicalClickableLinkPlugin';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
+import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 
-import { ContentEditable } from "@/components/editor/editor-ui/content-editable"
-import { ActionsPlugin } from "@/components/editor/plugins/actions/actions-plugin"
-import { ClearEditorActionPlugin } from "@/components/editor/plugins/actions/clear-editor-plugin"
-import { CounterCharacterPlugin } from "@/components/editor/plugins/actions/counter-character-plugin"
-import { AutoLinkPlugin } from "@/components/editor/plugins/auto-link-plugin"
-import { CodeActionMenuPlugin } from "@/components/editor/plugins/code-action-menu-plugin"
-import { CodeHighlightPlugin } from "@/components/editor/plugins/code-highlight-plugin"
-import { ContextMenuPlugin } from "@/components/editor/plugins/context-menu-plugin"
-import { DragDropPastePlugin } from "@/components/editor/plugins/drag-drop-paste-plugin"
-import { DraggableBlockPlugin } from "@/components/editor/plugins/draggable-block-plugin"
-import { AutoEmbedPlugin } from "@/components/editor/plugins/embeds/auto-embed-plugin"
-import { TwitterPlugin } from "@/components/editor/plugins/embeds/twitter-plugin"
-import { YouTubePlugin } from "@/components/editor/plugins/embeds/youtube-plugin"
-import { EmojisPlugin } from "@/components/editor/plugins/emojis-plugin"
-import { FloatingLinkEditorPlugin } from "@/components/editor/plugins/floating-link-editor-plugin"
-import { FloatingTextFormatToolbarPlugin } from "@/components/editor/plugins/floating-text-format-plugin"
-import { ImagesPlugin } from "@/components/editor/plugins/images-plugin"
-import { KeywordsPlugin } from "@/components/editor/plugins/keywords-plugin"
-import { LayoutPlugin } from "@/components/editor/plugins/layout-plugin"
-import { LinkPlugin } from "@/components/editor/plugins/link-plugin"
-import { ListMaxIndentLevelPlugin } from "@/components/editor/plugins/list-max-indent-level-plugin"
-import { TabFocusPlugin } from "@/components/editor/plugins/tab-focus-plugin"
-import { BlockFormatDropDown } from "@/components/editor/plugins/toolbar/block-format-toolbar-plugin"
-import { FormatBulletedList } from "@/components/editor/plugins/toolbar/block-format/format-bulleted-list"
-import { FormatCheckList } from "@/components/editor/plugins/toolbar/block-format/format-check-list"
-import { FormatCodeBlock } from "@/components/editor/plugins/toolbar/block-format/format-code-block"
-import { FormatHeading } from "@/components/editor/plugins/toolbar/block-format/format-heading"
-import { FormatNumberedList } from "@/components/editor/plugins/toolbar/block-format/format-numbered-list"
-import { FormatParagraph } from "@/components/editor/plugins/toolbar/block-format/format-paragraph"
-import { FormatQuote } from "@/components/editor/plugins/toolbar/block-format/format-quote"
-import { BlockInsertPlugin } from "@/components/editor/plugins/toolbar/block-insert-plugin"
-import { InsertColumnsLayout } from "@/components/editor/plugins/toolbar/block-insert/insert-columns-layout"
-import { InsertEmbeds } from "@/components/editor/plugins/toolbar/block-insert/insert-embeds"
-import { InsertHorizontalRule } from "@/components/editor/plugins/toolbar/block-insert/insert-horizontal-rule"
-import { InsertImage } from "@/components/editor/plugins/toolbar/block-insert/insert-image"
-import { InsertTable } from "@/components/editor/plugins/toolbar/block-insert/insert-table"
-import { ClearFormattingToolbarPlugin } from "@/components/editor/plugins/toolbar/clear-formatting-toolbar-plugin"
-import { CodeLanguageToolbarPlugin } from "@/components/editor/plugins/toolbar/code-language-toolbar-plugin"
-import { ElementFormatToolbarPlugin } from "@/components/editor/plugins/toolbar/element-format-toolbar-plugin"
-import { FontBackgroundToolbarPlugin } from "@/components/editor/plugins/toolbar/font-background-toolbar-plugin"
-import { FontColorToolbarPlugin } from "@/components/editor/plugins/toolbar/font-color-toolbar-plugin"
-import { FontFamilyToolbarPlugin } from "@/components/editor/plugins/toolbar/font-family-toolbar-plugin"
-import { FontFormatToolbarPlugin } from "@/components/editor/plugins/toolbar/font-format-toolbar-plugin"
-import { FontSizeToolbarPlugin } from "@/components/editor/plugins/toolbar/font-size-toolbar-plugin"
-import { HistoryToolbarPlugin } from "@/components/editor/plugins/toolbar/history-toolbar-plugin"
-import { LinkToolbarPlugin } from "@/components/editor/plugins/toolbar/link-toolbar-plugin"
-import { SubSuperToolbarPlugin } from "@/components/editor/plugins/toolbar/subsuper-toolbar-plugin"
-import { ToolbarPlugin } from "@/components/editor/plugins/toolbar/toolbar-plugin"
-import { EMOJI } from "@/components/editor/transformers/markdown-emoji-transformer"
-import { HR } from "@/components/editor/transformers/markdown-hr-transformer"
-import { IMAGE } from "@/components/editor/transformers/markdown-image-transformer"
-import { TABLE } from "@/components/editor/transformers/markdown-table-transformer"
-import { TWEET } from "@/components/editor/transformers/markdown-tweet-transformer"
-import { ButtonGroup } from "@/components/ui/button-group"
-import { Separator } from "@/components/ui/separator"
+import { ContentEditable } from '@/components/editor/editor-ui/content-editable';
+import { ActionsPlugin } from '@/components/editor/plugins/actions/actions-plugin';
+import { ClearEditorActionPlugin } from '@/components/editor/plugins/actions/clear-editor-plugin';
+import { CounterCharacterPlugin } from '@/components/editor/plugins/actions/counter-character-plugin';
+import { AutoLinkPlugin } from '@/components/editor/plugins/auto-link-plugin';
+import { CodeActionMenuPlugin } from '@/components/editor/plugins/code-action-menu-plugin';
+import { CodeHighlightPlugin } from '@/components/editor/plugins/code-highlight-plugin';
+import { ContextMenuPlugin } from '@/components/editor/plugins/context-menu-plugin';
+import { DragDropPastePlugin } from '@/components/editor/plugins/drag-drop-paste-plugin';
+import { DraggableBlockPlugin } from '@/components/editor/plugins/draggable-block-plugin';
+import { AutoEmbedPlugin } from '@/components/editor/plugins/embeds/auto-embed-plugin';
+import { TwitterPlugin } from '@/components/editor/plugins/embeds/twitter-plugin';
+import { YouTubePlugin } from '@/components/editor/plugins/embeds/youtube-plugin';
+import { EmojisPlugin } from '@/components/editor/plugins/emojis-plugin';
+import { FloatingLinkEditorPlugin } from '@/components/editor/plugins/floating-link-editor-plugin';
+import { FloatingTextFormatToolbarPlugin } from '@/components/editor/plugins/floating-text-format-plugin';
+import { ImagesPlugin } from '@/components/editor/plugins/images-plugin';
+import { KeywordsPlugin } from '@/components/editor/plugins/keywords-plugin';
+import { LayoutPlugin } from '@/components/editor/plugins/layout-plugin';
+import { LinkPlugin } from '@/components/editor/plugins/link-plugin';
+import { ListMaxIndentLevelPlugin } from '@/components/editor/plugins/list-max-indent-level-plugin';
+import { TabFocusPlugin } from '@/components/editor/plugins/tab-focus-plugin';
+import { BlockFormatDropDown } from '@/components/editor/plugins/toolbar/block-format-toolbar-plugin';
+import { FormatBulletedList } from '@/components/editor/plugins/toolbar/block-format/format-bulleted-list';
+import { FormatCheckList } from '@/components/editor/plugins/toolbar/block-format/format-check-list';
+import { FormatCodeBlock } from '@/components/editor/plugins/toolbar/block-format/format-code-block';
+import { FormatHeading } from '@/components/editor/plugins/toolbar/block-format/format-heading';
+import { FormatNumberedList } from '@/components/editor/plugins/toolbar/block-format/format-numbered-list';
+import { FormatParagraph } from '@/components/editor/plugins/toolbar/block-format/format-paragraph';
+import { FormatQuote } from '@/components/editor/plugins/toolbar/block-format/format-quote';
+import { BlockInsertPlugin } from '@/components/editor/plugins/toolbar/block-insert-plugin';
+import { InsertColumnsLayout } from '@/components/editor/plugins/toolbar/block-insert/insert-columns-layout';
+import { InsertEmbeds } from '@/components/editor/plugins/toolbar/block-insert/insert-embeds';
+import { InsertHorizontalRule } from '@/components/editor/plugins/toolbar/block-insert/insert-horizontal-rule';
+import { InsertImage } from '@/components/editor/plugins/toolbar/block-insert/insert-image';
+import { InsertTable } from '@/components/editor/plugins/toolbar/block-insert/insert-table';
+import { ClearFormattingToolbarPlugin } from '@/components/editor/plugins/toolbar/clear-formatting-toolbar-plugin';
+import { CodeLanguageToolbarPlugin } from '@/components/editor/plugins/toolbar/code-language-toolbar-plugin';
+import { ElementFormatToolbarPlugin } from '@/components/editor/plugins/toolbar/element-format-toolbar-plugin';
+import { FontBackgroundToolbarPlugin } from '@/components/editor/plugins/toolbar/font-background-toolbar-plugin';
+import { FontColorToolbarPlugin } from '@/components/editor/plugins/toolbar/font-color-toolbar-plugin';
+import { FontFamilyToolbarPlugin } from '@/components/editor/plugins/toolbar/font-family-toolbar-plugin';
+import { FontFormatToolbarPlugin } from '@/components/editor/plugins/toolbar/font-format-toolbar-plugin';
+import { FontSizeToolbarPlugin } from '@/components/editor/plugins/toolbar/font-size-toolbar-plugin';
+import { HistoryToolbarPlugin } from '@/components/editor/plugins/toolbar/history-toolbar-plugin';
+import { LinkToolbarPlugin } from '@/components/editor/plugins/toolbar/link-toolbar-plugin';
+import { SubSuperToolbarPlugin } from '@/components/editor/plugins/toolbar/subsuper-toolbar-plugin';
+import { ToolbarPlugin } from '@/components/editor/plugins/toolbar/toolbar-plugin';
+import { EMOJI } from '@/components/editor/transformers/markdown-emoji-transformer';
+import { HR } from '@/components/editor/transformers/markdown-hr-transformer';
+import { IMAGE } from '@/components/editor/transformers/markdown-image-transformer';
+import { TABLE } from '@/components/editor/transformers/markdown-table-transformer';
+import { TWEET } from '@/components/editor/transformers/markdown-tweet-transformer';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { Separator } from '@/components/ui/separator';
 
-const placeholder = "Nội dung mô tả..."
+const placeholder = 'Nội dung mô tả...';
 
 export function Plugins({}) {
-  const [floatingAnchorElem, setFloatingAnchorElem] =
-    useState<HTMLDivElement | null>(null)
-  const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false)
+  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+  const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
-      setFloatingAnchorElem(_floatingAnchorElem)
+      setFloatingAnchorElem(_floatingAnchorElem);
     }
-  }
+  };
 
   return (
     <div className="relative">
@@ -97,14 +96,14 @@ export function Plugins({}) {
             <Separator orientation="vertical" className="!h-7" />
             <BlockFormatDropDown>
               <FormatParagraph />
-              <FormatHeading levels={["h1", "h2", "h3"]} />
+              <FormatHeading levels={['h1', 'h2', 'h3']} />
               <FormatNumberedList />
               <FormatBulletedList />
               <FormatCheckList />
               <FormatCodeBlock />
               <FormatQuote />
             </BlockFormatDropDown>
-            {blockType === "code" ? (
+            {blockType === 'code' ? (
               <CodeLanguageToolbarPlugin />
             ) : (
               <>
@@ -201,17 +200,13 @@ export function Plugins({}) {
           isLinkEditMode={isLinkEditMode}
           setIsLinkEditMode={setIsLinkEditMode}
         />
-        <FloatingTextFormatToolbarPlugin
-          anchorElem={floatingAnchorElem}
-          setIsLinkEditMode={setIsLinkEditMode}
-        />
+        <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} setIsLinkEditMode={setIsLinkEditMode} />
 
         <ListMaxIndentLevelPlugin />
       </div>
       <ActionsPlugin>
         <div className="clear-both flex items-center justify-between gap-2 overflow-auto border-t p-1">
-          <div className="flex flex-1 justify-start">
-          </div>
+          <div className="flex flex-1 justify-start"></div>
           <div>
             <CounterCharacterPlugin charset="UTF-16" />
           </div>
@@ -224,5 +219,5 @@ export function Plugins({}) {
         </div>
       </ActionsPlugin>
     </div>
-  )
+  );
 }

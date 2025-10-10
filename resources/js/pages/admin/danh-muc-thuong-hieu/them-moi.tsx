@@ -103,6 +103,7 @@ export default function CreatePage({
   };
 
   const [editorState, setEditorState] = useState<SerializedEditorState>(initialValue);
+  const [htmlContent, setHtmlContent] = useState('<p>Initial content</p>');
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -173,7 +174,13 @@ export default function CreatePage({
           </div>
           <div className="grid gap-3">
             <Label htmlFor="mo_ta">Mô tả</Label>
-            <Editor editorSerializedState={editorState} onSerializedChange={(value) => setEditorState(value)} />
+            <Editor
+              editorSerializedState={editorState}
+              onSerializedChange={(value) => setEditorState(value)}
+              onHtmlChange={(html) => {
+                setHtmlContent(html);
+              }}
+            />
             {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
           </div>
           <div className="flex justify-end gap-3 pt-4">
