@@ -28,10 +28,10 @@ export function columns(
       accessorKey: 'slug',
       header: ({ column }) => <ColumnHeader column={column} title="Slug" />,
     },
-    {
-      accessorKey: 'mo_ta',
-      header: ({ column }) => <ColumnHeader column={column} title="Mô tả" />,
-    },
+    // {
+    //   accessorKey: 'mo_ta',
+    //   header: ({ column }) => <ColumnHeader column={column} title="Mô tả" />,
+    // },
     {
       id: 'actions',
       cell: ({ row }) => {

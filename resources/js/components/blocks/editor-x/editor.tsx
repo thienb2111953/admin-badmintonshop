@@ -11,6 +11,9 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { nodes } from './nodes';
 import { Plugins } from './plugins';
+import { useEffect } from 'react';
+import { $generateNodesFromDOM } from '@lexical/html';
+import { $getRoot } from 'lexical';
 
 const editorConfig: InitialConfigType = {
   namespace: 'Editor',
@@ -36,18 +39,38 @@ function HtmlPlugin({ onHtmlChange }: { onHtmlChange?: (html: string) => void })
   return <OnChangePlugin ignoreSelectionChange onChange={handleOnChange} />;
 }
 
+function InitialHtmlLoader({ initialHtml }: { initialHtml?: string }) {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    if (!initialHtml) return;
+    editor.update(() => {
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(initialHtml, 'text/html');
+      const nodes = $generateNodesFromDOM(editor, dom);
+      const root = $getRoot();
+      root.clear();
+      root.append(...nodes);
+    });
+  }, [editor, initialHtml]);
+
+  return null;
+}
+
 export function Editor({
   editorState,
   editorSerializedState,
   onChange,
   onSerializedChange,
   onHtmlChange,
+  initialHtml,
 }: {
   editorState?: EditorState;
   editorSerializedState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
   onHtmlChange?: (htmlString: string) => void;
+  initialHtml?: string;
 }) {
   return (
     <div className="overflow-hidden rounded-lg border bg-background shadow">
@@ -61,6 +84,8 @@ export function Editor({
         <TooltipProvider>
           <Plugins />
 
+          <InitialHtmlLoader initialHtml={initialHtml} />
+
           <OnChangePlugin
             ignoreSelectionChange={true}
             onChange={(editorState) => {
@@ -69,7 +94,7 @@ export function Editor({
             }}
           />
 
-          <HtmlPlugin onHtmlChange={onHtmlChange} />
+          {/* <HtmlPlugin onHtmlChange={onHtmlChange} /> */}
         </TooltipProvider>
       </LexicalComposer>
     </div>

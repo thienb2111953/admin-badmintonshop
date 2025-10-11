@@ -14,12 +14,6 @@ class DanhMucThuongHieuController extends Controller
 {
   public function index()
   {
-    // $danh_muc_thuong_hieus = DanhMucThuongHieu::where([
-    //     ['id_thuong_hieu', $id_thuong_hieu],
-    // ])
-    //     ->orderBy('id_danh_muc_thuong_hieu', 'asc')
-    //     ->get();
-
     $danh_mucs = DanhMuc::all();
     $thuong_hieus = ThuongHieu::all();
     $danh_muc_thuong_hieus = DanhMucThuongHieu::all();

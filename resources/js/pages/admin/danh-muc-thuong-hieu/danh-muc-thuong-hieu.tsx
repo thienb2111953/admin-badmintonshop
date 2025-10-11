@@ -22,13 +22,7 @@ export default function DanhMucThuongHieuPage({
   const [selectedRow, setSelectedRow] = useState<DanhMucThuongHieu | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const breadcrumbs: BreadcrumbItem[] = [
-    { title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() },
-    {
-      title: 'Thêm',
-      href: '#',
-    },
-  ];
+  const breadcrumbs: BreadcrumbItem[] = [{ title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() }];
 
   const form = useForm<DanhMucThuongHieu>({
     id_danh_muc_thuong_hieu: 0,

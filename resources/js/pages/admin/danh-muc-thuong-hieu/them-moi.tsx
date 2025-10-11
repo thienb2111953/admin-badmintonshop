@@ -51,8 +51,8 @@ export default function CreatePage({
   danh_mucs: DanhMuc[];
   danh_muc_thuong_hieu?: DanhMucThuongHieu;
 }) {
-  const breadcrumbs: BreadcrumbItem[] = [{ title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() }];
-
+  const [editorState, setEditorState] = useState<SerializedEditorState>(initialValue);
+  const [htmlContent, setHtmlContent] = useState('<p>Initial content</p>');
   const form = useForm({
     id_danh_muc_thuong_hieu: danh_muc_thuong_hieu?.id_danh_muc_thuong_hieu ?? 0,
     ten_danh_muc_thuong_hieu: danh_muc_thuong_hieu?.ten_danh_muc_thuong_hieu ?? '',
@@ -63,6 +63,14 @@ export default function CreatePage({
   });
 
   const { data, setData, errors, processing } = form;
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() },
+    {
+      title: data.id_danh_muc_thuong_hieu ? 'Cập nhật' : 'Thêm',
+      href: '#',
+    },
+  ];
 
   function updateTenDanhMucThuongHieu(id_danh_muc: number, id_thuong_hieu: number) {
     const danhMuc = danh_mucs.find((dm) => dm.id_danh_muc === id_danh_muc);
@@ -80,6 +88,17 @@ export default function CreatePage({
       updateTenDanhMucThuongHieu(data.id_danh_muc, data.id_thuong_hieu);
     }
   }, [data.id_danh_muc, data.id_thuong_hieu]);
+
+  useEffect(() => {
+    if (danh_muc_thuong_hieu?.mo_ta) {
+      try {
+        const parsed = JSON.parse(danh_muc_thuong_hieu.mo_ta);
+        setEditorState(parsed);
+      } catch (e) {
+        console.warn('mo_ta không phải JSON hợp lệ, fallback về HTML:', e);
+      }
+    }
+  }, [danh_muc_thuong_hieu]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,9 +120,6 @@ export default function CreatePage({
       });
     }
   };
-
-  const [editorState, setEditorState] = useState<SerializedEditorState>(initialValue);
-  const [htmlContent, setHtmlContent] = useState('<p>Initial content</p>');
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -175,11 +191,19 @@ export default function CreatePage({
           <div className="grid gap-3">
             <Label htmlFor="mo_ta">Mô tả</Label>
             <Editor
-              editorSerializedState={editorState}
+              initialHtml={danh_muc_thuong_hieu?.mo_ta || ''}
+              //   editorSerializedState={editorState}
               onSerializedChange={(value) => setEditorState(value)}
-              onHtmlChange={(html) => {
-                setHtmlContent(html);
+              onChange={(state) => {
+                console.log(state);
+                // const json = state.toJSON();
+                // setEditorState(json);
+                // setData('mo_ta', JSON.stringify(json));
               }}
+              //   onHtmlChange={(html) => {
+              //     setHtmlContent(html);
+              //     setData('mo_ta', html);
+              //   }}
             />
             {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
           </div>
