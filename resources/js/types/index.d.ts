@@ -135,3 +135,11 @@ export interface CaiDat {
     ten_cai_dat: string;
     gia_tri: string;
 }
+
+export interface Banner {
+  id_banner: number;
+  img_url: string;
+  thu_tu: number;
+  href: string;
+  file_logo: File | null;
+}

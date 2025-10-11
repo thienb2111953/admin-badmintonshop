@@ -1,51 +1,61 @@
 import AppLayout from '@/layouts/app-layout';
 import { columns } from './columns';
 import { DataTable } from '@/components/custom/data-table';
-import { type BreadcrumbItem, ThuocTinh } from '@/types';
+import { Banner, type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
-import { thuoc_tinh } from '@/routes';
+import { banner } from '@/routes';
 
-export default function ThuocTinhPage({ thuoc_tinhs }: { thuoc_tinhs: ThuocTinh[] }) {
-  console.log(thuoc_tinhs);
+export default function BannerPage({ banners }: { banners: Banner[] }) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<ThuocTinh | null>(null);
+  const [selectedRow, setSelectedRow] = useState<Banner | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quản lý thuộc tính', href: thuoc_tinh() }];
-  const form = useForm<ThuocTinh>({
-    id_thuoc_tinh: 0,
-    ten_thuoc_tinh: '',
+  const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quản lý Banner', href: banner() }];
+  const form = useForm<Banner>({
+    id_banner: 0,
+    img_url: '',
+    thu_tu: 1,
+    href: '',
+    logo_url: null,
+    file_logo: null,
   });
 
   const handleAdd = () => {
     setSelectedRow(null);
     form.setData({
-      ten_thuoc_tinh: '',
+      img_url: '',
+      thu_tu: 1,
+      href: '',
+      logo_url: null,
+      file_logo: null,
     });
     setOpenDialog(true);
   };
 
-  const handleEdit = (row: ThuocTinh) => {
+  const handleEdit = (row: Banner) => {
     setSelectedRow(row);
     form.setData({
-      id_thuoc_tinh: row.id_thuoc_tinh,
-      ten_thuoc_tinh: row.ten_thuoc_tinh,
+      id_banner: row.id_banner,
+      img_url: row.img_url,
+      thu_tu: row.thu_tu,
+      href: row.href,
+      file_logo: null,
     });
     setOpenDialog(true);
   };
 
-  const handleDelete = (row: ThuocTinh) => {
+  const handleDelete = (row: Banner) => {
     setSelectedRow(row);
     setOpenConfirm(true);
   };
 
   const confirmDelete = () => {
-    router.delete(route('thuoc_tinh.destroy'), {
-      data: { id_thuoc_tinh: selectedRow?.id_thuoc_tinh },
+    router.delete(route('banner.destroy'), {
+      data: { id_banner: selectedRow?.id_banner },
       preserveScroll: true,
       onSuccess: () => {
         toast.success('Xóa thành công!');
@@ -57,15 +67,24 @@ export default function ThuocTinhPage({ thuoc_tinhs }: { thuoc_tinhs: ThuocTinh[
 
   const handleSubmit = () => {
     if (selectedRow) {
-      form.put(route('thuoc_tinh.update'), {
-        onSuccess: () => {
-          toast.success('Cập nhật thành công!');
-          setOpenDialog(false);
+      router.post(
+        route('banner.update'),
+        {
+          _method: 'put',
+          ...form.data,
         },
-        onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
-      });
+        {
+          forceFormData: true,
+          onSuccess: () => {
+            toast.success('Cập nhật thành công!');
+            setOpenDialog(false);
+          },
+          onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
+        },
+      );
     } else {
-      form.post(route('thuoc_tinh.store'), {
+      form.post(route('banner.store'), {
+        forceFormData: true,
         onSuccess: () => {
           toast.success('Tạo mới thành công!');
           setOpenDialog(false);
@@ -80,13 +99,13 @@ export default function ThuocTinhPage({ thuoc_tinhs }: { thuoc_tinhs: ThuocTinh[
       <Head title="Quản lý Thuộc tính" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={thuoc_tinhs} onAdd={handleAdd} />
+        <DataTable columns={columns(handleEdit, handleDelete)} data={banners} onAdd={handleAdd} />
       </div>
 
       <ModalDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        title={selectedRow ? 'Sửa thuộc tính' : 'Thêm thuộc tính'}
+        title={selectedRow ? 'Sửa banner' : 'Thêm banner'}
         btnTitle={selectedRow ? 'Sửa' : 'Thêm'}
         form={form}
         onSubmit={handleSubmit}

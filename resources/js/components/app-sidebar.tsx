@@ -21,10 +21,11 @@ import {
   cai_dat,
   mau,
   kich_thuoc,
+  banner,
 } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, User, UserLock, Settings, ChevronDown } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, User, UserLock, Settings, ChevronDown, PictureInPicture2  } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -47,6 +48,11 @@ const mainNavItems: NavItem[] = [
     title: 'Cài đặt',
     href: cai_dat(),
     icon: Settings,
+  },
+  {
+    title: 'Banner',
+    href: banner(),
+    icon: PictureInPicture2,
   },
   {
     title: 'Quản lý thông tin',
