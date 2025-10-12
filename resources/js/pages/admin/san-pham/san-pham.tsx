@@ -26,6 +26,7 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
     id_san_pham: 0,
     ma_san_pham: '',
     ten_san_pham: '',
+    slug: '',
     mo_ta: '',
     gia_niem_yet: null,
     gia_ban: null,
@@ -33,31 +34,16 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
   });
 
   const handleAdd = () => {
-    setSelectedRow(null);
-    form.setData({
-      id_san_pham: 0,
-      ma_san_pham: '',
-      ten_san_pham: '',
-      mo_ta: '',
-      gia_niem_yet: null,
-      gia_ban: null,
-      trang_thai: '',
-    });
-    setOpenDialog(true);
+    router.visit(route('san_pham.storeView', { id_danh_muc_thuong_hieu: info_dmth.id_danh_muc_thuong_hieu }));
   };
 
   const handleEdit = (row: SanPham) => {
-    setSelectedRow(row);
-    form.setData({
-      id_san_pham: row.id_san_pham,
-      ma_san_pham: row.ma_san_pham,
-      ten_san_pham: row.ten_san_pham,
-      mo_ta: row.mo_ta,
-      gia_niem_yet: row.gia_niem_yet,
-      gia_ban: row.gia_ban,
-      trang_thai: row.trang_thai,
-    });
-    setOpenDialog(true);
+    router.visit(
+      route('san_pham.updateView', {
+        id_danh_muc_thuong_hieu: info_dmth.id_danh_muc_thuong_hieu,
+        id_san_pham: row.id_san_pham,
+      }),
+    );
   };
 
   const handleDelete = (row: SanPham) => {

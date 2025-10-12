@@ -94,7 +94,7 @@ export function Editor({
             }}
           />
 
-          {/* <HtmlPlugin onHtmlChange={onHtmlChange} /> */}
+          <HtmlPlugin onHtmlChange={onHtmlChange} />
         </TooltipProvider>
       </LexicalComposer>
     </div>

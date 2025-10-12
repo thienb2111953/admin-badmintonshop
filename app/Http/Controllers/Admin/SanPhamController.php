@@ -11,71 +11,100 @@ use Inertia\Inertia;
 
 class SanPhamController extends Controller
 {
-    public function index($id_danh_muc_thuong_hieu)
-    {
-        $info_dmth = DanhMucThuongHieu::find($id_danh_muc_thuong_hieu);
-        $san_phams = SanPham::where('id_danh_muc_thuong_hieu', $id_danh_muc_thuong_hieu)->get();
+  public function index($id_danh_muc_thuong_hieu)
+  {
+    $info_dmth = DanhMucThuongHieu::find($id_danh_muc_thuong_hieu);
+    $san_phams = SanPham::where('id_danh_muc_thuong_hieu', $id_danh_muc_thuong_hieu)->get();
 
-        return Inertia::render('admin/san-pham/san-pham', [
-            'info_dmth' => $info_dmth,
-            'san_phams' => $san_phams
-        ]);
-    }
+    return Inertia::render('admin/san-pham/san-pham', [
+      'info_dmth' => $info_dmth,
+      'san_phams' => $san_phams,
+    ]);
+  }
 
-    public function store(Request $request, $id_danh_muc_thuong_hieu)
-    {
-        $validated = $request->validate([
-            'ma_san_pham' => 'required|string|max:255',
-            'ten_san_pham' => 'required|string|max:255',
-            'mo_ta' => 'nullable|string',
-            'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
-            'gia_ban'      => 'nullable|integer|min:0|max:999999999999',
-            'trang_thai' => 'nullable|string',
-        ], [
-            'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
-            'ten_san_pham.required' => 'Tên sản phẩm không được để trống',
-            'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
-            'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
-        ]);
+  public function storeView($id_danh_muc_thuong_hieu)
+  {
+    return Inertia::render('admin/san-pham/edit-page', [
+      'id_danh_muc_thuong_hieu' => $id_danh_muc_thuong_hieu,
+    ]);
+  }
 
-        $validated['id_danh_muc_thuong_hieu'] = $id_danh_muc_thuong_hieu;
+  public function store(Request $request, $id_danh_muc_thuong_hieu)
+  {
+    $validated = $request->validate(
+      [
+        'ma_san_pham' => 'required|string|max:255',
+        'ten_san_pham' => 'required|string|max:255',
+        'slug' => 'required|string|max:255',
+        'mo_ta' => 'nullable|string',
+        'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
+        'gia_ban' => 'nullable|integer|min:0|max:999999999999',
+        'trang_thai' => 'nullable|string',
+      ],
+      [
+        'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
+        'ten_san_pham.required' => 'Tên sản phẩm không được để trống',
+        'slug.required' => 'Slug không được để trống',
+        'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
+        'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
+      ],
+    );
 
-        SanPham::create($validated);
+    $validated['id_danh_muc_thuong_hieu'] = $id_danh_muc_thuong_hieu;
 
-        return redirect()->back()->with('success', 'Thêm thành công');
-    }
+    SanPham::create($validated);
 
-    public function update(Request $request, $id_danh_muc_thuong_hieu)
-    {
-        $validated = $request->validate([
-            'ma_san_pham' => 'required|string|max:255',
-            'ten_san_pham' => 'required|string|max:255',
-            'mo_ta' => 'nullable|string',
-            'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
-            'gia_ban'      => 'nullable|integer|min:0|max:999999999999',
-            'trang_thai' => 'nullable|string',
-        ], [
-            'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
-            'ten_san_pham.required' => 'Tên sản phẩm không được để trống',
-            'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
-            'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
-        ]);
+    return redirect()->route('san_pham')->with('success', 'Thêm thành công');
+  }
 
-        $validated['id_danh_muc_thuong_hieu'] = $id_danh_muc_thuong_hieu;
+  public function updateView($id_danh_muc_thuong_hieu, $id_san_pham)
+  {
+    $san_pham = SanPham::findOrFail($id_san_pham);
 
-        $san_pham = SanPham::findOrFail($request->id_san_pham);
+    return Inertia::render('admin/san-pham/edit-page', [
+      'id_danh_muc_thuong_hieu' => $id_danh_muc_thuong_hieu,
+      'san_pham' => $san_pham,
+    ]);
+  }
 
-        $san_pham->update($validated);
+  public function update(Request $request, $id_danh_muc_thuong_hieu)
+  {
+    $validated = $request->validate(
+      [
+        'ma_san_pham' => 'required|string|max:255',
+        'ten_san_pham' => 'required|string|max:255',
+        'slug' => 'required|string|max:255',
+        'mo_ta' => 'nullable|string',
+        'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
+        'gia_ban' => 'nullable|integer|min:0|max:999999999999',
+        'trang_thai' => 'nullable|string',
+      ],
+      [
+        'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
+        'ten_san_pham.required' => 'Tên sản phẩm không được để trống',
+        'slug.required' => 'Slug không được để trống',
+        'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
+        'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
+      ],
+    );
 
-        return redirect()->back()->with('success', 'Cập nhật thành công');
-    }
+    $validated['id_danh_muc_thuong_hieu'] = $id_danh_muc_thuong_hieu;
 
-    public function destroy(Request $request, $id_danh_muc_thuong_hieu)
-    {
-        $san_pham = SanPham::findOrFail($request->id_san_pham);
+    $san_pham = SanPham::findOrFail($request->id_san_pham);
 
-        $san_pham->delete();
+    $san_pham->update($validated);
 
-        return redirect()->back()->with('success', 'Xóa thành công');
-    }
+    return redirect()
+      ->route('san_pham', ['id_danh_muc_thuong_hieu' => $id_danh_muc_thuong_hieu])
+      ->with('success', 'Cập nhật thành công');
+  }
+
+  public function destroy(Request $request, $id_danh_muc_thuong_hieu)
+  {
+    $san_pham = SanPham::findOrFail($request->id_san_pham);
+
+    $san_pham->delete();
+
+    return redirect()->back()->with('success', 'Xóa thành công');
+  }
 }

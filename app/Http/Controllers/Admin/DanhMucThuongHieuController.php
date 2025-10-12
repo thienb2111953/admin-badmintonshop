@@ -8,6 +8,7 @@ use App\Models\DanhMucThuocTinh;
 use App\Models\DanhMucThuongHieu;
 use App\Models\ThuongHieu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DanhMucThuongHieuController extends Controller
@@ -16,7 +17,16 @@ class DanhMucThuongHieuController extends Controller
   {
     $danh_mucs = DanhMuc::all();
     $thuong_hieus = ThuongHieu::all();
-    $danh_muc_thuong_hieus = DanhMucThuongHieu::all();
+    $danh_muc_thuong_hieus = DB::table('danh_muc_thuong_hieu')
+      ->join('danh_muc', 'danh_muc_thuong_hieu.id_danh_muc', '=', 'danh_muc.id_danh_muc')
+      ->join('thuong_hieu', 'danh_muc_thuong_hieu.id_thuong_hieu', '=', 'thuong_hieu.id_thuong_hieu')
+      ->select(
+        'danh_muc_thuong_hieu.*',
+        'danh_muc.ten_danh_muc as ten_danh_muc',
+        'thuong_hieu.ten_thuong_hieu as ten_thuong_hieu',
+      )
+      ->orderBy('danh_muc_thuong_hieu.id_danh_muc_thuong_hieu', 'desc')
+      ->get();
 
     return Inertia::render('admin/danh-muc-thuong-hieu/danh-muc-thuong-hieu', [
       // 'thuong_hieu_info' => ThuongHieu::find($id_thuong_hieu),
@@ -31,7 +41,7 @@ class DanhMucThuongHieuController extends Controller
     $danh_mucs = DanhMuc::all();
     $thuong_hieus = ThuongHieu::all();
 
-    return Inertia::render('admin/danh-muc-thuong-hieu/them-moi', [
+    return Inertia::render('admin/danh-muc-thuong-hieu/edit-page', [
       'danh_mucs' => $danh_mucs,
       'thuong_hieus' => $thuong_hieus,
     ]);
@@ -61,13 +71,13 @@ class DanhMucThuongHieuController extends Controller
     return redirect()->route('san_pham_thuong_hieu')->with('success', 'Tạo thành công');
   }
 
-  public function updateView($id)
+  public function updateView($id_danh_muc_thuong_hieu)
   {
     $danh_mucs = DanhMuc::all();
     $thuong_hieus = ThuongHieu::all();
-    $danh_muc_thuong_hieu = DanhMucThuongHieu::findOrFail($id);
+    $danh_muc_thuong_hieu = DanhMucThuongHieu::findOrFail($id_danh_muc_thuong_hieu);
 
-    return Inertia::render('admin/danh-muc-thuong-hieu/them-moi', [
+    return Inertia::render('admin/danh-muc-thuong-hieu/edit-page', [
       'danh_mucs' => $danh_mucs,
       'thuong_hieus' => $thuong_hieus,
       'danh_muc_thuong_hieu' => $danh_muc_thuong_hieu,

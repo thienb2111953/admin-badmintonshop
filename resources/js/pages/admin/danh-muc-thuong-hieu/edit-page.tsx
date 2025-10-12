@@ -42,7 +42,7 @@ export const initialValue = {
   },
 } as unknown as SerializedEditorState;
 
-export default function CreatePage({
+export default function EditPage({
   thuong_hieus,
   danh_mucs,
   danh_muc_thuong_hieu,
@@ -53,6 +53,7 @@ export default function CreatePage({
 }) {
   const [editorState, setEditorState] = useState<SerializedEditorState>(initialValue);
   const [htmlContent, setHtmlContent] = useState('<p>Initial content</p>');
+
   const form = useForm({
     id_danh_muc_thuong_hieu: danh_muc_thuong_hieu?.id_danh_muc_thuong_hieu ?? 0,
     ten_danh_muc_thuong_hieu: danh_muc_thuong_hieu?.ten_danh_muc_thuong_hieu ?? '',
@@ -104,7 +105,7 @@ export default function CreatePage({
     e.preventDefault();
     if (data.id_danh_muc_thuong_hieu && data.id_danh_muc_thuong_hieu !== 0) {
       // Update
-      form.put(route('danh_muc_thuong_hieu.update', { id: data.id_danh_muc_thuong_hieu }), {
+      form.put(route('danh_muc_thuong_hieu.update', { id_danh_muc_thuong_hieu: data.id_danh_muc_thuong_hieu }), {
         onSuccess: () => {
           toast.success('Cập nhật thành công!');
         },
@@ -120,9 +121,6 @@ export default function CreatePage({
       });
     }
   };
-
-  const [editorState, setEditorState] = useState<SerializedEditorState>(initialValue);
-  const [htmlContent, setHtmlContent] = useState('');
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -196,16 +194,17 @@ export default function CreatePage({
             <Editor
               initialHtml={danh_muc_thuong_hieu?.mo_ta || ''}
               //   editorSerializedState={editorState}
-              onSerializedChange={(value) => setEditorState(value)}
-              // onHtmlChange={(html) => {
-              //   setHtmlContent(html);
-              // }}
-              onChange={(value)=>console.log(value)}
+              //   onSerializedChange={(value) => setEditorState(value)}
+              onHtmlChange={(html) => {
+                setHtmlContent(html);
+                setData('mo_ta', html);
+              }}
+              //   onChange={(value) => console.log(value)}
             />
             {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
           </div>
           <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => router.visit(route('danh_muc_thuong_hieu.index'))}>
+            <Button type="button" variant="outline" onClick={() => router.visit(route('san_pham_thuong_hieu'))}>
               Hủy
             </Button>
             <Button type="submit" disabled={processing}>

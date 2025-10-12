@@ -38,7 +38,7 @@ export default function DanhMucThuongHieuPage({
   };
 
   const handleEdit = (row: DanhMucThuongHieu) => {
-    router.visit(route('danh_muc_thuong_hieu.updateView', { id: row.id_danh_muc_thuong_hieu }));
+    router.visit(route('danh_muc_thuong_hieu.updateView', { id_danh_muc_thuong_hieu: row.id_danh_muc_thuong_hieu }));
   };
 
   const handleDelete = (row: DanhMucThuongHieu) => {
@@ -56,26 +56,6 @@ export default function DanhMucThuongHieuPage({
       },
       onError: () => toast.error('Xóa thất bại!'),
     });
-  };
-
-  const handleSubmit = () => {
-    if (selectedRow) {
-      form.put(route('danh_muc_thuong_hieu.update'), {
-        onSuccess: () => {
-          toast.success('Cập nhật thành công!');
-          setOpenDialog(false);
-        },
-        onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
-      });
-    } else {
-      form.post(route('danh_muc_thuong_hieu.store'), {
-        onSuccess: () => {
-          toast.success('Tạo mới thành công!');
-          setOpenDialog(false);
-        },
-        onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
-      });
-    }
   };
 
   return (
