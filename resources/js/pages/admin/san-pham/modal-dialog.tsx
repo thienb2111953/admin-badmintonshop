@@ -4,9 +4,6 @@ import { Input } from '@/components/ui/input';
 import { type InertiaFormProps } from '@inertiajs/react';
 import { SanPham } from '@/types';
 import { Label } from '@/components/ui/label';
-import { Combobox } from '@/components/ui/combobox';
-import { slugify } from 'transliteration';
-import { useEffect } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface Props {

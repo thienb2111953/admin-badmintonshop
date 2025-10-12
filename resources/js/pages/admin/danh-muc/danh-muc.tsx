@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { DataTable } from '@/components/custom/data-table';
-import { type BreadcrumbItem, DanhMuc, DanhMucForm, ThuocTinh } from '@/types';
+import { type BreadcrumbItem, DanhMuc, ThuocTinh } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { columns } from './columns';
@@ -26,6 +26,7 @@ export default function DanhMucPage({ danh_mucs, thuoc_tinhs }: { danh_mucs: Dan
     ten_danh_muc: '',
     slug: '',
     id_thuoc_tinh: [],
+    thuoc_tinhs: [],
   });
 
   const handleAdd = () => {

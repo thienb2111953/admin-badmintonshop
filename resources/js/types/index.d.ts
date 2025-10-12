@@ -63,7 +63,7 @@ export interface DanhMuc {
     ten_danh_muc: string;
     slug: string;
     id_thuoc_tinh: string[];
-    thuoc_tinhs?: ThuocTinh[];
+    thuoc_tinhs: ThuocTinh[];
   }
 
 export interface ThuocTinh{

@@ -121,6 +121,9 @@ export default function CreatePage({
     }
   };
 
+  const [editorState, setEditorState] = useState<SerializedEditorState>(initialValue);
+  const [htmlContent, setHtmlContent] = useState('');
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={data.id_danh_muc_thuong_hieu ? 'Cập nhật Danh mục Thương hiệu' : 'Thêm Danh mục Thương hiệu'} />
@@ -194,16 +197,10 @@ export default function CreatePage({
               initialHtml={danh_muc_thuong_hieu?.mo_ta || ''}
               //   editorSerializedState={editorState}
               onSerializedChange={(value) => setEditorState(value)}
-              onChange={(state) => {
-                console.log(state);
-                // const json = state.toJSON();
-                // setEditorState(json);
-                // setData('mo_ta', JSON.stringify(json));
-              }}
-              //   onHtmlChange={(html) => {
-              //     setHtmlContent(html);
-              //     setData('mo_ta', html);
-              //   }}
+              // onHtmlChange={(html) => {
+              //   setHtmlContent(html);
+              // }}
+              onChange={(value)=>console.log(value)}
             />
             {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
           </div>

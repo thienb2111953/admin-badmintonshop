@@ -6,7 +6,6 @@ import { DanhMuc } from '@/types';
 import { Label } from '@/components/ui/label';
 import { slugify } from 'transliteration';
 import { MultiSelect } from '@/components/multi-select';
-import { useState } from 'react';
 
 interface Props {
   open: boolean;
