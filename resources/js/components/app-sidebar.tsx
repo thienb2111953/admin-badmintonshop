@@ -86,6 +86,10 @@ const mainNavItems: NavItem[] = [
     href: nhap_hang(),
   },
   {
+    title: 'Đơn hàng',
+    // href: don_hang(),
+  },
+  {
     title: 'Sản phẩm',
     href: san_pham_thuong_hieu(),
   },

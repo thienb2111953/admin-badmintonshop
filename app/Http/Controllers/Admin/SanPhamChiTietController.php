@@ -68,30 +68,24 @@ class SanPhamChiTietController extends Controller
       [
         'id_mau' => 'required|integer',
         'id_kich_thuoc' => 'required|integer',
-        'so_luong_nhap' => 'required|integer',
-        'ngay_nhap' => 'required|date',
       ],
       [
         'id_kich_thuoc.required' => 'Không để trống kích thước',
         'id_mau.required' => 'Không để trống màu',
-        'so_luong_nhap.required' => 'Không để trống số lượng tồn',
-        'ngay_nhap.required' => 'Không để trống ngày nhập',
       ],
     );
 
-    // 1. Tạo chi tiết sản phẩm
+    $tenSanPham = SanPham::where('id_san_pham', $id_san_pham)->value('ten_san_pham');
+    $tenMau = Mau::where('id_mau', $validated['id_mau'])->value('ten_mau');
+    $tenKichThuoc = KichThuoc::where('id_kich_thuoc', $validated['id_kich_thuoc'])->value('ten_kich_thuoc');
+
+    $tenChiTiet = trim("{$tenSanPham} - {$tenMau} - {$tenKichThuoc}", ' -');
+
     $chiTiet = SanPhamChiTiet::create([
       'id_san_pham' => $id_san_pham,
       'id_mau' => $validated['id_mau'],
       'id_kich_thuoc' => $validated['id_kich_thuoc'],
-      'so_luong_nhap' => $validated['so_luong_nhap'],
-    ]);
-
-    // 2. Thêm bản ghi vào bảng kho
-    Kho::create([
-      'id_san_pham_chi_tiet' => $chiTiet->id_san_pham_chi_tiet,
-      'so_luong_nhap' => $validated['so_luong_nhap'],
-      'ngay_nhap' => $validated['ngay_nhap'],
+      'ten_san_pham_chi_tiet' => $tenChiTiet,
     ]);
 
     return redirect()->back()->with('success', 'Thêm sản phẩm chi tiết thành công');
@@ -104,32 +98,27 @@ class SanPhamChiTietController extends Controller
         'id_san_pham_chi_tiet' => 'required|integer',
         'id_mau' => 'required|integer',
         'id_kich_thuoc' => 'required|integer',
-        'so_luong_nhap' => 'required|integer',
-        'ngay_nhap' => 'required|date',
       ],
       [
         'id_san_pham_chi_tiet.required' => 'Không tìm thấy sản phẩm chi tiết',
         'id_kich_thuoc.required' => 'Không để trống kích thước',
         'id_mau.required' => 'Không để trống màu',
-        'so_luong_nhap.required' => 'Không để trống số lượng tồn',
-        'ngay_nhap.required' => 'Không để trống ngày nhập',
       ],
     );
 
-    // 1. Update chi tiết sản phẩm
     $san_pham_chi_tiet = SanPhamChiTiet::findOrFail($validated['id_san_pham_chi_tiet']);
+
+    $tenSanPham = SanPham::where('id_san_pham', $id_san_pham)->value('ten_san_pham');
+    $tenMau = Mau::where('id_mau', $validated['id_mau'])->value('ten_mau');
+    $tenKichThuoc = KichThuoc::where('id_kich_thuoc', $validated['id_kich_thuoc'])->value('ten_kich_thuoc');
+
+    $tenChiTiet = trim("{$tenSanPham} - {$tenMau} - {$tenKichThuoc}", ' -');
+
     $san_pham_chi_tiet->update([
       'id_san_pham' => $id_san_pham,
       'id_mau' => $validated['id_mau'],
       'id_kich_thuoc' => $validated['id_kich_thuoc'],
-    ]);
-
-    // 2. Update bản ghi kho (giả sử mỗi chi tiết có 1 bản ghi trong kho)
-    $kho = Kho::where('id_san_pham_chi_tiet', $san_pham_chi_tiet->id_san_pham_chi_tiet)->first();
-
-    $kho->update([
-      'so_luong_nhap' => $validated['so_luong_nhap'],
-      'ngay_nhap' => $validated['ngay_nhap'],
+      'ten_san_pham_chi_tiet' => $tenChiTiet,
     ]);
 
     return redirect()->back()->with('success', 'Cập nhật chi tiết sản phẩm thành công');

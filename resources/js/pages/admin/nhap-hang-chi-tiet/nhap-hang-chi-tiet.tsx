@@ -1,51 +1,71 @@
 import AppLayout from '@/layouts/app-layout';
 import { columns } from './columns';
 import { DataTable } from '@/components/custom/data-table';
-import { type BreadcrumbItem, ThuocTinh } from '@/types';
+import { type BreadcrumbItem, NhapHang, NhapHangChiTiet, SanPham, SanPhamChiTiet } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
-import { thuoc_tinh } from '@/routes';
+import { nhap_hang, nhap_hang_chi_tiet } from '@/routes';
 
-export default function ThuocTinhPage({ thuoc_tinhs }: { thuoc_tinhs: ThuocTinh[] }) {
-  console.log(thuoc_tinhs);
+export default function NhapHangChiTietPage({
+  nhap_hang_info,
+  nhap_hang_chi_tiets,
+  san_pham_chi_tiets,
+}: {
+  nhap_hang_info: NhapHang;
+  nhap_hang_chi_tiets: NhapHangChiTiet[];
+  san_pham_chi_tiets: SanPhamChiTiet[];
+}) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<ThuocTinh | null>(null);
+  const [selectedRow, setSelectedRow] = useState<NhapHangChiTiet | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Quản lý Nhập hàng', href: nhap_hang() },
+    { title: `${nhap_hang_info.ma_nhap_hang}`, href: nhap_hang_chi_tiet(nhap_hang_info.id_nhap_hang) },
+  ];
 
-  const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quản lý thuộc tính', href: thuoc_tinh() }];
-  const form = useForm<ThuocTinh>({
-    id_thuoc_tinh: 0,
-    ten_thuoc_tinh: '',
+  const form = useForm<NhapHangChiTiet>({
+    id_nhap_hang: nhap_hang_info.id_nhap_hang,
+    id_nhap_hang_chi_tiet: 0,
+    id_san_pham_chi_tiet: 0,
+    so_luong: null,
+    don_gia: 0,
   });
 
   const handleAdd = () => {
     setSelectedRow(null);
     form.setData({
-      ten_thuoc_tinh: '',
+      id_nhap_hang: nhap_hang_info.id_nhap_hang,
+      id_nhap_hang_chi_tiet: 0,
+      id_san_pham_chi_tiet: 0,
+      so_luong: null,
+      don_gia: 0,
     });
     setOpenDialog(true);
   };
 
-  const handleEdit = (row: ThuocTinh) => {
+  const handleEdit = (row: NhapHangChiTiet) => {
     setSelectedRow(row);
     form.setData({
-      id_thuoc_tinh: row.id_thuoc_tinh,
-      ten_thuoc_tinh: row.ten_thuoc_tinh,
+      id_nhap_hang_chi_tiet: row.id_nhap_hang_chi_tiet,
+      id_san_pham_chi_tiet: row.id_san_pham_chi_tiet,
+      so_luong: row.so_luong,
+      don_gia: row.don_gia,
+      id_nhap_hang: row.id_nhap_hang,
     });
     setOpenDialog(true);
   };
 
-  const handleDelete = (row: ThuocTinh) => {
+  const handleDelete = (row: NhapHangChiTiet) => {
     setSelectedRow(row);
     setOpenConfirm(true);
   };
 
   const confirmDelete = () => {
-    router.delete(route('thuoc_tinh.destroy'), {
-      data: { id_thuoc_tinh: selectedRow?.id_thuoc_tinh },
+    router.delete(route('nhap_hang_chi_tiet.destroy', { id_nhap_hang: nhap_hang_info.id_nhap_hang }), {
+      data: { id_nhap_hang_chi_tiet: selectedRow?.id_nhap_hang_chi_tiet },
       preserveScroll: true,
       onSuccess: () => {
         toast.success('Xóa thành công!');
@@ -57,7 +77,7 @@ export default function ThuocTinhPage({ thuoc_tinhs }: { thuoc_tinhs: ThuocTinh[
 
   const handleSubmit = () => {
     if (selectedRow) {
-      form.put(route('thuoc_tinh.update'), {
+      form.put(route('nhap_hang_chi_tiet.update', { id_nhap_hang: nhap_hang_info.id_nhap_hang }), {
         onSuccess: () => {
           toast.success('Cập nhật thành công!');
           setOpenDialog(false);
@@ -65,7 +85,7 @@ export default function ThuocTinhPage({ thuoc_tinhs }: { thuoc_tinhs: ThuocTinh[
         onError: (errors) => Object.values(errors).forEach((err) => toast.error(err as string)),
       });
     } else {
-      form.post(route('thuoc_tinh.store'), {
+      form.post(route('nhap_hang_chi_tiet.store', { id_nhap_hang: nhap_hang_info.id_nhap_hang }), {
         onSuccess: () => {
           toast.success('Tạo mới thành công!');
           setOpenDialog(false);
@@ -77,19 +97,20 @@ export default function ThuocTinhPage({ thuoc_tinhs }: { thuoc_tinhs: ThuocTinh[
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Quản lý Thuộc tính" />
+      <Head title="Quản lý Nhập hàng chi tiết" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={thuoc_tinhs} onAdd={handleAdd} />
+        <DataTable columns={columns(handleEdit, handleDelete)} data={nhap_hang_chi_tiets} onAdd={handleAdd} />
       </div>
 
       <ModalDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        title={selectedRow ? 'Sửa thuộc tính' : 'Thêm thuộc tính'}
+        title={selectedRow ? 'Sửa Nhập hàng chi tiết' : 'Thêm Nhập hàng chi tiết'}
         btnTitle={selectedRow ? 'Sửa' : 'Thêm'}
         form={form}
         onSubmit={handleSubmit}
+        sanPhamChiTietOptions={san_pham_chi_tiets}
       />
 
       <DialogConfirmDelete open={openConfirm} onClose={() => setOpenConfirm(false)} onConfirm={confirmDelete} />

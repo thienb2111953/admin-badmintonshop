@@ -16,7 +16,7 @@ return new class extends Migration {
       $table->foreignId('id_mau')->constrained('mau', 'id_mau')->onDelete('cascade');
       $table->foreignId('id_kich_thuoc')->constrained('kich_thuoc', 'id_kich_thuoc')->onDelete('cascade');
       $table->integer('so_luong_ton')->default(0);
-
+      $table->string('ten_san_pham_chi_tiet');
       $table->timestamps();
     });
   }

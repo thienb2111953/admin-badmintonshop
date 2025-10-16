@@ -24,8 +24,8 @@ export function Columns(
     },
     {
       accessorKey: 'so_luong_ton',
-      header: ({ column }) => <ColumnHeader column={column} title="Số lượng nhập" />,
-      cell: ({ row }) => row.original.kho?.[0]?.so_luong_nhap ?? 0,
+      header: ({ column }) => <ColumnHeader column={column} title="Số lượng tồn" />,
+      cell: ({ row }) => row.original.so_luong_ton ?? 0,
     },
     // {
     //   accessorKey: 'ngay_nhap',

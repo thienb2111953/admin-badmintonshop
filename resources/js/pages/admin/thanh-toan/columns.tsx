@@ -3,32 +3,22 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
-import { NhapHang } from '@/types';
+import { ThuocTinh } from '@/types';
 import { Link } from '@inertiajs/react';
-import { nhap_hang_chi_tiet } from '@/routes';
-import { format } from 'date-fns';
+import { thuoc_tinh_chi_tiet } from '@/routes';
 
-export function columns(onEdit: (row: NhapHang) => void, onDelete: (row: NhapHang) => void): ColumnDef<NhapHang>[] {
+export function columns(onEdit: (row: ThuocTinh) => void, onDelete: (row: ThuocTinh) => void): ColumnDef<ThuocTinh>[] {
   return [
     {
-      accessorKey: 'ma_nhap_hang',
-      header: ({ column }) => <ColumnHeader column={column} title="Mã nhập hàng" />,
+      accessorKey: 'ten_thuoc_tinh',
+      header: ({ column }) => <ColumnHeader column={column} title="Tên thuộc tính" />,
       cell: ({ row }) => {
         const rowData = row.original;
         return (
-          <Link href={nhap_hang_chi_tiet(rowData.id_nhap_hang)} className="font-bold hover:underline">
-            {rowData.ma_nhap_hang}
+          <Link href={thuoc_tinh_chi_tiet(rowData.id_thuoc_tinh)} className="font-bold hover:underline">
+            {rowData.ten_thuoc_tinh}
           </Link>
         );
-      },
-    },
-    {
-      accessorKey: 'ngay_nhap',
-      header: ({ column }) => <ColumnHeader column={column} title="Ngày Nhập" />,
-      cell: ({ row }) => {
-        const dateStr = row.original.ngay_nhap;
-        if (!dateStr) return '';
-        return format(new Date(dateStr), 'dd/MM/yyyy');
       },
     },
     {

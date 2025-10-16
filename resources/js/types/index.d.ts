@@ -114,13 +114,13 @@ export interface SanPham {
 
 export interface SanPhamChiTiet {
   id_san_pham_chi_tiet: number;
-  slug: string;
+  ten_san_pham_chi_tiet: string;
   id_san_pham: number;
   id_mau: number;
   id_kich_thuoc: number;
   mau?: Mau;
   kich_thuoc?: KichThuoc;
-  kho?: Kho;
+  so_luong_ton: number;
 }
 
 export interface AnhSanPham {
@@ -155,6 +155,14 @@ export interface NhapHangChiTiet {
   id_nhap_hang_chi_tiet: number;
   id_nhap_hang: number;
   id_san_pham_chi_tiet: number;
-  so_luong: number;
+  so_luong: number | null;
   don_gia: number;
+}
+
+export interface ThanhToan {
+  id_thanh_toan: number;
+  id_don_hang: number;
+  so_tien: number;
+  ten_ngan_hang: string;
+  ngay_thanh_toan: date;
 }

@@ -10,34 +10,29 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SanPhamChiTiet extends Model
 {
-    protected $table = 'san_pham_chi_tiet';
-    protected $primaryKey = 'id_san_pham_chi_tiet';
-    public $incrementing = true;
+  protected $table = 'san_pham_chi_tiet';
+  protected $primaryKey = 'id_san_pham_chi_tiet';
+  public $incrementing = true;
 
-    protected $fillable = [
-        'slug',
-        'id_san_pham',
-        'id_mau',
-        'id_kich_thuoc',
-    ];
+  protected $fillable = ['id_san_pham', 'id_mau', 'id_kich_thuoc', 'ten_san_pham_chi_tiet', 'so_luong_ton'];
 
-    public function anhSanPham(): HasMany
-    {
-        return $this->hasMany(AnhSanPham::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
-    }
+  public function anhSanPham(): HasMany
+  {
+    return $this->hasMany(AnhSanPham::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
+  }
 
-    public function kho(): HasMany
-    {
-        return $this->hasMany(Kho::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
-    }
+  public function kho(): HasMany
+  {
+    return $this->hasMany(Kho::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
+  }
 
-    public function mau(): BelongsTo
-    {
-        return $this->belongsTo(Mau::class, 'id_mau', 'id_mau');
-    }
+  public function mau(): BelongsTo
+  {
+    return $this->belongsTo(Mau::class, 'id_mau', 'id_mau');
+  }
 
-    public function kichThuoc(): BelongsTo
-    {
-        return $this->belongsTo(KichThuoc::class, 'id_kich_thuoc', 'id_kich_thuoc');
-    }
+  public function kichThuoc(): BelongsTo
+  {
+    return $this->belongsTo(KichThuoc::class, 'id_kich_thuoc', 'id_kich_thuoc');
+  }
 }

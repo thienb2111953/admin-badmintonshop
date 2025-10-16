@@ -20,8 +20,8 @@ return new class extends Migration {
         ->onDelete('restrict');
 
       $table->integer('so_luong');
-      $table->decimal('don_gia', 15, 2);
-      $table->decimal('tong_tien', 15, 2);
+      $table->decimal('don_gia', 15);
+      $table->decimal('tong_tien', 15);
 
       $table->timestamps();
     });

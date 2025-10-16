@@ -16,7 +16,7 @@ return new class extends Migration {
       // liên kết đến đơn hàng
       $table->foreignId('id_don_hang')->constrained('don_hang', 'id_don_hang')->onDelete('cascade');
 
-      $table->decimal('so_tien', 15, 2);
+      $table->decimal('so_tien', 15);
       $table->string('ten_ngan_hang', 100)->nullable();
       $table->dateTime('ngay_thanh_toan');
 

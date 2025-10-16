@@ -16,4 +16,9 @@ class NhapHangChiTiet extends Model
   {
     return $this->belongsTo(NhapHang::class, 'id_nhap_hang', 'id_nhap_hang');
   }
+
+  public function sanPhamChiTiet()
+  {
+    return $this->belongsTo(SanPhamChiTiet::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
+  }
 }

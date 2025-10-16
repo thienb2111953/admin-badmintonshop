@@ -3,34 +3,27 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { ColumnHeader } from '@/components/custom/column-header';
-import { NhapHang } from '@/types';
-import { Link } from '@inertiajs/react';
-import { nhap_hang_chi_tiet } from '@/routes';
-import { format } from 'date-fns';
+import { NhapHangChiTiet } from '@/types';
 
-export function columns(onEdit: (row: NhapHang) => void, onDelete: (row: NhapHang) => void): ColumnDef<NhapHang>[] {
+export function columns(
+  onEdit: (row: NhapHangChiTiet) => void,
+  onDelete: (row: NhapHangChiTiet) => void,
+): ColumnDef<NhapHangChiTiet>[] {
   return [
     {
-      accessorKey: 'ma_nhap_hang',
-      header: ({ column }) => <ColumnHeader column={column} title="Mã nhập hàng" />,
-      cell: ({ row }) => {
-        const rowData = row.original;
-        return (
-          <Link href={nhap_hang_chi_tiet(rowData.id_nhap_hang)} className="font-bold hover:underline">
-            {rowData.ma_nhap_hang}
-          </Link>
-        );
-      },
+      accessorKey: 'ten_san_pham_chi_tiet',
+      header: ({ column }) => <ColumnHeader column={column} title="Sản phẩm" />,
     },
     {
-      accessorKey: 'ngay_nhap',
-      header: ({ column }) => <ColumnHeader column={column} title="Ngày Nhập" />,
-      cell: ({ row }) => {
-        const dateStr = row.original.ngay_nhap;
-        if (!dateStr) return '';
-        return format(new Date(dateStr), 'dd/MM/yyyy');
-      },
+      accessorKey: 'don_gia',
+      header: ({ column }) => <ColumnHeader column={column} title="Đơn giá" />,
+      cell: ({ row }) => row.original.don_gia.toLocaleString('vi-VN'),
     },
+    {
+      accessorKey: 'so_luong',
+      header: ({ column }) => <ColumnHeader column={column} title="Số lượng" />,
+    },
+
     {
       id: 'actions',
       cell: ({ row }) => {

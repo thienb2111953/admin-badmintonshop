@@ -10,7 +10,7 @@ class NhapHangController extends Controller
 {
   public function index()
   {
-    return Inertia::render('admin/nhap_hang/nhap_hang', [
+    return Inertia::render('admin/nhap-hang/nhap-hang', [
       'nhap_hangs' => NhapHang::all(),
     ]);
   }
@@ -20,9 +20,11 @@ class NhapHangController extends Controller
     $validated = $request->validate(
       [
         'ma_nhap_hang' => 'required|string|max:255',
+        'ngay_nhap' => 'required|date', // thêm validate
       ],
       [
         'ma_nhap_hang.required' => 'Mã nhập hàng không được để trống',
+        'ngay_nhap.required' => 'Ngày nhập không được để trống',
       ],
     );
 
@@ -35,16 +37,18 @@ class NhapHangController extends Controller
     $validated = $request->validate(
       [
         'ma_nhap_hang' => 'required|string|max:255',
+        'ngay_nhap' => 'required|date',
       ],
       [
         'ma_nhap_hang.required' => 'Mã nhập hàng không được để trống',
+        'ngay_nhap.required' => 'Ngày nhập không được để trống',
       ],
     );
 
     $nhap_hang = NhapHang::findOrFail($request->id_nhap_hang);
-
     $nhap_hang->update($validated);
-    return redirect()->back()->with('success', 'cập nhật thành công');
+
+    return redirect()->back()->with('success', 'Cập nhật thành công');
   }
 
   public function destroy(Request $request)

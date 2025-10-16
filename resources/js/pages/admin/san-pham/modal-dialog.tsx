@@ -5,6 +5,7 @@ import { type InertiaFormProps } from '@inertiajs/react';
 import { SanPham } from '@/types';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { formatNumber } from '@/utils/helper';
 
 interface Props {
   open: boolean;
@@ -22,11 +23,6 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
     e.preventDefault();
     onSubmit();
   };
-
-  function formatNumber(value: number | null): string {
-    if (value == null || isNaN(value)) return '';
-    return value.toLocaleString('vi-VN'); // ví dụ: 1000000 -> "1.000.000"
-  }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
