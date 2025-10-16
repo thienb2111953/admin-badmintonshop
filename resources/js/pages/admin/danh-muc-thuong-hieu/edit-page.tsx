@@ -138,6 +138,7 @@ export default function EditPage({
                 options={thuong_hieus.map((th) => ({
                   label: th.ten_thuong_hieu,
                   value: th.id_thuong_hieu,
+                  searchKey: th.ten_thuong_hieu,
                 }))}
                 value={data.id_thuong_hieu}
                 onChange={(val) => setData('id_thuong_hieu', val as number)}

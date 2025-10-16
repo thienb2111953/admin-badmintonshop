@@ -22,6 +22,7 @@ import {
   mau,
   kich_thuoc,
   banner,
+  nhap_hang,
 } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -79,6 +80,10 @@ const mainNavItems: NavItem[] = [
         href: kich_thuoc(),
       },
     ],
+  },
+  {
+    title: 'Nhập hàng',
+    href: nhap_hang(),
   },
   {
     title: 'Sản phẩm',

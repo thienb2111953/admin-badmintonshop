@@ -144,3 +144,17 @@ export interface Banner {
   href: string;
   file_logo: File | null;
 }
+
+export interface NhapHang {
+  id_nhap_hang: number;
+  ma_nhap_hang: string;
+  ngay_nhap: date;
+}
+
+export interface NhapHangChiTiet {
+  id_nhap_hang_chi_tiet: number;
+  id_nhap_hang: number;
+  id_san_pham_chi_tiet: number;
+  so_luong: number;
+  don_gia: number;
+}

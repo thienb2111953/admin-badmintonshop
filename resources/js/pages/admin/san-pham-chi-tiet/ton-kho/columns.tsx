@@ -23,19 +23,19 @@ export function Columns(
       cell: ({ row }) => row.original.kich_thuoc?.ten_kich_thuoc ?? '',
     },
     {
-      accessorKey: 'so_luong_nhap', // khác key
+      accessorKey: 'so_luong_ton',
       header: ({ column }) => <ColumnHeader column={column} title="Số lượng nhập" />,
       cell: ({ row }) => row.original.kho?.[0]?.so_luong_nhap ?? 0,
     },
-    {
-      accessorKey: 'ngay_nhap', // khác key
-      header: ({ column }) => <ColumnHeader column={column} title="Ngày Nhập" />,
-      cell: ({ row }) => {
-        const dateStr = row.original.kho?.[0]?.ngay_nhap;
-        if (!dateStr) return '';
-        return format(new Date(dateStr), 'dd/MM/yyyy');
-      },
-    },
+    // {
+    //   accessorKey: 'ngay_nhap',
+    //   header: ({ column }) => <ColumnHeader column={column} title="Ngày Nhập" />,
+    //   cell: ({ row }) => {
+    //     const dateStr = row.original.kho?.[0]?.ngay_nhap;
+    //     if (!dateStr) return '';
+    //     return format(new Date(dateStr), 'dd/MM/yyyy');
+    //   },
+    // },
     {
       id: 'actions',
       cell: ({ row }) => {

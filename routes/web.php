@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\SanPhamController;
 use App\Http\Controllers\Admin\ThuocTinhChiTietController;
 use App\Http\Controllers\Admin\ThuocTinhController;
 use App\Http\Controllers\Admin\ThuongHieuController;
+use App\Http\Controllers\NhapHangChiTietController;
+use App\Http\Controllers\NhapHangController;
 
 Route::get('/', function () {
   return Inertia::render('welcome');
@@ -130,6 +132,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/', [BannerController::class, 'store'])->name('banner.store');
     Route::put('/', [BannerController::class, 'update'])->name('banner.update');
     Route::delete('/', [BannerController::class, 'destroy'])->name('banner.destroy');
+  });
+
+  Route::prefix('nhap-hang')->group(function () {
+    Route::get('', [NhapHangController::class, 'index'])->name('nhap_hang');
+    Route::post('', [NhapHangController::class, 'store'])->name('nhap_hang.store');
+    Route::put('', [NhapHangController::class, 'update'])->name('nhap_hang.update');
+    Route::delete('', [NhapHangController::class, 'destroy'])->name('nhap_hang.destroy');
+    Route::prefix('{id_nhap_hang}')->group(function () {
+      Route::get('/', [NhapHangChiTietController::class, 'index'])->name('nhap_hang_chi_tiet');
+      Route::post('/', [NhapHangChiTietController::class, 'store'])->name('nhap_hang_chi_tiet.store');
+      Route::put('/', [NhapHangChiTietController::class, 'update'])->name('nhap_hang_chi_tiet.update');
+      Route::delete('/', [NhapHangChiTietController::class, 'destroy'])->name('nhap_hang_chi_tiet.destroy');
+    });
   });
 });
 

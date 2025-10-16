@@ -70,7 +70,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, ma
               />
               {errors.id_kich_thuoc && <p className="text-red-500">{errors.id_kich_thuoc}</p>}
             </div>
-            <div className="grid gap-3">
+            {/* <div className="grid gap-3">
               <Label htmlFor="so_luong_nhap">Số lượng nhập</Label>
               <Input
                 id="so_luong_nhap"
@@ -80,9 +80,9 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, ma
                 onChange={(e) => setData('so_luong_nhap', Number(e.target.value))}
               />
               {errors.so_luong_nhap && <p className="text-red-500">{errors.so_luong_nhap}</p>}
-            </div>
+            </div> */}
 
-            <div className="grid gap-3">
+            {/* <div className="grid gap-3">
               <Label htmlFor="ngay_nhap" className="px-1">
                 Ngày nhập
               </Label>
@@ -109,7 +109,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, ma
                 </PopoverContent>
               </Popover>
               {errors.ngay_nhap && <p className="text-red-500">{errors.ngay_nhap}</p>}
-            </div>
+            </div> */}
           </div>
 
           <div className="flex justify-end gap-2 pt-4">

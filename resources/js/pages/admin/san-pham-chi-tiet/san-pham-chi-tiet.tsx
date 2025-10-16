@@ -20,8 +20,6 @@ export default function SanPhamChiTietPage({
   maus: Mau[];
   kich_thuocs: KichThuoc[];
 }) {
-  console.log(san_pham_chi_tiets);
-
   const [activeTab, setActiveTab] = useState('ton-kho');
 
   const breadcrumbs: BreadcrumbItem[] = [

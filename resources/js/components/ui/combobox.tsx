@@ -64,12 +64,11 @@ export function Combobox({
               {options.map((opt) => (
                 <CommandItem
                   key={opt.value}
-                  value={String(opt.value)}
-                  onSelect={(currentValue) => {
-                    const newValue = currentValue === value ? null : opt.value
-                    onChange?.(newValue)
-                    setOpen(false)
-                  }}
+                    value={opt.label.toLowerCase()}
+                    onSelect={() => {
+                        onChange?.(opt.value)
+                        setOpen(false)
+                    }}
                 >
                   <CheckIcon
                     className={cn(
