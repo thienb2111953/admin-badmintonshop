@@ -114,6 +114,21 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
     }
   };
 
+  const handlePayment = () => {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = route('vnpay.payment');
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'total_vnpay';
+    input.value = '100000';
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+  };
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Quản lý Quyền" />
@@ -126,6 +141,13 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
           // onDeleteSelected={handleDeleteSelected}
         />
       </div>
+      <button
+        type="button"
+        onClick={handlePayment}
+        className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      >
+        Thanh toán
+      </button>
 
       <ModalDialog
         open={openDialog}

@@ -72,7 +72,6 @@ export default function DanhMucThuongHieuPage({
         title={selectedRow ? 'Sửa Danh mục thương hiệu' : 'Thêm Danh mục thương hiệu'}
         btnTitle={selectedRow ? 'Sửa' : 'Thêm'}
         form={form}
-        onSubmit={handleSubmit}
         danhMucOptions={danh_mucs}
         thuongHieuOptions={thuong_hieus}
       />
