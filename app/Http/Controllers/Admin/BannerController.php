@@ -45,6 +45,14 @@ class BannerController extends Controller
             $validated['img_url'] = $path;
         }
 
+        DB::table('banner')->insert([
+            'img_url' => $validated['img_url'],
+            'thu_tu' => $validated['thu_tu'] ?? 0,
+            'href' => $validated['href'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         return redirect()->back()->with('success', 'Thêm banner thành công');
     }
 
