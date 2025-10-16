@@ -33,12 +33,22 @@ class TrangChuController extends Controller
         $rackets = $query->where('danh_muc.slug', 'vot-cau-long')->limit(10)->get();
         $popular = $query->limit(10)->get();
         $shoes = $query->where('danh_muc.slug', 'giay-cau-long')->limit(10)->get();
+        $banner = DB::table('banner')
+            ->select([
+                'id_banner',
+                'img_url',
+                'thu_tu',
+                'href'
+            ])
+            ->orderBy('thu_tu', 'asc')
+            ->get();
 
         return Response::Success([
             'products' => $products,
             'rackets' => $rackets,
             'popular' => $popular,
             'shoes' => $shoes,
+            'banner' => $banner
         ]);
     }
 }

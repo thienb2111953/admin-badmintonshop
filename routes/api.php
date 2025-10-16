@@ -6,7 +6,7 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DanhMucController;
-use App\Http\Controllers\CheckOutController;
+use App\Http\Controllers\Api\SanPhamController;
 
 Route::get('/user', function (Request $request) {
   return $request->user();
@@ -20,6 +20,6 @@ Route::group(['prefix' => 'danh-muc'], function () {
 });
 
 Route::get('trang-chu', [TrangChuController::class, 'getViewHome'])->name('TrangChuController.getViewHome');
-
-Route::post('/vnpay-payment', [CheckOutController::class, 'vnpay_payment'])->name('vnpay.payment');
-Route::get('/vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('vnpay.return');
+Route::group(['prefix' => 'san-pham'], function () {
+   Route::get('/{param}', [SanPhamController::class, 'getProductsDetail'])->name('SanPhamController.getProductsDetail');
+});
