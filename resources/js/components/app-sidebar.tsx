@@ -23,6 +23,7 @@ import {
   kich_thuoc,
   banner,
   nhap_hang,
+  thanh_toan,
 } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -92,6 +93,10 @@ const mainNavItems: NavItem[] = [
   {
     title: 'Sản phẩm',
     href: san_pham_thuong_hieu(),
+  },
+  {
+    title: 'Thanh toán',
+    href: thanh_toan(),
   },
 ];
 

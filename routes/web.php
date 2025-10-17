@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ThuocTinhController;
 use App\Http\Controllers\Admin\ThuongHieuController;
 use App\Http\Controllers\NhapHangChiTietController;
 use App\Http\Controllers\NhapHangController;
+use App\Http\Controllers\ThanhToanController;
 
 Route::get('/', function () {
   return Inertia::render('welcome');
@@ -146,6 +147,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
       Route::delete('/', [NhapHangChiTietController::class, 'destroy'])->name('nhap_hang_chi_tiet.destroy');
     });
   });
+
+  Route::prefix('thanh-toan')->group(function () {
+    Route::get('', [ThanhToanController::class, 'index'])->name('thanh_toan');
+  });
+
 });
 
 require __DIR__ . '/settings.php';

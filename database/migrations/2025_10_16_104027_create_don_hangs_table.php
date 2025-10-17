@@ -14,7 +14,6 @@ return new class extends Migration {
       $table->id('id_don_hang');
       $table->string('ma_don_hang')->unique();
       $table->foreignId('id_nguoi_dung')->nullable()->constrained('nguoi_dung', 'id_nguoi_dung')->onDelete('set null');
-      $table->decimal('tong_tien');
       $table->string('trang_thai', 50);
       $table->timestamps();
     });

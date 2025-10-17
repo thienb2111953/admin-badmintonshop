@@ -165,4 +165,5 @@ export interface ThanhToan {
   so_tien: number;
   ten_ngan_hang: string;
   ngay_thanh_toan: date;
+  ma_don_hang: string;
 }
