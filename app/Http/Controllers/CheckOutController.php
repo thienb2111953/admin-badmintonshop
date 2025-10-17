@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CheckOutController extends Controller
 {
   public function vnpayReturn(Request $request)
   {
-    // Lấy toàn bộ dữ liệu trả về từ VNPAY
+    // Lấy tất cả tham số trả về từ VNPAY
     $vnpData = $request->all();
 
-    // Lấy các trường quan trọng
+    // Lấy từng giá trị cụ thể
     $amount = $vnpData['vnp_Amount'] ?? null;
     $bankCode = $vnpData['vnp_BankCode'] ?? null;
     $bankTranNo = $vnpData['vnp_BankTranNo'] ?? null;
@@ -25,32 +26,27 @@ class CheckOutController extends Controller
     $transactionStatus = $vnpData['vnp_TransactionStatus'] ?? null;
     $txnRef = $vnpData['vnp_TxnRef'] ?? null;
 
-    // 👉 Kiểm tra trạng thái thanh toán thành công
+    // ✅ Kiểm tra thanh toán thành công
     if ($responseCode == '00' && $transactionStatus == '00') {
-      // ✅ Thanh toán thành công
-      // Lưu vào DB, cập nhật trạng thái đơn hàng ở đây
+      // Ghi vào DB
+      DB::table('thanh_toan')->insert([
+        'id_don_hang' => 1,
+        'so_tien' => $amount,
+        'ma_giao_dich' => $txnRef,
+        'ten_ngan_hang' => $bankCode,
+        'ngay_thanh_toan' => $payDate,
+        'created_at' => now(),
+        'updated_at' => now(),
+      ]);
 
-      return view(
-        'checkout-success',
-        compact(
-          'amount',
-          'bankCode',
-          'bankTranNo',
-          'cardType',
-          'orderInfo',
-          'payDate',
-          'tmnCode',
-          'transactionNo',
-          'txnRef',
-        ),
-      );
+      return redirect()->route('quyen.index')->with('success', 'Thanh toán thành công');
     } else {
-      // ❌ Thanh toán thất bại
-      return view('checkout-fail', compact('responseCode', 'transactionStatus'));
+      return redirect()->route('quyen.index')->with('error', 'Thanh toán thất bại');
     }
   }
 
-  public function vnpay_payment()
+
+  public function vnpayPayment()
   {
     $data = request()->all();
     $code_cart = rand(00, 9999);

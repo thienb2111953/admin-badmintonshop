@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DanhMucController;
 use App\Http\Controllers\Api\SanPhamController;
+use App\Http\Controllers\CheckOutController;
 
 Route::get('/user', function (Request $request) {
   return $request->user();
@@ -21,5 +22,8 @@ Route::group(['prefix' => 'danh-muc'], function () {
 
 Route::get('trang-chu', [TrangChuController::class, 'getViewHome'])->name('TrangChuController.getViewHome');
 Route::group(['prefix' => 'san-pham'], function () {
-   Route::get('/{param}', [SanPhamController::class, 'getProductsDetail'])->name('SanPhamController.getProductsDetail');
+  Route::get('/{param}', [SanPhamController::class, 'getProductsDetail'])->name('SanPhamController.getProductsDetail');
 });
+
+
+Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');

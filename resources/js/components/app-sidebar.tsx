@@ -24,6 +24,7 @@ import {
   banner,
   nhap_hang,
   thanh_toan,
+  don_hang,
 } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -88,7 +89,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Đơn hàng',
-    // href: don_hang(),
+    href: don_hang(),
   },
   {
     title: 'Sản phẩm',

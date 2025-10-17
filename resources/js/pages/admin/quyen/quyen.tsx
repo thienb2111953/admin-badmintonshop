@@ -117,7 +117,16 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
   const handlePayment = () => {
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = route('vnpay.payment');
+    form.action = '/api/check-out'; // Gọi trực tiếp URL web
+
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (csrf) {
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = '_token';
+      csrfInput.value = csrf;
+      form.appendChild(csrfInput);
+    }
 
     const input = document.createElement('input');
     input.type = 'hidden';

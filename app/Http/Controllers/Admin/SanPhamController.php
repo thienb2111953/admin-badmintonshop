@@ -54,7 +54,9 @@ class SanPhamController extends Controller
 
     SanPham::create($validated);
 
-    return redirect()->route('san_pham')->with('success', 'Thêm thành công');
+     return redirect()
+      ->route('san_pham', ['id_danh_muc_thuong_hieu' => $id_danh_muc_thuong_hieu])
+      ->with('success', 'Cập nhật thành công');
   }
 
   public function updateView($id_danh_muc_thuong_hieu, $id_san_pham)

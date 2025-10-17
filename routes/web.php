@@ -16,9 +16,12 @@ use App\Http\Controllers\Admin\SanPhamController;
 use App\Http\Controllers\Admin\ThuocTinhChiTietController;
 use App\Http\Controllers\Admin\ThuocTinhController;
 use App\Http\Controllers\Admin\ThuongHieuController;
+use App\Http\Controllers\DonHangChiTietController;
+use App\Http\Controllers\DonHangController;
 use App\Http\Controllers\NhapHangChiTietController;
 use App\Http\Controllers\NhapHangController;
 use App\Http\Controllers\ThanhToanController;
+use App\Models\DonHangChiTiet;
 
 Route::get('/', function () {
   return Inertia::render('welcome');
@@ -152,6 +155,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('', [ThanhToanController::class, 'index'])->name('thanh_toan');
   });
 
+  Route::prefix('don-hang')->group(function () {
+    Route::get('', [DonHangController::class, 'index'])->name('don_hang');
+    // Route::post('', [DonHangController::class, 'store'])->name('don_hang.store');
+    // Route::put('', [DonHangController::class, 'update'])->name('don_hang.update');
+    // Route::delete('', [DonHangController::class, 'destroy'])->name('don_hang.destroy');
+    // Route::prefix('{id_nhap_hang}')->group(function () {
+      Route::get('{id_don_hang}', [DonHangChiTietController::class, 'index'])->name('don_hang_chi_tiet');
+      // Route::post('/', [DonHangChiTietController::class, 'store'])->name('nhap_hang_chi_tiet.store');
+      // Route::put('/', [DonHangChiTietController::class, 'update'])->name('nhap_hang_chi_tiet.update');
+      // Route::delete('/', [DonHangChiTietController::class, 'destroy'])->name('nhap_hang_chi_tiet.destroy');
+    // });
+  });
 });
 
 require __DIR__ . '/settings.php';

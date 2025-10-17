@@ -167,3 +167,19 @@ export interface ThanhToan {
   ngay_thanh_toan: date;
   ma_don_hang: string;
 }
+
+export interface DonHang {
+  id_don_hang: number;
+  ma_don_hang: string;
+  id_nguoi_dung: number;
+  trang_thai: string;
+  ngay_dat_hang: date;
+}
+
+export interface DonHangChiTiet {
+  id_don_hang_chi_tiet: number;
+  id_don_hang: number;
+  id_san_pham_chi_tiet: number;
+  so_luong: number | null;
+  don_gia: number;
+}

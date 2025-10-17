@@ -67,7 +67,8 @@ export default function EditPage({
   const { data, setData, errors, processing } = form;
 
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: `Quản lý Sản phẩm`, href: SanPhamRoute(id_danh_muc_thuong_hieu) },
+    { title: `Quản lý Sản phẩm`, href: SanPhamRoute(id_danh_muc_thuong_hieu),
+ },
     {
       title: data.id_san_pham ? 'Cập nhật' : 'Thêm',
       href: '#',
@@ -225,7 +226,7 @@ export default function EditPage({
             {errors.mo_ta && <p className="text-red-500">{errors.mo_ta}</p>}
           </div>
           <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => router.visit(route('san_pham'))}>
+            <Button type="button" variant="outline" onClick={() => router.visit(SanPhamRoute( id_danh_muc_thuong_hieu))}>
               Hủy
             </Button>
             <Button type="submit" disabled={processing}>
