@@ -19,7 +19,9 @@ export default function DonHangPage({ don_hangs }: { don_hangs: DonHang[] }) {
     id_don_hang: 0,
     ma_don_hang: '',
     id_nguoi_dung: 1,
-    trang_thai: '',
+    trang_thai_don_hang: '',
+    phuong_thuc_thanh_toan: '',
+    trang_thai_thanh_toan: '',
     ngay_dat_hang: new Date(),
   });
 
@@ -29,7 +31,9 @@ export default function DonHangPage({ don_hangs }: { don_hangs: DonHang[] }) {
       id_don_hang: 0,
       ma_don_hang: '',
       id_nguoi_dung: 1,
-      trang_thai: '',
+      trang_thai_don_hang: '',
+      phuong_thuc_thanh_toan: '',
+      trang_thai_thanh_toan: '',
       ngay_dat_hang: new Date(),
     });
     setOpenDialog(true);
@@ -41,7 +45,9 @@ export default function DonHangPage({ don_hangs }: { don_hangs: DonHang[] }) {
       id_don_hang: row.id_don_hang,
       ma_don_hang: row.ma_don_hang,
       id_nguoi_dung: row.id_nguoi_dung,
-      trang_thai: row.trang_thai,
+      trang_thai_don_hang: row.trang_thai_don_hang,
+      phuong_thuc_thanh_toan: row.phuong_thuc_thanh_toan,
+      trang_thai_thanh_toan: row.trang_thai_thanh_toan,
       ngay_dat_hang: row.ngay_dat_hang,
     });
     setOpenDialog(true);

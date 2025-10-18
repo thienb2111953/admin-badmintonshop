@@ -28,25 +28,40 @@ export function columns(onEdit: (row: DonHang) => void, onDelete: (row: DonHang)
       cell: ({ row }) => row.original.nguoi_dung_thong_tin || '',
     },
     {
-      accessorKey: 'trang_thai',
-      header: ({ column }) => <ColumnHeader column={column} title="Trạng thái" />,
+      accessorKey: 'phuong_thuc_thanh_toan',
+      header: ({ column }) => <ColumnHeader column={column} title="Phương thức thanh toán" />,
+    },
+    {
+      accessorKey: 'trang_thai_thanh_toan',
+      header: ({ column }) => <ColumnHeader column={column} title="Trạng thái thanh toán" />,
+    },
+    {
+      accessorKey: 'trang_thai_don_hang',
+      header: ({ column }) => <ColumnHeader column={column} title="Trạng thái đơn hàng" />,
       cell: ({ row }) => {
-        const status = row.original.trang_thai;
+        const status = row.original.trang_thai_don_hang;
         switch (status) {
-          case 'dang_xu_ly':
+          case 'Đang xử lý':
             return <span className="font-medium text-yellow-600">Đang xử lý</span>;
-          case 'dang_giao':
-            return <span className="font-medium text-blue-600">Đang giao</span>;
-          case 'da_nhan':
+          case 'Vận chuyển':
+            return <span className="font-medium text-blue-600">Vận chuyển</span>;
+          case 'Đã nhận':
             return <span className="font-medium text-green-600">Đã nhận</span>;
-          case 'huy':
+          case 'Hủy':
             return <span className="font-medium text-red-600">Hủy</span>;
           default:
             return <span>{status}</span>;
         }
       },
     },
-
+    {
+      accessorKey: 'tong_tien',
+      header: ({ column }) => <ColumnHeader column={column} title="Tổng tiền" />,
+      cell: ({ row }) => {
+        const value = Number(row.original.tong_tien || 0)
+        return value.toLocaleString('vi-VN') + ' ₫'
+      }
+    },
     {
       accessorKey: 'ngay_dat_hang',
       header: ({ column }) => <ColumnHeader column={column} title="Ngày đặt hàng" />,

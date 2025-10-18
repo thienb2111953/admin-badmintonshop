@@ -164,16 +164,19 @@ export interface ThanhToan {
   id_don_hang: number;
   so_tien: number;
   ten_ngan_hang: string;
-  ngay_thanh_toan: date;
+ngay_thanh_toan: date;
   ma_don_hang: string;
+  ma_giao_dich: string; // chỉ có nếu VNPAY
 }
 
 export interface DonHang {
   id_don_hang: number;
   ma_don_hang: string;
   id_nguoi_dung: number;
-  trang_thai: string;
+  trang_thai_thanh_toan: string; // CHUA_THANH_TOAN / DA_THANH_TOAN
   ngay_dat_hang: date;
+  phuong_thuc_thanh_toan: string; // COD hoặc VNPAY
+  trang_thai_don_hang: string; // CHO_XAC_NHAN / DANG_GIAO / ...DA_HOAN_THANH / DA_HUY
 }
 
 export interface DonHangChiTiet {

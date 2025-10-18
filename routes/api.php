@@ -26,4 +26,5 @@ Route::group(['prefix' => 'san-pham'], function () {
 });
 
 
+Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
 Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');

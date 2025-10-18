@@ -12,10 +12,13 @@ export function columns(): ColumnDef<ThanhToan>[] {
       header: ({ column }) => <ColumnHeader column={column} title="Mã đơn hàng" />,
       cell: ({ row }) => row.original.ma_don_hang,
     },
-    {
+   {
       accessorKey: 'so_tien',
       header: ({ column }) => <ColumnHeader column={column} title="Số tiền" />,
-      cell: ({ row }) => row.original.so_tien.toLocaleString('vi-VN') + ' ₫',
+      cell: ({ row }) => {
+        const value = Number(row.original.so_tien || 0)
+        return value.toLocaleString('vi-VN') + ' ₫'
+      }
     },
     {
       accessorKey: 'ten_ngan_hang',

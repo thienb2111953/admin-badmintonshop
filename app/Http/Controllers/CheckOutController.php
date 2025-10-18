@@ -7,12 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class CheckOutController extends Controller
 {
+
   public function vnpayReturn(Request $request)
   {
-    // Lấy tất cả tham số trả về từ VNPAY
     $vnpData = $request->all();
 
-    // Lấy từng giá trị cụ thể
     $amount = $vnpData['vnp_Amount'] ?? null;
     $bankCode = $vnpData['vnp_BankCode'] ?? null;
     $bankTranNo = $vnpData['vnp_BankTranNo'] ?? null;
@@ -24,36 +23,33 @@ class CheckOutController extends Controller
     $tmnCode = $vnpData['vnp_TmnCode'] ?? null;
     $transactionNo = $vnpData['vnp_TransactionNo'] ?? null;
     $transactionStatus = $vnpData['vnp_TransactionStatus'] ?? null;
-    $txnRef = $vnpData['vnp_TxnRef'] ?? null;
+    $id_don_hang = $vnpData['vnp_TxnRef'] ?? null;
 
-    // ✅ Kiểm tra thanh toán thành công
+    $ngayThanhToan = null;
+    if ($payDate) {
+      $ngayThanhToan = \Carbon\Carbon::createFromFormat('YmdHis', $payDate)->format('Y-m-d H:i:s');
+    }
+
     if ($responseCode == '00' && $transactionStatus == '00') {
-      // Ghi vào DB
-      DB::table('thanh_toan')->insert([
-        'id_don_hang' => 1,
-        'so_tien' => $amount,
-        'ma_giao_dich' => $txnRef,
-        'ten_ngan_hang' => $bankCode,
-        'ngay_thanh_toan' => $payDate,
-        'created_at' => now(),
-        'updated_at' => now(),
-      ]);
+      $this->xuLySauThanhToanThanhCong($id_don_hang, $amount, $bankCode, $cardType, $ngayThanhToan);
 
-      return redirect()->route('quyen.index')->with('success', 'Thanh toán thành công');
+      return redirect('http://127.0.0.1:8000')->with('success', 'Thanh toán thành công');
     } else {
-      return redirect()->route('quyen.index')->with('error', 'Thanh toán thất bại');
+      return redirect('http://127.0.0.1:8000/quyen')->with('error', 'Thanh toán thất bại');
     }
   }
 
-
-  public function vnpayPayment()
+  public function vnpayPayment(Request $request)
   {
     $data = request()->all();
+
+    $id_don_hang = $this->taoDonHang($request);
+
     $code_cart = rand(00, 9999);
 
     $vnp_TmnCode = 'JAAFIQBW'; //Mã định danh merchant kết nối (Terminal Id)
     $vnp_HashSecret = '9C5TPD7IEBP1LECOWONHTEGEMZ0PF8EI'; //Secret key
-    $vnp_Returnurl = 'http://127.0.0.1:8000/quyen';
+    $vnp_Returnurl = 'http://127.0.0.1:8000/api/vnpay-return';
     $vnp_apiUrl = 'http://sandbox.vnpayment.vn/merchant_webapi/merchant.html';
     $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
 
@@ -80,7 +76,8 @@ class CheckOutController extends Controller
       'vnp_OrderInfo' => 'Thanh toan GD: ' . $vnp_TxnRef,
       'vnp_OrderType' => 'other',
       'vnp_ReturnUrl' => $vnp_Returnurl,
-      'vnp_TxnRef' => $vnp_TxnRef,
+      // 'vnp_TxnRef' => $vnp_TxnRef,
+      'vnp_TxnRef' => $id_don_hang,
       //   'vnp_ExpireDate' => $expire,
     ];
 
@@ -111,5 +108,75 @@ class CheckOutController extends Controller
     die();
 
     // return view('checkout');
+  }
+
+
+  private function taoDonHang(Request $request)
+  {
+    $ma_don_hang = 'DH' . strtoupper(uniqid());
+
+    $id_don_hang = DB::table('don_hang')->insertGetId([
+      'id_nguoi_dung' => 1,
+      'ma_don_hang' => $ma_don_hang,
+      'trang_thai_don_hang' => 'Đang xử lý',
+      'trang_thai_thanh_toan' => 'Chưa thanh toán',
+      'phuong_thuc_thanh_toan' => 'VNPay',
+      'created_at' => now(),
+      'updated_at' => now(),
+    ]);
+
+    $gioHangChiTietIds = $request->input('id_gio_hang_chi_tiet');
+
+    foreach ($gioHangChiTietIds as $id) {
+      $gio_hang_chi_tiet = DB::table('gio_hang_chi_tiet')
+        ->where('id_gio_hang_chi_tiet', $id)
+        ->first();
+
+      if (!$gio_hang_chi_tiet) continue;
+
+      DB::table('don_hang_chi_tiet')->insert([
+        'id_don_hang' => $id_don_hang,
+        'id_gio_hang_chi_tiet' => $id,
+        'id_san_pham_chi_tiet' => $gio_hang_chi_tiet->id_san_pham_chi_tiet,
+        'so_luong' => $gio_hang_chi_tiet->so_luong,
+        'created_at' => now(),
+        'updated_at' => now(),
+      ]);
+    }
+
+    return $id_don_hang;
+  }
+
+  private function xuLySauThanhToanThanhCong(int $id_don_hang, float $amount, ?string $bankCode, ?string $cardType, ?string $ngayThanhToan)
+  {
+    // ✅ 1. Cập nhật trạng thái đơn hàng
+    DB::table('don_hang')->where('id_don_hang', $id_don_hang)->update([
+      'trang_thai_thanh_toan' => 'Đã thanh toán',
+      'trang_thai_don_hang' => 'Đang xử lý',
+      'updated_at' => now(),
+    ]);
+
+    // ✅ 2. Thêm bản ghi thanh toán
+    DB::table('thanh_toan')->insert([
+      'id_don_hang' => $id_don_hang,
+      'so_tien' => $amount,
+      'phuong_thuc' => $cardType,
+      'ten_ngan_hang' => $bankCode,
+      'ngay_thanh_toan' => $ngayThanhToan,
+      'created_at' => now(),
+      'updated_at' => now(),
+    ]);
+
+    // ✅ 3. Trừ tồn kho
+    $chiTietDonHangs = DB::table('don_hang_chi_tiet')
+      ->where('id_don_hang', $id_don_hang)
+      ->select('id_san_pham_chi_tiet', 'so_luong')
+      ->get();
+
+    foreach ($chiTietDonHangs as $item) {
+      DB::table('san_pham_chi_tiet')
+        ->where('id_san_pham_chi_tiet', $item->id_san_pham_chi_tiet)
+        ->decrement('so_luong_ton', $item->so_luong);
+    }
   }
 }

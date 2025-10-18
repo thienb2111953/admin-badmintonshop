@@ -117,7 +117,7 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
   const handlePayment = () => {
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '/api/check-out'; // Gọi trực tiếp URL web
+    form.action = '/api/check-out';
 
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     if (csrf) {
@@ -128,12 +128,23 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
       form.appendChild(csrfInput);
     }
 
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'total_vnpay';
-    input.value = '100000';
+    // Tổng tiền
+    const inputTotal = document.createElement('input');
+    inputTotal.type = 'hidden';
+    inputTotal.name = 'total_vnpay';
+    inputTotal.value = '100000';
+    form.appendChild(inputTotal);
 
-    form.appendChild(input);
+    // Mảng ID giỏ hàng chi tiết
+    const ids = [1, 2, 3]; // mảng này bạn có thể lấy từ state / table
+    ids.forEach((id) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'id_gio_hang_chi_tiet[]';
+      input.value = id.toString();
+      form.appendChild(input);
+    });
+
     document.body.appendChild(form);
     form.submit();
   };
