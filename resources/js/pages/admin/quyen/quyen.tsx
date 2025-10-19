@@ -8,6 +8,7 @@ import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
 import { dashboard, quyen, thuong_hieu } from '@/routes';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Quản lý á', href: thuong_hieu() },
@@ -114,40 +115,33 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
     }
   };
 
-  const handlePayment = () => {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/api/check-out';
+ const handlePayment = async () => {
+  const csrf = document
+    .querySelector('meta[name="csrf-token"]')
+    ?.getAttribute('content');
 
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    if (csrf) {
-      const csrfInput = document.createElement('input');
-      csrfInput.type = 'hidden';
-      csrfInput.name = '_token';
-      csrfInput.value = csrf;
-      form.appendChild(csrfInput);
-    }
+  const payload = {
+    id_gio_hang_chi_tiet: [1],
+  };
 
-    // Tổng tiền
-    const inputTotal = document.createElement('input');
-    inputTotal.type = 'hidden';
-    inputTotal.name = 'total_vnpay';
-    inputTotal.value = '100000';
-    form.appendChild(inputTotal);
-
-    // Mảng ID giỏ hàng chi tiết
-    const ids = [1, 2, 3]; // mảng này bạn có thể lấy từ state / table
-    ids.forEach((id) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'id_gio_hang_chi_tiet[]';
-      input.value = id.toString();
-      form.appendChild(input);
+  try {
+    const res = await axios.post('/api/check-out', payload, {
+      headers: {
+        'X-CSRF-TOKEN': csrf || '',
+      },
     });
 
-    document.body.appendChild(form);
-    form.submit();
-  };
+    // ✅ Backend trả về URL VNPAY
+    if (res.data?.vnpay_url) {
+      window.location.href = res.data.vnpay_url; // 👉 redirect browser sang VNPAY
+    } else {
+      console.error('Không có URL VNPAY trả về');
+    }
+  } catch (err) {
+    console.error('Thanh toán thất bại:', err);
+  }
+};
+
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
