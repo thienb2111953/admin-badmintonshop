@@ -157,6 +157,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
   Route::prefix('don-hang')->group(function () {
     Route::get('', [DonHangController::class, 'index'])->name('don_hang');
+    Route::patch('', [DonHangController::class, 'updateTrangThai'])->name('don_hang.updateTrangThai');
     // Route::post('', [DonHangController::class, 'store'])->name('don_hang.store');
     // Route::put('', [DonHangController::class, 'update'])->name('don_hang.update');
     // Route::delete('', [DonHangController::class, 'destroy'])->name('don_hang.destroy');

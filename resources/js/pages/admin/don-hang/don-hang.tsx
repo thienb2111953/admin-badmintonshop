@@ -72,7 +72,7 @@ export default function DonHangPage({ don_hangs }: { don_hangs: DonHang[] }) {
 
   const handleSubmit = () => {
     if (selectedRow) {
-      form.put(route('don_hang.update'), {
+      form.patch(route('don_hang.updateTrangThai'), {
         onSuccess: () => {
           toast.success('Cập nhật thành công!');
           setOpenDialog(false);
@@ -95,7 +95,7 @@ export default function DonHangPage({ don_hangs }: { don_hangs: DonHang[] }) {
       <Head title="Quản lý Đơn hàng" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={don_hangs} onAdd={handleAdd} />
+        <DataTable columns={columns(handleEdit, handleDelete)} data={don_hangs} onAdd={handleAdd} showAddButton={false}/>
       </div>
 
       <ModalDialog

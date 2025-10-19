@@ -18,8 +18,6 @@ class DonHangChiTietController extends Controller
         ->select(
             'don_hang_chi_tiet.*',
             'don_hang.ma_don_hang',
-            'don_hang.trang_thai',
-            'don_hang.ngay_dat_hang',
             'san_pham_chi_tiet.ten_san_pham_chi_tiet'
         )
         ->where('don_hang.id_don_hang', $id_don_hang) 
