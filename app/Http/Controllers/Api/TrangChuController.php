@@ -21,7 +21,7 @@ class TrangChuController extends Controller
                 'san_pham.id_san_pham',
                 'san_pham.ma_san_pham',
                 'san_pham.ten_san_pham',
-                'san_pham_chi_tiet.slug as slug_san_pham',
+                'san_pham.slug as slug_san_pham',
                 'san_pham.gia_niem_yet',
                 'san_pham.gia_ban',
                 'anh_san_pham.anh_url'
