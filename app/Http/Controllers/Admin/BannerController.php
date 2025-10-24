@@ -14,7 +14,7 @@ class BannerController extends Controller
 {
     public function index()
     {
-        $banner = DB::table('banner')->get();
+        $banner = DB::table('banner')->orderBy('thu_tu')->get();
         return Inertia::render('admin/banner/banner', [
             'banners' => $banner,
         ]);

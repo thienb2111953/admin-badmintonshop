@@ -25,6 +25,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   onAdd: () => void;
   showAddButton?: boolean
+  disableSearchBox?: boolean
   onDeleteSelected?: (selectedRows: TData[]) => void; // truyền cả row chứ không chỉ id
   tableInstanceRef?: (table: ReturnType<typeof useReactTable<TData>>) => void;
 }
@@ -34,6 +35,7 @@ export function DataTable<TData, TValue>({
   data,
   onAdd,
   showAddButton = true,
+  disableSearchBox = false,
   onDeleteSelected,
   tableInstanceRef,
 }: DataTableProps<TData, TValue>) {
@@ -81,7 +83,7 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center justify-between py-4">
         <div className="item-left">
-          {showAddButton && (   
+          {showAddButton && (
             <Button onClick={onAdd}>
               <Plus className="h-4 w-4" />
               <Label>Thêm</Label>
@@ -90,13 +92,16 @@ export function DataTable<TData, TValue>({
         </div>
         <div className="item-right">
           {/* <DataTableViewOptions table={table} /> */}
+          {
+            !disableSearchBox && (
+              <Input
+              placeholder="Tìm kiếm ..."
+              value={globalFilter ?? ''}
+              onChange={(event) => setGlobalFilter(event.target.value)}
+              className="float-right w-100"
+            />)
+          }
 
-          <Input
-            placeholder="Tìm kiếm ..."
-            value={globalFilter ?? ''}
-            onChange={(event) => setGlobalFilter(event.target.value)}
-            className="float-right w-100"
-          />
         </div>
       </div>
 

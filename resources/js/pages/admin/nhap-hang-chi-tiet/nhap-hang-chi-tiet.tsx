@@ -18,6 +18,7 @@ export default function NhapHangChiTietPage({
   nhap_hang_chi_tiets: NhapHangChiTiet[];
   san_pham_chi_tiets: SanPhamChiTiet[];
 }) {
+  console.log (san_pham_chi_tiets)
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<NhapHangChiTiet | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);

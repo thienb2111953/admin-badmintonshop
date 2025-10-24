@@ -17,9 +17,10 @@ class AnhSanPhamController extends Controller
     {
         $validated = $request->validate([
             'ten_mau'              => 'nullable|string',
-            'files_anh_san_pham'   => 'nullable|array',
+            'files_anh_san_pham'   => 'required|array',
             'files_anh_san_pham.*' => 'mimes:jpg,jpeg,png,webp|max:2048',
         ], [
+            'files_anh_san_pham.required' => 'chưa thêm thứ tự hình ảnh',
             'files_anh_san_pham.*.mimes' => 'Hình ảnh phải có định dạng: jpg, jpeg, png',
             'files_anh_san_pham.*.max'   => 'Kích thước ảnh tối đa 2MB.',
         ]);
@@ -52,11 +53,14 @@ class AnhSanPhamController extends Controller
             'ten_mau'                     => 'nullable|string',
             'files_anh_san_pham_new'      => 'nullable|array',
             'files_anh_san_pham_new.*.file' => 'mimes:jpg,jpeg,png,webp|max:2048',
-            'files_anh_san_pham_new.*.thu_tu' => 'nullable|integer',
+            'files_anh_san_pham_new.*.thu_tu' => 'required|integer',
             'path_anh_san_pham_old'       => 'nullable|array',
+        ],
+        [
+            'files_anh_san_pham_new.*.thu_tu.required' => 'Chưa thêm thứ tự ảnh',
         ]);
 
-        // lặp qua tất cả ảnh cũ gửi qua -> nếu ds ảnh cũ từ DB ko tồn tại trong ds ảnh cũ gửi qua thì xóa, nếu tồn tại thì cập nhật 
+        // lặp qua tất cả ảnh cũ gửi qua -> nếu ds ảnh cũ từ DB ko tồn tại trong ds ảnh cũ gửi qua thì xóa, nếu tồn tại thì cập nhật
         // Lấy danh sách ảnh cũ trong DB
         $ds_anh_cu = AnhSanPham::where('id_san_pham_chi_tiet', $request->id_san_pham_chi_tiet)->get();
 

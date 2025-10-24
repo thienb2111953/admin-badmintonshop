@@ -102,7 +102,7 @@ export default function DanhMucPage({ danh_mucs, thuoc_tinhs }: { danh_mucs: Dan
         onSubmit={handleSubmit}
         form={form}
         options={thuocTinhOptions}
-        title={selectedRow ? 'Cập nhật người dùng' : 'Thêm người dùng'}
+        title={selectedRow ? 'Cập nhật danh mục' : 'Thêm danh mục'}
         btnTitle={selectedRow ? 'Cập nhật' : 'Thêm'}
       />
 

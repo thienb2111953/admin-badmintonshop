@@ -99,7 +99,7 @@ export default function BannerPage({ banners }: { banners: Banner[] }) {
       <Head title="Quản lý Thuộc tính" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={banners} onAdd={handleAdd} />
+        <DataTable columns={columns(handleEdit, handleDelete)} disableSearchBox={true} data={banners} onAdd={handleAdd} />
       </div>
 
       <ModalDialog

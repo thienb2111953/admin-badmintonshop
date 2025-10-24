@@ -96,6 +96,7 @@ export default function AnhSanPhamPage({
     <>
       <DataTable
         columns={Columns(handleEdit, handleDelete)}
+        showAddButton={false}
         data={anh_san_phams}
         onAdd={handleAdd}
         addVisibility={false}

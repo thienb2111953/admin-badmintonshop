@@ -28,7 +28,7 @@ import {
 } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, User, UserLock, Settings, ChevronDown, PictureInPicture2 } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, User, UserLock, Settings, Package, ChevronDown, PictureInPicture2 } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -66,12 +66,22 @@ const mainNavItems: NavItem[] = [
         href: thuong_hieu(),
       },
       {
+        title: 'Thuộc tính',
+        href: thuoc_tinh(),
+      },
+      {
         title: 'Danh mục',
         href: danh_muc(),
       },
+    ],
+  },
+  {
+    title: 'Quản lý sản phẩm',
+    icon : Package,
+    items: [
       {
-        title: 'Thuộc tính',
-        href: thuoc_tinh(),
+        title: 'Sản phẩm',
+        href: san_pham_thuong_hieu()
       },
       {
         title: 'Màu',
@@ -81,7 +91,7 @@ const mainNavItems: NavItem[] = [
         title: 'Kích thước',
         href: kich_thuoc(),
       },
-    ],
+    ]
   },
   {
     title: 'Nhập hàng',
@@ -90,10 +100,6 @@ const mainNavItems: NavItem[] = [
   {
     title: 'Đơn hàng',
     href: don_hang(),
-  },
-  {
-    title: 'Sản phẩm',
-    href: san_pham_thuong_hieu(),
   },
   {
     title: 'Thanh toán',
