@@ -66,7 +66,14 @@ class SanPhamChiTietController extends Controller
   {
     $validated = $request->validate(
       [
-        'id_mau' => 'required|integer',
+          'id_mau' => [
+              'required',
+              'integer',
+              Rule::unique('san_pham_chi_tiet')->where(function ($query) use ($request, $id_san_pham) {
+                  return $query->where('id_kich_thuoc', $request->input('id_kich_thuoc'))
+                      ->where('id_san_pham', $id_san_pham);
+              }),
+          ],
         'id_kich_thuoc' => 'required|integer',
           'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
           'gia_ban' => 'nullable|integer|min:0|max:999999999999',
@@ -74,6 +81,7 @@ class SanPhamChiTietController extends Controller
       [
         'id_kich_thuoc.required' => 'Không để trống kích thước',
         'id_mau.required' => 'Không để trống màu',
+          'id_mau.unique' => 'Sự kết hợp của Màu sắc và Kích thước này đã tồn tại cho sản phẩm.',
           'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
           'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
       ],

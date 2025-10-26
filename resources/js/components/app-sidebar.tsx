@@ -64,11 +64,6 @@ const mainNavItems: NavItem[] = [
         icon: User
     },
     {
-        title: 'Quyền',
-        href: quyen(),
-        icon: UserLock
-    },
-    {
         title: 'Cài đặt',
         href: cai_dat(),
         icon: Settings

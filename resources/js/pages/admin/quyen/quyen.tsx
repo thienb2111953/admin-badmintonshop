@@ -115,32 +115,7 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
     }
   };
 
- const handlePayment = async () => {
-  const csrf = document
-    .querySelector('meta[name="csrf-token"]')
-    ?.getAttribute('content');
 
-  const payload = {
-    id_gio_hang_chi_tiet: [1],
-  };
-
-  try {
-    const res = await axios.post('/api/check-out', payload, {
-      headers: {
-        'X-CSRF-TOKEN': csrf || '',
-      },
-    });
-
-    // ✅ Backend trả về URL VNPAY
-    if (res.data?.vnpay_url) {
-      window.location.href = res.data.vnpay_url; // 👉 redirect browser sang VNPAY
-    } else {
-      console.error('Không có URL VNPAY trả về');
-    }
-  } catch (err) {
-    console.error('Thanh toán thất bại:', err);
-  }
-};
 
 
   return (
@@ -155,13 +130,7 @@ export default function QuyenPage({ quyen }: { quyen: Quyen[] }) {
           // onDeleteSelected={handleDeleteSelected}
         />
       </div>
-      <button
-        type="button"
-        onClick={handlePayment}
-        className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-      >
-        Thanh toán
-      </button>
+
 
       <ModalDialog
         open={openDialog}
