@@ -8,83 +8,71 @@ use App\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'email' => 'required|string|email|max:255',
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+            ],
         ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'sdt' => $request->sdt,
-            'ngay_sinh' => $request->ngay_sinh
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Đăng ký thành công!',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user,
-        ], 201);
+        return Response::Success($user, 'Đăng ký thành công');
     }
 
     public function login(Request $request)
     {
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Thông tin đăng nhập không hợp lệ'], 401);
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+
+        if (!$token = Auth::guard('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $user = User::where('email', $request['email'])->firstOrFail();
+        return $this->respondWithToken($token);
+    }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+    public function refresh()
+    {
+        return $this->respondWithToken(Auth::guard('api')->refresh());
+    }
 
-        $cookieExpirationInMinutes = 60 * 24 * 7;
+    protected function respondWithToken($token)
+    {
+        $expiresInMinutes = Auth::guard('api')->factory()->getTTL();
 
         return response()->json([
-            'message' => 'Đăng nhập thành công!',
-            'user' => $user,
-        ])->cookie(
-            'authToken',
-            $token,
-            $cookieExpirationInMinutes,
-            '/',
-            null,
-            config('session.secure'),
-            true,
-            false,
-            'Lax'
-        );
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => $expiresInMinutes * 60,
+            'user' => Auth::guard('api')->user(),
+        ]);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Đã đăng xuất thành công']);
+        Auth::guard('api')->logout();
+        return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function user(Request $request)
+    public function me(Request $request)
     {
-        $user = $request->user();
-
-        if (!$user) {
-            return Response::Error('Người dùng chưa đăng nhập', 'Lỗi');
-        }
-
-        return Response::Success($user, 'Lấy thông tin người dùng thành công');
+        return response()->json(Auth::guard('api')->user());
     }
 }
