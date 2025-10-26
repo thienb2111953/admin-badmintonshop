@@ -16,8 +16,6 @@ return new class extends Migration {
       $table->string('ten_san_pham');
       $table->string('slug');
       $table->text('mo_ta')->nullable();
-      $table->decimal('gia_niem_yet', 12, 0)->nullable();
-      $table->decimal('gia_ban', 12, 0)->nullable();
       $table->string('trang_thai')->default('Đang sản xuất');
       $table
         ->foreignId('id_danh_muc_thuong_hieu')
