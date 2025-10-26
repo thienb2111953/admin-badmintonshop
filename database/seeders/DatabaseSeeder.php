@@ -23,10 +23,5 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@gmail.com',
         ]);
 
-        ThuocTinh::factory(5)->create()->each(function ($thuocTinh) {
-            $thuocTinh->chiTiets()->createMany(
-                ThuocTinhChiTiet::factory(3)->make()->toArray()
-            );
-        });
     }
 }
