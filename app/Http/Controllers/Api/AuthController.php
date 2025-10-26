@@ -44,47 +44,45 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Thông tin đăng nhập không hợp lệ'], 401);
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+
+        if (!$token = Auth::guard('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $user = User::where('email', $request['email'])->firstOrFail();
+        return $this->respondWithToken($token);
+    }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+    public function refresh()
+    {
+        return $this->respondWithToken(Auth::guard('api')->refresh());
+    }
 
-        $cookieExpirationInMinutes = 60 * 24 * 7;
+    protected function respondWithToken($token)
+    {
+        $expiresInMinutes = Auth::guard('api')->factory()->getTTL();
 
         return response()->json([
-            'message' => 'Đăng nhập thành công!',
-            'user' => $user,
-        ])->cookie(
-            'authToken',
-            $token,
-            $cookieExpirationInMinutes,
-            '/',
-            null,
-            config('session.secure'),
-            true,
-            false,
-            'Lax'
-        );
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => $expiresInMinutes * 60,
+            'user' => Auth::guard('api')->user(),
+        ]);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Đã đăng xuất thành công']);
+        Auth::guard('api')->logout();
+        return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function user(Request $request)
+    public function me(Request $request)
     {
-        $user = $request->user();
-
-        if (!$user) {
-            return Response::Error('Người dùng chưa đăng nhập', 'Lỗi');
-        }
-
-        return Response::Success($user, 'Lấy thông tin người dùng thành công');
+        return response()->json(Auth::guard('api')->user());
     }
 }

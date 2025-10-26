@@ -8,15 +8,42 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, JWTSubject
 {
     protected $table = 'nguoi_dung';
     protected $primaryKey = 'id_nguoi_dung';
     public $incrementing = true;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable;
+
+    /**
+     * Lấy định danh (identifier) sẽ được lưu trong 'sub' claim của JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Trả về một mảng key/value chứa bất kỳ custom claims nào
+     * bạn muốn thêm vào JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [
+            'name'=> $this->name,
+            'email'=> $this->email,
+            'sdt'=> $this->sdt,
+            'ngay_sinh'=>$this->ngay_sinh
+        ];
+    }
 
     /**
      * The attributes that are mass assignable.
