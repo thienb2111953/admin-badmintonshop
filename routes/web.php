@@ -3,25 +3,25 @@
 use App\Http\Controllers\Admin\AnhSanPhamController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CaiDatController;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DanhMucController;
 use App\Http\Controllers\Admin\DanhMucThuongHieuController;
+use App\Http\Controllers\Admin\DonHangChiTietController;
+use App\Http\Controllers\Admin\DonHangController;
 use App\Http\Controllers\Admin\KichThuocController;
 use App\Http\Controllers\Admin\MauController;
-use App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Admin\NguoiDungController;
+use App\Http\Controllers\Admin\NhapHangChiTietController;
+use App\Http\Controllers\Admin\NhapHangController;
+use App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Admin\SanPhamChiTietController;
 use App\Http\Controllers\Admin\SanPhamController;
+use App\Http\Controllers\Admin\ThanhToanController;
+use App\Http\Controllers\Admin\ThongKeController;
 use App\Http\Controllers\Admin\ThuocTinhChiTietController;
 use App\Http\Controllers\Admin\ThuocTinhController;
 use App\Http\Controllers\Admin\ThuongHieuController;
-use App\Http\Controllers\DonHangChiTietController;
-use App\Http\Controllers\DonHangController;
-use App\Http\Controllers\NhapHangChiTietController;
-use App\Http\Controllers\NhapHangController;
-use App\Http\Controllers\ThanhToanController;
-use App\Models\DonHangChiTiet;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', function () {
   return Inertia::render('welcome');
@@ -168,7 +168,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
       // Route::delete('/', [DonHangChiTietController::class, 'destroy'])->name('nhap_hang_chi_tiet.destroy');
     // });
   });
+
+    Route::prefix('thong-ke')->group(function () {
+        Route::get('', [ThongKeController::class, 'index'])->name('thong_ke');
+        Route::get('/doanh-thu', [ThongKeController::class, 'doanhThu'])->name('thong_ke.doanh_thu');
+        Route::get('/san-pham', [ThongKeController::class, 'thongKeSanPham'])->name('thong_ke.san_pham');
+    });
+
+
 });
+
+
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

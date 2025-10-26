@@ -68,10 +68,14 @@ class SanPhamChiTietController extends Controller
       [
         'id_mau' => 'required|integer',
         'id_kich_thuoc' => 'required|integer',
+          'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
+          'gia_ban' => 'nullable|integer|min:0|max:999999999999',
       ],
       [
         'id_kich_thuoc.required' => 'Không để trống kích thước',
         'id_mau.required' => 'Không để trống màu',
+          'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
+          'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
       ],
     );
 
@@ -86,6 +90,8 @@ class SanPhamChiTietController extends Controller
       'id_mau' => $validated['id_mau'],
       'id_kich_thuoc' => $validated['id_kich_thuoc'],
       'ten_san_pham_chi_tiet' => $tenChiTiet,
+        'gia_niem_yet' => $validated['gia_niem_yet'],
+        'gia_ban' => $validated['gia_ban'],
     ]);
 
     return redirect()->back()->with('success', 'Thêm sản phẩm chi tiết thành công');
@@ -98,11 +104,15 @@ class SanPhamChiTietController extends Controller
         'id_san_pham_chi_tiet' => 'required|integer',
         'id_mau' => 'required|integer',
         'id_kich_thuoc' => 'required|integer',
+          'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
+          'gia_ban' => 'nullable|integer|min:0|max:999999999999',
       ],
       [
         'id_san_pham_chi_tiet.required' => 'Không tìm thấy sản phẩm chi tiết',
         'id_kich_thuoc.required' => 'Không để trống kích thước',
         'id_mau.required' => 'Không để trống màu',
+          'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
+          'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
       ],
     );
 
@@ -119,6 +129,8 @@ class SanPhamChiTietController extends Controller
       'id_mau' => $validated['id_mau'],
       'id_kich_thuoc' => $validated['id_kich_thuoc'],
       'ten_san_pham_chi_tiet' => $tenChiTiet,
+        'gia_niem_yet' => $validated['gia_niem_yet'],
+        'gia_ban' => $validated['gia_ban'],
     ]);
 
     return redirect()->back()->with('success', 'Cập nhật chi tiết sản phẩm thành công');

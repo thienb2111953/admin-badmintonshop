@@ -69,17 +69,15 @@ class CheckOutController extends Controller
 
       if (!$gio_hang) continue;
 
-      $sanPham = DB::table('san_pham')
-        ->join('san_pham_chi_tiet', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
+      $sanPhamChiTiet = DB::table('san_pham_chi_tiet')
         ->where('san_pham_chi_tiet.id_san_pham_chi_tiet', $gio_hang->id_san_pham_chi_tiet)
-        ->select('san_pham.gia_ban')
         ->first();
 
       DB::table('don_hang_chi_tiet')->insert([
         'id_don_hang' => $id_don_hang,
         'id_san_pham_chi_tiet' => $gio_hang->id_san_pham_chi_tiet,
         'so_luong' => $gio_hang->so_luong,
-        'don_gia' => $sanPham->gia_ban,
+        'don_gia' => $sanPhamChiTiet->gia_ban,
         'created_at' => now(),
         'updated_at' => now(),
       ]);

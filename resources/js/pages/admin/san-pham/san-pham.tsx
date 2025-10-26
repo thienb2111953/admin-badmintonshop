@@ -28,8 +28,6 @@ export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPh
     ten_san_pham: '',
     slug: '',
     mo_ta: '',
-    gia_niem_yet: null,
-    gia_ban: null,
     trang_thai: '',
   });
 

@@ -107,8 +107,7 @@ export interface SanPham {
   ten_san_pham: string;
   mo_ta: string;
   slug: string;
-  gia_niem_yet: number | null;
-  gia_ban: number | null;
+
   trang_thai: string;
 }
 
@@ -120,6 +119,8 @@ export interface SanPhamChiTiet {
   id_kich_thuoc: number;
   mau?: Mau;
   kich_thuoc?: KichThuoc;
+    gia_niem_yet: number | null;
+    gia_ban: number | null;
   so_luong_ton: number;
 }
 

@@ -14,7 +14,7 @@ class SanPhamChiTiet extends Model
   protected $primaryKey = 'id_san_pham_chi_tiet';
   public $incrementing = true;
 
-  protected $fillable = ['id_san_pham', 'id_mau', 'id_kich_thuoc', 'ten_san_pham_chi_tiet', 'so_luong_ton'];
+  protected $fillable = ['id_san_pham', 'id_mau', 'id_kich_thuoc', 'ten_san_pham_chi_tiet', 'so_luong_ton','gia_niem_yet', 'gia_ban'];
 
   public function anhSanPham(): HasMany
   {

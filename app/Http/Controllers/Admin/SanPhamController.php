@@ -37,16 +37,14 @@ class SanPhamController extends Controller
         'ten_san_pham' => 'required|string|max:255',
         'slug' => 'required|string|max:255',
         'mo_ta' => 'nullable|string',
-        'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
-        'gia_ban' => 'nullable|integer|min:0|max:999999999999',
+
         'trang_thai' => 'nullable|string',
       ],
       [
         'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
         'ten_san_pham.required' => 'Tên sản phẩm không được để trống',
         'slug.required' => 'Slug không được để trống',
-        'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
-        'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
+
       ],
     );
 
@@ -77,16 +75,14 @@ class SanPhamController extends Controller
         'ten_san_pham' => 'required|string|max:255',
         'slug' => 'required|string|max:255',
         'mo_ta' => 'nullable|string',
-        'gia_niem_yet' => 'nullable|integer|min:0|max:999999999999',
-        'gia_ban' => 'nullable|integer|min:0|max:999999999999',
+
         'trang_thai' => 'nullable|string',
       ],
       [
         'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
         'ten_san_pham.required' => 'Tên sản phẩm không được để trống',
         'slug.required' => 'Slug không được để trống',
-        'gia_niem_yet.min' => 'Giá niêm yết không nhỏ hơn 0',
-        'gia_ban.min' => 'Giá bán không nhỏ hơn 0',
+
       ],
     );
 

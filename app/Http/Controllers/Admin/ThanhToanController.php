@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\ThanhToan;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class ThanhToanController extends Controller
 {

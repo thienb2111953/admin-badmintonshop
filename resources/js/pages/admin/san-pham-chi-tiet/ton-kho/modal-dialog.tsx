@@ -10,6 +10,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, ChevronDownIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Combobox } from '@/components/ui/combobox';
+import { formatNumber } from '@/utils/helper';
+
+
 
 interface Props {
   open: boolean;
@@ -70,46 +73,35 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, ma
               />
               {errors.id_kich_thuoc && <p className="text-red-500">{errors.id_kich_thuoc}</p>}
             </div>
-            {/* <div className="grid gap-3">
-              <Label htmlFor="so_luong_nhap">Số lượng nhập</Label>
-              <Input
-                id="so_luong_nhap"
-                type="number"
-                placeholder="Số lượng nhập"
-                value={data.so_luong_nhap ?? ''}
-                onChange={(e) => setData('so_luong_nhap', Number(e.target.value))}
-              />
-              {errors.so_luong_nhap && <p className="text-red-500">{errors.so_luong_nhap}</p>}
-            </div> */}
-
-            {/* <div className="grid gap-3">
-              <Label htmlFor="ngay_nhap" className="px-1">
-                Ngày nhập
-              </Label>
-              <Popover open={openDate} onOpenChange={setOpenDate}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" id="ngay_nhap" className="w-60 justify-between font-normal">
-                    {data.ngay_nhap ? format(new Date(data.ngay_nhap), 'dd/MM/yyyy') : 'Chọn ngày'}
-                    <CalendarIcon className="ml-2 h-4 w-4 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto overflow-hidden p-0" align="start">
-                  <Calendar
-                    className="w-[250px]"
-                    mode="single"
-                    selected={date}
-                    captionLayout="dropdown"
-                    onSelect={(selectedDate) => {
-                      if (!selectedDate) return;
-                      setDate(selectedDate);
-                      setData('ngay_nhap', format(selectedDate, 'yyyy-MM-dd'));
-                      setOpenDate(false);
-                    }}
+              <div className="grid gap-3">
+                  <Label htmlFor="gia_niem_yet">Giá niêm yết</Label>
+                  <Input
+                      id="gia_niem_yet"
+                      placeholder="Giá niêm yết"
+                      type="text"
+                      value={formatNumber(data.gia_niem_yet)}
+                      onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, '');
+                          setData('gia_niem_yet', raw ? Number(raw) : null);
+                      }}
                   />
-                </PopoverContent>
-              </Popover>
-              {errors.ngay_nhap && <p className="text-red-500">{errors.ngay_nhap}</p>}
-            </div> */}
+                  {errors.gia_niem_yet && <p className="text-red-500">{errors.gia_niem_yet}</p>}
+              </div>
+
+              <div className="grid gap-3">
+                  <Label htmlFor="gia_ban">Giá bán</Label>
+                  <Input
+                      id="gia_ban"
+                      placeholder="Giá bán"
+                      type="text"
+                      value={formatNumber(data.gia_ban)}
+                      onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, '');
+                          setData('gia_ban', raw ? Number(raw) : null);
+                      }}
+                  />
+                  {errors.gia_ban && <p className="text-red-500">{errors.gia_ban}</p>}
+              </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-4">

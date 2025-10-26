@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\NhapHang;
 use App\Models\NhapHangChiTiet;
-use App\Models\SanPham;
 use App\Models\SanPhamChiTiet;
 use Illuminate\Http\Request;
 use Inertia\Inertia;

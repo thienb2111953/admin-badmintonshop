@@ -75,17 +75,6 @@ export default function EditPage({
     },
   ];
 
-  //   useEffect(() => {
-  //     if (data.ten_san_pham) {
-  //       setData('slug', slugify(data.ten_san_pham));
-  //     }
-  //   }, [data.ten_san_pham]);
-
-  function formatNumber(value: number | null): string {
-    if (value == null || isNaN(value)) return '';
-    return value.toLocaleString('vi-VN'); // ví dụ: 1000000 -> "1.000.000"
-  }
-
   useEffect(() => {
     if (san_pham?.mo_ta) {
       try {
@@ -181,35 +170,7 @@ export default function EditPage({
               {errors.trang_thai && <p className="text-red-500">{errors.trang_thai}</p>}
             </div>
 
-            <div className="grid gap-3">
-              <Label htmlFor="gia_niem_yet">Giá niêm yết</Label>
-              <Input
-                id="gia_niem_yet"
-                placeholder="Giá niêm yết"
-                type="text"
-                value={formatNumber(data.gia_niem_yet)}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/\D/g, '');
-                  setData('gia_niem_yet', raw ? Number(raw) : null);
-                }}
-              />
-              {errors.gia_niem_yet && <p className="text-red-500">{errors.gia_niem_yet}</p>}
-            </div>
 
-            <div className="grid gap-3">
-              <Label htmlFor="gia_ban">Giá bán</Label>
-              <Input
-                id="gia_ban"
-                placeholder="Giá bán"
-                type="text"
-                value={formatNumber(data.gia_ban)}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/\D/g, '');
-                  setData('gia_ban', raw ? Number(raw) : null);
-                }}
-              />
-              {errors.gia_ban && <p className="text-red-500">{errors.gia_ban}</p>}
-            </div>
           </div>
           <div className="grid gap-3">
             <Label htmlFor="mo_ta">Mô tả</Label>

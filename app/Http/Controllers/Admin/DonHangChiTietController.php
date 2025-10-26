@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -20,7 +20,7 @@ class DonHangChiTietController extends Controller
             'don_hang.ma_don_hang',
             'san_pham_chi_tiet.ten_san_pham_chi_tiet'
         )
-        ->where('don_hang.id_don_hang', $id_don_hang) 
+        ->where('don_hang.id_don_hang', $id_don_hang)
         ->get();
 
         return Inertia::render('admin/don-hang-chi-tiet/don-hang-chi-tiet', [

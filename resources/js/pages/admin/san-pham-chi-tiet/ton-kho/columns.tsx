@@ -22,20 +22,31 @@ export function Columns(
       header: ({ column }) => <ColumnHeader column={column} title="Kích thước" />,
       cell: ({ row }) => row.original.kich_thuoc?.ten_kich_thuoc ?? '',
     },
+      {
+          accessorKey: 'gia_niem_yet',
+          header: ({ column }) => <ColumnHeader column={column} title="Giá niêm yết" />,
+          cell: ({ row }) => {
+              const raw = row.getValue('gia_niem_yet');
+              const value = Number(raw);
+
+              return isNaN(value) ? '' : value.toLocaleString('vi-VN');
+          },
+      },
+      {
+          accessorKey: 'gia_ban',
+          header: ({ column }) => <ColumnHeader column={column} title="Giá bán" />,
+          cell: ({ row }) => {
+              const raw = row.getValue('gia_ban');
+              const value = Number(raw);
+
+              return isNaN(value) ? '' : value.toLocaleString('vi-VN');
+          },
+      },
     {
       accessorKey: 'so_luong_ton',
       header: ({ column }) => <ColumnHeader column={column} title="Số lượng tồn" />,
       cell: ({ row }) => row.original.so_luong_ton ?? 0,
     },
-    // {
-    //   accessorKey: 'ngay_nhap',
-    //   header: ({ column }) => <ColumnHeader column={column} title="Ngày Nhập" />,
-    //   cell: ({ row }) => {
-    //     const dateStr = row.original.kho?.[0]?.ngay_nhap;
-    //     if (!dateStr) return '';
-    //     return format(new Date(dateStr), 'dd/MM/yyyy');
-    //   },
-    // },
     {
       id: 'actions',
       cell: ({ row }) => {

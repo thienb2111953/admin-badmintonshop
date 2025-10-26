@@ -17,7 +17,12 @@ export function columns(
     {
       accessorKey: 'don_gia',
       header: ({ column }) => <ColumnHeader column={column} title="Đơn giá" />,
-      cell: ({ row }) => row.original.don_gia.toLocaleString('vi-VN'),
+        cell: ({ row }) => {
+            const raw = row.getValue('don_gia');
+            const value = Number(raw);
+
+            return isNaN(value) ? '' : value.toLocaleString('vi-VN');
+        },
     },
     {
       accessorKey: 'so_luong',

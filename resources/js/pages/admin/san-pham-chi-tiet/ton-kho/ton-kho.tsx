@@ -27,7 +27,8 @@ export default function TonKhoPage({
     id_mau: 0,
     id_kich_thuoc: 0,
     so_luong_nhap: 0,
-    ngay_nhap: '',
+      gia_niem_yet: null,
+      gia_ban: null,
   });
 
   const handleAdd = () => {
@@ -37,7 +38,8 @@ export default function TonKhoPage({
       ten_kich_thuoc: '',
       ten_mau: '',
       so_luong_nhap: '',
-      ngay_nhap: '',
+        gia_niem_yet: null,
+        gia_ban: null,
     });
     setOpenDialog(true);
   };
@@ -48,8 +50,9 @@ export default function TonKhoPage({
       id_san_pham_chi_tiet: row.id_san_pham_chi_tiet,
       id_mau: row.id_mau,
       id_kich_thuoc: row.id_kich_thuoc,
-      so_luong_nhap: row.kho?.[0]?.so_luong_nhap ?? 0,
-      ngay_nhap: row.kho?.[0]?.ngay_nhap,
+        gia_niem_yet: row.gia_niem_yet,
+        gia_ban: row.gia_ban,
+
     });
     setOpenDialog(true);
   };

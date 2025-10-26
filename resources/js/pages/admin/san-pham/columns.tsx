@@ -29,26 +29,7 @@ export function columns(onEdit: (row: SanPham) => void, onDelete: (row: SanPham)
       accessorKey: 'ten_san_pham',
       header: ({ column }) => <ColumnHeader column={column} title="Tên sản phẩm" />,
     },
-    {
-      accessorKey: 'gia_niem_yet',
-      header: ({ column }) => <ColumnHeader column={column} title="Giá niêm yết" />,
-      cell: ({ row }) => {
-        const raw = row.getValue('gia_niem_yet');
-        const value = Number(raw);
 
-        return isNaN(value) ? '' : value.toLocaleString('vi-VN');
-      },
-    },
-    {
-      accessorKey: 'gia_ban',
-      header: ({ column }) => <ColumnHeader column={column} title="Giá bán" />,
-      cell: ({ row }) => {
-        const raw = row.getValue('gia_ban');
-        const value = Number(raw);
-
-        return isNaN(value) ? '' : value.toLocaleString('vi-VN');
-      },
-    },
     {
       accessorKey: 'trang_thai',
       header: ({ column }) => <ColumnHeader column={column} title="Trạng thái" />,
