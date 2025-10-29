@@ -104,97 +104,6 @@ class CheckOutController extends Controller
         ];
     }
 
-//  public function vnpayPayment(Request $request)
-//  {
-//
-//    $kiemTra = $this->kiemTraTonKho($request->input('id_gio_hang_chi_tiet'));
-//
-//    if ($kiemTra !== true) {
-//      return response()->json([
-//        'message' => $kiemTra,
-//      ], 400);
-//    }
-//
-//    $don_hang = $this->taoDonHang($request->input('id_gio_hang_chi_tiet'));
-//
-//    if (!is_array($don_hang)) {
-//      return response()->json([
-//        'message' => $don_hang,
-//      ], 400);
-//    }
-//
-//    $id_don_hang = $don_hang['id_don_hang'];
-//    $ma_don_hang = $don_hang['ma_don_hang'];
-//    $tong_tien = $don_hang['tong_tien'];
-//
-//    // $code_cart = rand(00, 9999);
-//
-//    $vnp_TmnCode = 'JAAFIQBW'; //Mã định danh merchant kết nối (Terminal Id)
-//    $vnp_HashSecret = '9C5TPD7IEBP1LECOWONHTEGEMZ0PF8EI'; //Secret key
-//    $vnp_Returnurl = 'http://127.0.0.1:8000/api/vnpay-return';
-//    $vnp_apiUrl = 'http://sandbox.vnpayment.vn/merchant_webapi/merchant.html';
-//    $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-//
-//    $vnp_TxnRef = rand(1, 10000); //Mã giao dịch thanh toán tham chiếu của merchant
-//    $vnp_OrderInfo = 'Thanh toan don hang ' . $ma_don_hang;
-//    $vnp_OrderType = 'billpayment';
-//    $vnp_Amount = $tong_tien; // Số
-//    $vnp_Locale = 'vn';
-////    $vnp_BankCode = 'NCB'; //Mã phương thức thanh toán
-//    $vnp_IpAddr = $_SERVER['REMOTE_ADDR']; //IP Khách hàng thanh toán
-//      $vnp_BankCode = $_POST['bankCode'];
-//
-//    // $startTime = date('YmdHis');
-//    //$expire = date('YmdHis', strtotime('+5 minutes', strtotime($startTime)));
-//
-//    $inputData = [
-//      'vnp_Version' => '2.1.0',
-//      'vnp_TmnCode' => $vnp_TmnCode,
-//      'vnp_Amount' => $vnp_Amount * 100,
-//      'vnp_Command' => 'pay',
-//      'vnp_CreateDate' => date('YmdHis'),
-//      'vnp_CurrCode' => 'VND',
-//      'vnp_IpAddr' => $vnp_IpAddr,
-//      'vnp_Locale' => $vnp_Locale,
-//      'vnp_OrderInfo' => 'Thanh toan GD: ' . $vnp_TxnRef,
-//      'vnp_OrderType' => 'other',
-//      'vnp_ReturnUrl' => $vnp_Returnurl,
-//      'vnp_TxnRef' => $id_don_hang,
-//      //   'vnp_ExpireDate' => $expire,
-//    ];
-//
-//    if (isset($vnp_BankCode) && $vnp_BankCode != '') {
-//      $inputData['vnp_BankCode'] = $vnp_BankCode;
-//    }
-//
-//    ksort($inputData);
-//    $query = '';
-//    $i = 0;
-//    $hashdata = '';
-//    foreach ($inputData as $key => $value) {
-//      if ($i == 1) {
-//        $hashdata .= '&' . urlencode($key) . '=' . urlencode($value);
-//      } else {
-//        $hashdata .= urlencode($key) . '=' . urlencode($value);
-//        $i = 1;
-//      }
-//      $query .= urlencode($key) . '=' . urlencode($value) . '&';
-//    }
-//
-//    $vnp_Url = $vnp_Url . '?' . $query;
-//    if (isset($vnp_HashSecret)) {
-//      $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
-//      $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
-//    }
-//
-//    return response()->json([
-//      'vnpay_url' => $vnp_Url,
-//    ]);
-//
-//     header('Location: ' . $vnp_Url);
-//    die();
-//  }
-
     public function vnpayPayment()
     {
         $data = request()->all();
@@ -220,16 +129,14 @@ class CheckOutController extends Controller
         $tong_tien = $don_hang['tong_tien'];
 
 
-        $code_cart = rand(00, 9999);
-
         $vnp_TmnCode = 'DO7YTD4A'; //Mã định danh merchant kết nối (Terminal Id)
         $vnp_HashSecret = 'ZVC6BIHYJ6AUGMT7ID6R92DQ95ZI54HV'; //Secret key
-        $vnp_Returnurl = 'http://127.0.0.1:8000';
+        $vnp_Returnurl = 'http://127.0.0.1:8000/api/vnpay-return';
         $vnp_apiUrl = 'http://sandbox.vnpayment.vn/merchant_webapi/merchant.html';
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
 
         $vnp_TxnRef = rand(1, 10000); //Mã giao dịch thanh toán tham chiếu của merchant
-        $vnp_OrderInfo = 'Thanh toan don hang ' . $code_cart;
+        $vnp_OrderInfo = 'Thanh toan don hang ' . $ma_don_hang;
         $vnp_OrderType = 'billpayment';
         $vnp_Amount = $tong_tien; // Số
         $vnp_Locale = 'vn';
@@ -308,7 +215,7 @@ class CheckOutController extends Controller
 
         if ($responseCode == '00' && $transactionStatus == '00') {
             // ✅ Thanh toán thành công
-            $this->xuLySauThanhToanThanhCong($id_don_hang, $amount, $bankCode, $cardType, $ngayThanhToan);
+            $this->xuLySauThanhToanThanhCong($id_don_hang, $amount, $bankCode, $ngayThanhToan);
 
             return redirect('http://127.0.0.1:8000')->with('success', 'Thanh toán thành công');
         } else {
@@ -319,7 +226,7 @@ class CheckOutController extends Controller
         }
     }
 
-    public function xuLySauThanhToanThanhCong(int $id_don_hang, float $amount, ?string $bankCode, ?string $cardType, ?string $ngayThanhToan)
+    public function xuLySauThanhToanThanhCong(int $id_don_hang, float $amount, ?string $bankCode, ?string $ngayThanhToan)
     {
         // ✅ 1. Cập nhật trạng thái đơn hàng
         DB::table('don_hang')->where('id_don_hang', $id_don_hang)->update([
@@ -332,7 +239,6 @@ class CheckOutController extends Controller
         DB::table('thanh_toan')->insert([
             'id_don_hang' => $id_don_hang,
             'so_tien' => $amount,
-            'phuong_thuc' => $cardType,
             'ten_ngan_hang' => $bankCode,
             'ngay_thanh_toan' => $ngayThanhToan,
             'created_at' => now(),

@@ -110,7 +110,7 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
     const handlePayment = () => {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/api/check-out'; // Gọi trực tiếp URL web
+        form.action = '/api/check-out';
 
         const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         if (csrf) {
@@ -121,14 +121,9 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
             form.appendChild(csrfInput);
         }
 
-        // --- Bắt đầu thay đổi ---
-
-        // Dữ liệu mảng bạn muốn gửi
         const ids = [1];
         const inputName = 'id_gio_hang_chi_tiet';
 
-        // Tạo một input ẩn cho mỗi giá trị trong mảng
-        // Thêm '[]' vào tên để backend nhận diện là một mảng
         ids.forEach(id => {
             const input = document.createElement('input');
             input.type = 'hidden';
@@ -137,7 +132,6 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
             form.appendChild(input);
         });
 
-        // --- Kết thúc thay đổi ---
 
         document.body.appendChild(form);
         form.submit();

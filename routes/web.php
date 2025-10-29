@@ -178,8 +178,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/san-pham', [ThongKeController::class, 'thongKeSanPham'])->name('thong_ke.san_pham');
     });
 
-    Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
-    Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
+//    Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
+//    Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
 
 });
 
