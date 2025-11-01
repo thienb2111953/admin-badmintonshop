@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id('id_nguoi_dung');
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('quyen',20)->default('người dùng');
             $table->date('ngay_sinh')->nullable();
             $table->string('sdt','20')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('avatar')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

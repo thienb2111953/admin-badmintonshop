@@ -35,11 +35,17 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard Doanh Thu', href: '#'
 const chartConfig = {
     revenue: {
         label: 'Doanh thu',
-        color: 'hsl(var(--chart-1))',
+        theme: {
+            light: 'hsl(var(--chart-1))',
+            dark: '#ffffff',
+        },
     },
     profit: {
         label: 'Lợi nhuận',
-        color: 'hsl(var(--chart-2))',
+        theme: {
+            light: 'hsl(var(--chart-2))',
+            dark: '#A1A1A1',
+        },
     },
 } satisfies ChartConfig;
 

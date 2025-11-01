@@ -39,12 +39,23 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+        $credentials = $this->only('email', 'password');
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
+            ]);
+        }
+
+        $user = Auth::user();
+
+        if ($user->quyen !== 'admin') {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Tài khoản này không có quyền truy cập (chỉ admin).',
             ]);
         }
 

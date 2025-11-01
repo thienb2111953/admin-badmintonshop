@@ -23,7 +23,15 @@ export function columns(onEdit: (row: User) => void, onDelete: (row: User) => vo
       accessorKey: 'sdt',
       header: ({ column }) => <ColumnHeader column={column} title="SĐT" />,
     },
-    {
+      {
+          accessorKey: 'quyen',
+          header: 'Quyền',
+          cell: ({ row }) => <span className="capitalize">{row.getValue('quyen')}</span>,
+          filterFn: (row, id, value) => value.includes(row.getValue(id)),
+      },
+
+
+      {
       id: 'actions',
       cell: ({ row }) => {
         const rowData = row.original;

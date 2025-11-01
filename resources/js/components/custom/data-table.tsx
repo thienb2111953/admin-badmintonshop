@@ -18,14 +18,21 @@ import {
 import { Plus } from 'lucide-react';
 
 import { DataTablePagination } from './data-table-pagination';
+import { DataTableFilterDropdown } from './data-table-filter-dropdown';
 
+interface DataTableFilterConfig {
+    columnId: string
+    title: string
+    options: string[]
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onAdd: () => void;
   showAddButton?: boolean
-  disableSearchBox?: boolean
+    disableSearchBox?: boolean
+    filters?: DataTableFilterConfig[]
   onDeleteSelected?: (selectedRows: TData[]) => void; // truyền cả row chứ không chỉ id
   tableInstanceRef?: (table: ReturnType<typeof useReactTable<TData>>) => void;
 }
@@ -36,6 +43,7 @@ export function DataTable<TData, TValue>({
   onAdd,
   showAddButton = true,
   disableSearchBox = false,
+ filters = [],
   onDeleteSelected,
   tableInstanceRef,
 }: DataTableProps<TData, TValue>) {
@@ -82,7 +90,7 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex items-center justify-between py-4">
-        <div className="item-left">
+        <div className="flex justify-between item-left">
           {showAddButton && (
             <Button onClick={onAdd}>
               <Plus className="h-4 w-4" />
@@ -90,18 +98,26 @@ export function DataTable<TData, TValue>({
             </Button>
           )}
         </div>
-        <div className="item-right">
-          {/* <DataTableViewOptions table={table} /> */}
+        <div className="flex item-right">
+           {/*<DataTableViewOptions table={table} />*/}
+            {filters.length > 0 &&
+                filters.map((filter) => (
+                    <DataTableFilterDropdown
+                        key={filter.columnId}
+                        column={table.getColumn(filter.columnId)}
+                        title={filter.title}
+                        options={filter.options}
+                    />
+                ))}
           {
             !disableSearchBox && (
               <Input
               placeholder="Tìm kiếm ..."
               value={globalFilter ?? ''}
               onChange={(event) => setGlobalFilter(event.target.value)}
-              className="float-right w-100"
+              className="float-right w-100 ml-4"
             />)
           }
-
         </div>
       </div>
 

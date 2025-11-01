@@ -11,7 +11,9 @@ class NguoiDungController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::query()
+            ->orderBy('id_nguoi_dung', 'desc')
+            ->get();
 
         return Inertia::render('admin/nguoi-dung/nguoi-dung', [
             'users' => $users,
@@ -42,9 +44,9 @@ class NguoiDungController extends Controller
         ]);
 
         $validatedData['email_verified_at'] = now();
-
-        // Hash password trước khi lưu
         $validatedData['password'] = bcrypt($validatedData['password']);
+
+        $validatedData['quyen'] = 'admin';
 
         User::create($validatedData);
 

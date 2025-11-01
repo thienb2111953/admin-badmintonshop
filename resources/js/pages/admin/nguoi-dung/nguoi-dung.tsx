@@ -142,7 +142,11 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
             <Head title="Quản lý Quyền" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <DataTable columns={columns(handleEdit, handleDelete)} data={users} onAdd={handleAdd} />
+                <DataTable columns={columns(handleEdit, handleDelete)} data={users} onAdd={handleAdd}
+                           filters={[
+                               { columnId: 'quyen', title: 'Quyền', options: ['Admin', 'Khách hàng'] },
+                           ]}
+                />
             </div>
 
             <button
