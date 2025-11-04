@@ -46,7 +46,7 @@ class NguoiDungController extends Controller
         $validatedData['email_verified_at'] = now();
         $validatedData['password'] = bcrypt($validatedData['password']);
 
-        $validatedData['quyen'] = 'admin';
+        $validatedData['quyen'] = 'Admin';
 
         User::create($validatedData);
 

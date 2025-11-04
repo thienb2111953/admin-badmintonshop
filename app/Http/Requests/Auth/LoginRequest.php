@@ -51,7 +51,7 @@ class LoginRequest extends FormRequest
 
         $user = Auth::user();
 
-        if ($user->quyen !== 'admin') {
+        if ($user->quyen !== 'Admin') {
             Auth::logout();
 
             throw ValidationException::withMessages([
