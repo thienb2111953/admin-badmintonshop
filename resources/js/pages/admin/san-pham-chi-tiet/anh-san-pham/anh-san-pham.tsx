@@ -49,11 +49,6 @@ export default function AnhSanPhamPage({
     setOpenDialog(true);
   };
 
-  const handleDelete = (row: AnhSanPham) => {
-    setSelectedRow(row);
-    setOpenConfirm(true);
-  };
-
   const confirmDelete = () => {
     router.delete(route('anh_san_pham.destroy', { id_san_pham: san_pham_info.id_san_pham }), {
       data: { id_san_pham_chi_tiet: selectedRow?.id_san_pham_chi_tiet },
@@ -95,7 +90,7 @@ export default function AnhSanPhamPage({
   return (
     <>
       <DataTable
-        columns={Columns(handleEdit, handleDelete)}
+        columns={Columns(handleEdit)}
         showAddButton={false}
         data={anh_san_phams}
         onAdd={handleAdd}
