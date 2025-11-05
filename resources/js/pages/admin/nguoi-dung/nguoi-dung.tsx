@@ -83,30 +83,6 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
         }
     };
 
-    // const handlePayment = async () => {
-    //     console.log('🔥 handlePayment được gọi');
-    //
-    //     try {
-    //         const payload = {
-    //             id_gio_hang_chi_tiet: [1]
-    //         };
-    //
-    //         console.log('📦 Đang gọi API...');
-    //         const res = await axios.post('/api/check-out', payload); // ✅ Thêm /api
-    //
-    //         console.log('✅ Response:', res.data);
-    //
-    //         if (res.data?.vnpay_url) {
-    //             window.location.href = res.data.vnpay_url;
-    //         } else {
-    //             console.error('❌ Không có URL VNPAY trả về');
-    //         }
-    //     } catch (error) {
-    //         console.error('❌ Lỗi API:', error);
-    //         toast.error('Có lỗi xảy ra khi thanh toán!');
-    //     }
-    // };
-
     const handlePayment = () => {
         const form = document.createElement('form');
         form.method = 'POST';
@@ -144,18 +120,11 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <DataTable columns={columns(handleEdit, handleDelete)} data={users} onAdd={handleAdd}
                            filters={[
-                               { columnId: 'quyen', title: 'Quyền', options: ['Admin', 'Khách hàng'] },
+                               { columnId: 'quyen', title: 'Quyền', options: ['Admin', 'User'] },
                            ]}
                 />
             </div>
 
-            <button
-                type="button"
-                onClick={handlePayment}
-                className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-                Thanh toán
-            </button>
 
             <ModalDialog
                 open={openDialog}

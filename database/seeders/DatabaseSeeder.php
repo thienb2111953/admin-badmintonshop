@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@gmail.com',
+            'quyen' => 'Admin',
         ]);
 
         $data = [
