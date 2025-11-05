@@ -18,11 +18,11 @@ class AnhSanPhamController extends Controller
         $validated = $request->validate([
             'ten_mau'              => 'nullable|string',
             'files_anh_san_pham'   => 'required|array',
-            'files_anh_san_pham.*' => 'mimes:jpg,jpeg,png,webp|max:20000',
+            'files_anh_san_pham.*' => 'mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'files_anh_san_pham.required' => 'chưa thêm thứ tự hình ảnh',
             'files_anh_san_pham.*.mimes' => 'Hình ảnh phải có định dạng: jpg, jpeg, png',
-            'files_anh_san_pham.*.max'   => 'Kích thước ảnh tối đa 20MB.',
+            'files_anh_san_pham.*.max'   => 'Kích thước ảnh tối đa 2MB.',
         ]);
 
         $san_pham = SanPham::find($id_san_pham);
@@ -52,7 +52,7 @@ class AnhSanPhamController extends Controller
         $validated = $request->validate([
             'ten_mau'                     => 'nullable|string',
             'files_anh_san_pham_new'      => 'nullable|array',
-            'files_anh_san_pham_new.*.file' => 'mimes:jpg,jpeg,png,webp|max:20000',
+            'files_anh_san_pham_new.*.file' => 'mimes:jpg,jpeg,png,webp|max:2048',
             'files_anh_san_pham_new.*.thu_tu' => 'required|integer',
             'path_anh_san_pham_old'       => 'nullable|array',
         ],
