@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\DanhMucController;
 use App\Http\Controllers\Api\SanPhamController;
 use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CartController;
 
 Route::get('quyen', [QuyenController::class, 'dsQuyen'])->name('QuyenController.dsQuyen');
 Route::post('quyen', [QuyenController::class, 'them'])->name('QuyenController.them');
@@ -34,6 +35,11 @@ Route::middleware('jwt')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
 
+
+    Route::prefix('cart')->group(function () {
+       Route::get('/', [CartController::class, 'cart']);
+       Route::post('/add', [CartController::class, 'addToCart']);
+    });
 });
 
 

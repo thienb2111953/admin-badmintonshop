@@ -22,8 +22,8 @@ class TrangChuController extends Controller
                 'san_pham.ma_san_pham',
                 'san_pham.ten_san_pham',
                 'san_pham.slug as slug_san_pham',
-                'san_pham.gia_niem_yet',
-                'san_pham.gia_ban',
+                'san_pham_chi_tiet.gia_niem_yet',
+                'san_pham_chi_tiet.gia_ban',
                 'anh_san_pham.anh_url'
             ])
             ->where('anh_san_pham.thu_tu', 1)
