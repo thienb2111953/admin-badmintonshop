@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id('id_thuong_hieu');
             $table->string('ten_thuong_hieu');
             $table->text('logo_url')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 

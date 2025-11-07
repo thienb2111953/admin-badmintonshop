@@ -16,7 +16,8 @@ return new class extends Migration
             $table->id('id_danh_muc');
             $table->string('ten_danh_muc');
             $table->string('slug');
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('gio_hang', function (Blueprint $table) {
             $table->increments('id_gio_hang');
             $table->foreignId('id_nguoi_dung')->nullable()->constrained('nguoi_dung', 'id_nguoi_dung')->onDelete('set null');
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 

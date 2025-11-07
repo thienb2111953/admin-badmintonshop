@@ -23,7 +23,8 @@ return new class extends Migration
                 ->references('id_danh_muc')
                 ->on('danh_muc')
                 ->onDelete('cascade');
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 

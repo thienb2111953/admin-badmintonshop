@@ -20,7 +20,8 @@ return new class extends Migration {
       $table->string('ten_ngan_hang', 100)->nullable();
       $table->dateTime('ngay_thanh_toan');
 
-      $table->timestamps();
+        $table->timestamp('created_at', 6)->useCurrent();
+        $table->timestamp('updated_at', 6)->useCurrent();
     });
   }
 

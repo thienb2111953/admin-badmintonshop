@@ -18,7 +18,8 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->integer('so_luong_nhap');
             $table->dateTime('ngay_nhap')->default(now());
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 
