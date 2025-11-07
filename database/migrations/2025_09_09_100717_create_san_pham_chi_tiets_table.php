@@ -19,7 +19,8 @@ return new class extends Migration {
             $table->string('ten_san_pham_chi_tiet');
             $table->decimal('gia_niem_yet', 12, 0)->nullable();
             $table->decimal('gia_ban', 12, 0)->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 

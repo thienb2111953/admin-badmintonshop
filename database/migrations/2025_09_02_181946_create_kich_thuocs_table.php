@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('kich_thuoc', function (Blueprint $table) {
             $table->id('id_kich_thuoc');
             $table->string('ten_kich_thuoc');
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 

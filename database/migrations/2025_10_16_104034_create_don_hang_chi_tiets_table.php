@@ -22,7 +22,8 @@ return new class extends Migration {
       $table->integer('so_luong');
       $table->decimal('don_gia', 15, 0);
 
-      $table->timestamps();
+        $table->timestamp('created_at', 6)->useCurrent();
+        $table->timestamp('updated_at', 6)->useCurrent();
     });
   }
 

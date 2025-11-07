@@ -14,7 +14,8 @@ return new class extends Migration {
       $table->id('id_nhap_hang');
       $table->string('ma_nhap_hang')->unique();
       $table->dateTime('ngay_nhap');
-      $table->timestamps();
+        $table->timestamp('created_at', 6)->useCurrent();
+        $table->timestamp('updated_at', 6)->useCurrent();
     });
   }
 

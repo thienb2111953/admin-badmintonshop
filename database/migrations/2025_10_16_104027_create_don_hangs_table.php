@@ -18,7 +18,8 @@ return new class extends Migration {
         $table->string('trang_thai_don_hang', 50)->default('Đang xử lý');
         $table->string('phuong_thuc_thanh_toan', 50)->nullable();
       $table->dateTime('ngay_dat_hang')->useCurrent();
-      $table->timestamps();
+        $table->timestamp('created_at', 6)->useCurrent();
+        $table->timestamp('updated_at', 6)->useCurrent();
     });
   }
 

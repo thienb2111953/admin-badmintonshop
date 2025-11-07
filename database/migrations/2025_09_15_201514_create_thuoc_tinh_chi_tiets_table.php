@@ -19,7 +19,8 @@ return new class extends Migration
                 ->references('id_thuoc_tinh')
                 ->on('thuoc_tinh')
                 ->onDelete('cascade');
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 

@@ -21,7 +21,8 @@ return new class extends Migration {
         ->foreignId('id_danh_muc_thuong_hieu')
         ->constrained('danh_muc_thuong_hieu', 'id_danh_muc_thuong_hieu')
         ->onDelete('cascade');
-      $table->timestamps();
+        $table->timestamp('created_at', 6)->useCurrent();
+        $table->timestamp('updated_at', 6)->useCurrent();
     });
   }
 

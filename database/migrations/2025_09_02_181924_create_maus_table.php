@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('mau', function (Blueprint $table) {
             $table->id('id_mau');
             $table->string('ten_mau');
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 
