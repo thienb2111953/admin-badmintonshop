@@ -16,17 +16,17 @@ class CartController extends Controller
     public function addToCart(Request $request)
     {
         $validated = $request->validate([
-            'productId' => 'required',
-            'colorId' => 'required',
-            'sizeId' => 'required',
-            'quantity' => 'required|integer|min:1',
+            'id_san_pham' => 'required',
+            'id_mau' => 'required',
+            'id_kich_thuoc' => 'required',
+            'so_luong' => 'required|integer|min:1',
         ], [
-            'productId.required' => 'Sản phẩm không được để trống.',
-            'colorId.required' => 'Màu sắc không được để trống.',
-            'sizeId.required' => 'Kích thước không được để trống.',
-            'quantity.required' => 'Số lượng không được để trống.',
-            'quantity.integer' => 'Số lượng phải là số nguyên.',
-            'quantity.min' => 'Số lượng phải lớn hơn 0.',
+            'id_san_pham.required' => 'Sản phẩm không được để trống.',
+            'id_mau.required' => 'Màu sắc không được để trống.',
+            'id_kich_thuoc.required' => 'Kích thước không được để trống.',
+            'so_luong.required' => 'Số lượng không được để trống.',
+            'so_luong.integer' => 'Số lượng phải là số nguyên.',
+            'so_luong.min' => 'Số lượng phải lớn hơn 0.',
         ]);
 
         $id_nguoi_dung = Auth::guard('api')->id();
@@ -35,12 +35,13 @@ class CartController extends Controller
             return Response::Error('Xác thực không thành công.', '', 401);
         }
 
-        $id_san_pham = $validated['productId'];
-        $id_mau = $validated['colorId'];
-        $id_kich_thuoc = $validated['sizeId'];
-        $so_luong_them = (int)$validated['quantity'];
+        $id_san_pham = $validated['id_san_pham'];
+        $id_mau = $validated['id_mau'];
+        $id_kich_thuoc = $validated['id_kich_thuoc'];
+        $so_luong_them = (int)$validated['so_luong'];
 
         $gio_hang = DB::table('gio_hang')->where('id_nguoi_dung', $id_nguoi_dung)->first();
+
 
         $id_gio_hang = $gio_hang->id_gio_hang;
 
@@ -95,10 +96,76 @@ class CartController extends Controller
         return Response::Success($gio_hang_moi, '');
     }
 
-    public function cart(Request $request){
-        return DB::table('gio_hang')
+    public function cart(Request $request)
+    {
+        $userId = Auth::guard('api')->id();
+
+        if (!$userId) {
+            return Response::Success([], 'User not authenticated');
+        }
+
+        $data = DB::table('gio_hang')
             ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
             ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
-            ->where('id_nguoi_dung', Auth::guard('api')->id())->first();
+            ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
+            ->join('mau', 'mau.id_mau', 'san_pham_chi_tiet.id_mau')
+            ->join('kich_thuoc', 'kich_thuoc.id_kich_thuoc', 'san_pham_chi_tiet.id_kich_thuoc')
+            ->where('gio_hang.id_nguoi_dung', $userId)
+            ->select(
+                'san_pham_chi_tiet.id_san_pham_chi_tiet',
+                'san_pham_chi_tiet.ten_san_pham_chi_tiet',
+                'san_pham_chi_tiet.gia_ban',
+                'gio_hang_chi_tiet.so_luong',
+                'san_pham_chi_tiet.id_san_pham',
+                'san_pham_chi_tiet.id_mau',
+                'san_pham_chi_tiet.id_kich_thuoc',
+                'san_pham.ten_san_pham',
+                'gio_hang_chi_tiet.id_gio_hang_chi_tiet',
+                'gio_hang_chi_tiet.tong_tien',
+                'gio_hang_chi_tiet.so_luong',
+                'mau.id_mau',
+                'mau.ten_mau',
+                'kich_thuoc.id_kich_thuoc',
+                'kich_thuoc.ten_kich_thuoc',
+            )
+            ->get();
+        return Response::Success($data, 'Cart loaded successfully');
+    }
+
+    public function removeFromCart(Request $request)
+    {
+        $id_gio_hang_chi_tiet = $request->input('id_gio_hang_chi_tiet');
+
+        $result = DB::table('gio_hang_chi_tiet')->where('id_gio_hang_chi_tiet', $id_gio_hang_chi_tiet)->delete();
+
+        if ($result) {
+            $gio_hang_moi = DB::table('gio_hang')
+                ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
+                ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
+                ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
+                ->where('gio_hang.id_nguoi_dung', Auth::guard('api')->id())
+                ->get();
+            return Response::Success($gio_hang_moi, 'Cart removed successfully');
+        }
+    }
+
+    public function updateQuantity(Request $request)
+    {
+        $id_gio_hang_chi_tiet = $request->input('id_gio_hang_chi_tiet');
+        $so_luong = $request->input('so_luong');
+
+        $result = DB::table('gio_hang_chi_tiet')
+            ->where('id_gio_hang_chi_tiet', $id_gio_hang_chi_tiet)
+            ->update(['so_luong' => $so_luong]);
+
+        if ($result) {
+            $gio_hang_moi = DB::table('gio_hang')
+                ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
+                ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
+                ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
+                ->where('gio_hang.id_nguoi_dung', Auth::guard('api')->id())
+                ->get();
+            return Response::Success($gio_hang_moi, 'Cart removed successfully');
+        }
     }
 }

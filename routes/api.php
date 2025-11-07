@@ -35,10 +35,11 @@ Route::middleware('jwt')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
 
-
     Route::prefix('cart')->group(function () {
-       Route::get('/', [CartController::class, 'cart']);
-       Route::post('/add', [CartController::class, 'addToCart']);
+        Route::get('/', [CartController::class, 'cart']);
+        Route::post('/add', [CartController::class, 'addToCart']);
+        Route::post('/remove', [CartController::class, 'removeFromCart']);
+        Route::put('/update', [CartController::class, 'updateQuantity']);
     });
 });
 

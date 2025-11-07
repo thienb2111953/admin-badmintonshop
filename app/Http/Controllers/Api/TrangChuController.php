@@ -11,28 +11,54 @@ class TrangChuController extends Controller
 {
     public function getViewHome()
     {
-        $query = DB::table('san_pham')
+        $variantSubquery = DB::table('san_pham_chi_tiet as sct')
+            ->join('anh_san_pham as asp', 'asp.id_san_pham_chi_tiet', '=', 'sct.id_san_pham_chi_tiet')
+            ->select(
+                'sct.id_san_pham',
+                'sct.id_san_pham_chi_tiet',
+                'sct.gia_niem_yet',
+                'sct.gia_ban',
+                'asp.anh_url',
+                DB::raw('ROW_NUMBER() OVER(
+                    PARTITION BY sct.id_san_pham
+                    ORDER BY sct.gia_ban ASC
+                ) as rn')
+            )
+            ->where('asp.thu_tu', 1);
+
+        $baseQuery = DB::table('san_pham')
             ->join('danh_muc_thuong_hieu', 'danh_muc_thuong_hieu.id_danh_muc_thuong_hieu', '=', 'san_pham.id_danh_muc_thuong_hieu')
             ->join('danh_muc', 'danh_muc.id_danh_muc', '=', 'danh_muc_thuong_hieu.id_danh_muc')
             ->join('thuong_hieu', 'thuong_hieu.id_thuong_hieu', '=', 'danh_muc_thuong_hieu.id_thuong_hieu')
-            ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham', '=', 'san_pham.id_san_pham')
-            ->join('anh_san_pham', 'anh_san_pham.id_san_pham_chi_tiet', '=', 'san_pham_chi_tiet.id_san_pham_chi_tiet')
+            ->joinSub($variantSubquery, 'variants', function ($join) {
+                $join->on('san_pham.id_san_pham', '=', 'variants.id_san_pham')
+                    ->where('variants.rn', '=', 1);
+            })
             ->select([
                 'san_pham.id_san_pham',
                 'san_pham.ma_san_pham',
                 'san_pham.ten_san_pham',
                 'san_pham.slug as slug_san_pham',
-                'san_pham_chi_tiet.gia_niem_yet',
-                'san_pham_chi_tiet.gia_ban',
-                'anh_san_pham.anh_url'
+                'variants.gia_niem_yet',
+                'variants.gia_ban',
+                'variants.anh_url'
             ])
-            ->where('anh_san_pham.thu_tu', 1)
             ->orderBy('san_pham.created_at', 'desc');
 
-        $products = $query->limit(10)->get();
-        $rackets = $query->where('danh_muc.slug', 'vot-cau-long')->limit(10)->get();
-        $popular = $query->limit(10)->get();
-        $shoes = $query->where('danh_muc.slug', 'giay-cau-long')->limit(10)->get();
+        $products = (clone $baseQuery)->limit(10)->get();
+
+        $rackets = (clone $baseQuery)
+            ->where('danh_muc.slug', 'vot-cau-long')
+            ->limit(10)
+            ->get();
+
+        $popular = (clone $baseQuery)->limit(10)->get();
+
+        $shoes = (clone $baseQuery)
+            ->where('danh_muc.slug', 'giay-cau-long')
+            ->limit(10)
+            ->get();
+
         $banner = DB::table('banner')
             ->select([
                 'id_banner',

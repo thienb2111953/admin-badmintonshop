@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\GioHang;
 use App\Models\User;
 use App\Response;
 use App\StaticString;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -25,10 +28,15 @@ class AuthController extends Controller
             ],
         ]);
 
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+        ]);
+
+        DB::table('gio_hang')->insert([
+           'id_nguoi_dung' => $user['id_nguoi_dung']
         ]);
 
         return Response::Success($user, 'Đăng ký thành công');
