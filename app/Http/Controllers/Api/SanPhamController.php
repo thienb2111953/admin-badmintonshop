@@ -36,12 +36,57 @@ class SanPhamController extends Controller
                 'kich_thuoc.ten_kich_thuoc',
                 'anh_san_pham.anh_url',
                 'anh_san_pham.thu_tu',
+                // Quan trọng: Thêm id_san_pham_chi_tiet để liên kết ảnh đúng
+                'san_pham_chi_tiet.id_san_pham_chi_tiet'
             ])
             ->where('san_pham.slug', $param)
             ->get();
 
+        // Xử lý trường hợp không tìm thấy sản phẩm
+        if ($query->isEmpty()) {
+            // Bạn có thể trả về lỗi 404
+            return Response::Error('Product not found', 404);
+        }
+
         $result = $query->groupBy('ma_san_pham')->map(function ($items) {
             $first = $items->first();
+
+            $kich_thuoc = $items
+                ->filter(fn($item) => !is_null($item->id_kich_thuoc))
+                ->unique('id_kich_thuoc')
+                ->map(function ($item) {
+                    return [
+                        'id_kich_thuoc' => $item->id_kich_thuoc,
+                        'ten_kich_thuoc' => $item->ten_kich_thuoc,
+                    ];
+                })->values();
+
+            $mau = $items
+                ->filter(fn($item) => !is_null($item->id_mau))
+                ->groupBy('id_mau')
+                ->map(function ($colorItems) {
+
+                    $firstColorItem = $colorItems->first();
+
+                    $anh_san_pham = $colorItems
+                        ->filter(fn($item) => !is_null($item->anh_url))
+                        ->unique('anh_url')
+                        ->sortBy('thu_tu')
+                        ->map(function ($imageItem) {
+                            return [
+                                'anh_url' => env('APP_URL') . '/storage/' . $imageItem->anh_url,
+                                'thu_tu' => $imageItem->thu_tu,
+                            ];
+                        })->values();
+
+                    // Trả về cấu trúc lồng nhau như bạn yêu cầu
+                    return [
+                        'id_mau' => $firstColorItem->id_mau,
+                        'ten_mau' => $firstColorItem->ten_mau,
+                        'anh' => $anh_san_pham
+                    ];
+                })->values();
+
             return [
                 'id_san_pham' => $first->id_san_pham,
                 'ma_san_pham' => $first->ma_san_pham,
@@ -52,24 +97,8 @@ class SanPhamController extends Controller
                 'trang_thai' => $first->trang_thai,
                 'ten_thuong_hieu' => $first->ten_thuong_hieu,
                 'so_luong_ton' => $first->so_luong_ton,
-                'mau' => $items->unique('ten_mau')->map(function ($item) {
-                    return [
-                        'id_mau' => $item->id_mau,
-                        'ten_mau' => $item->ten_mau,
-                    ];
-                })->values(),
-                'kich_thuoc' => $items->unique('ten_kich_thuoc')->map(function ($item) {
-                    return [
-                        'id_kich_thuoc' => $item->id_kich_thuoc,
-                        'ten_kich_thuoc' => $item->ten_kich_thuoc,
-                    ];
-                })->values(),
-                'anh_san_pham' => $items->unique('anh_url')->sortBy('thu_tu')->map(function ($item) {
-                    return [
-                        'anh_url' => env('APP_URL') . '/storage/' . $item->anh_url,
-                        'thu_tu' => $item->thu_tu,
-                    ];
-                })->values()
+                'mau' => $mau,
+                'kich_thuoc' => $kich_thuoc,
             ];
         })->first();
 
