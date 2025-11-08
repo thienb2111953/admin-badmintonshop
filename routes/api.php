@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\NguoiDungController;
 use App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Api\TrangChuController;
+use App\Http\Controllers\ChatBotController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,8 @@ use App\Http\Controllers\Api\SanPhamController;
 use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
+
+Route::post('/chatbot', [ChatbotController::class, 'reply']);
 
 Route::get('quyen', [QuyenController::class, 'dsQuyen'])->name('QuyenController.dsQuyen');
 Route::post('quyen', [QuyenController::class, 'them'])->name('QuyenController.them');
