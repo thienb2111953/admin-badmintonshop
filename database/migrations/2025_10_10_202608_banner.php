@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('img_url');
             $table->integer('thu_tu');
             $table->string('href');
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 

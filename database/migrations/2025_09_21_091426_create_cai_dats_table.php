@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id('id_cai_dat');
             $table->string('ten_cai_dat');
             $table->string('gia_tri')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at', 6)->useCurrent();
+            $table->timestamp('updated_at', 6)->useCurrent();
         });
     }
 
