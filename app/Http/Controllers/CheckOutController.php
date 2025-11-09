@@ -217,7 +217,7 @@ class CheckOutController extends Controller
             // ✅ Thanh toán thành công
             $this->xuLySauThanhToanThanhCong($id_don_hang, $amount, $bankCode, $ngayThanhToan);
 
-            return redirect('http://127.0.0.1:8000')->with('success', 'Thanh toán thành công');
+            return redirect('http://127.0.0.1:8000/dashboard')->with('success', 'Thanh toán thành công');
         } else {
             // ❌ Thanh toán thất bại → rollback
             $this->xuLySauThanhToanThatBai($id_don_hang);

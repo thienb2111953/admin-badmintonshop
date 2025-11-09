@@ -125,6 +125,13 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
                 />
             </div>
 
+          <button
+            type="button"
+            onClick={handlePayment}
+            className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            Thanh toán
+          </button>
 
             <ModalDialog
                 open={openDialog}
