@@ -13,10 +13,8 @@ return new class extends Migration {
     Schema::create('nhap_hang_chi_tiet', function (Blueprint $table) {
       $table->id('id_nhap_hang_chi_tiet');
 
-      // liên kết đến bảng nhập hàng
       $table->foreignId('id_nhap_hang')->constrained('nhap_hang', 'id_nhap_hang')->onDelete('cascade');
 
-      // liên kết đến bảng sản phẩm chi tiết
       $table
         ->foreignId('id_san_pham_chi_tiet')
         ->constrained('san_pham_chi_tiet', 'id_san_pham_chi_tiet')

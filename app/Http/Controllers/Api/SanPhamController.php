@@ -10,6 +10,40 @@ use Illuminate\Support\Facades\DB;
 
 class SanPhamController extends Controller
 {
+    public function dsSanPhamChiTiet(Request $request)
+    {
+        $query = DB::table('san_pham')
+            ->leftJoin('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham', '=', 'san_pham.id_san_pham')
+            ->leftJoin('anh_san_pham', 'anh_san_pham.id_san_pham_chi_tiet', '=', 'san_pham_chi_tiet.id_san_pham_chi_tiet')
+            ->leftJoin('mau', 'mau.id_mau', '=', 'san_pham_chi_tiet.id_mau')
+            ->leftJoin('kich_thuoc', 'kich_thuoc.id_kich_thuoc', '=', 'san_pham_chi_tiet.id_kich_thuoc')
+            ->leftJoin('danh_muc_thuong_hieu', 'danh_muc_thuong_hieu.id_danh_muc_thuong_hieu', '=', 'san_pham.id_danh_muc_thuong_hieu')
+            ->leftJoin('thuong_hieu', 'thuong_hieu.id_thuong_hieu', '=', 'danh_muc_thuong_hieu.id_thuong_hieu')
+            ->leftJoin('danh_muc', 'danh_muc.id_danh_muc', '=', 'danh_muc_thuong_hieu.id_danh_muc')
+            ->leftJoin('thuoc_tinh','thuoc_tinh.id_thuoc_tinh','=','danh_muc.id_thuoc_tinh')
+            ->select([
+                'san_pham.id_san_pham',
+                'san_pham.ma_san_pham',
+                'san_pham.ten_san_pham',
+                'san_pham_chi_tiet.gia_ban',
+                'san_pham_chi_tiet.so_luong_ton',
+                'san_pham.trang_thai',
+                'thuong_hieu.ten_thuong_hieu',
+                'mau.ten_mau',
+                'kich_thuoc.ten_kich_thuoc',
+                'anh_san_pham.anh_url',
+                'anh_san_pham.thu_tu',
+                // Quan trọng: Thêm id_san_pham_chi_tiet để liên kết ảnh đúng
+                'san_pham_chi_tiet.id_san_pham_chi_tiet'
+            ])
+            ->orderBy('san_pham.id_san_pham')
+            ->orderBy('san_pham_chi_tiet.ten_san_pham_chi_tiet')
+            ->get();
+
+
+        return Response::Success($query, '');
+    }
+
     public function getProductsDetail(Request $request, $param)
     {
         $query = DB::table('san_pham')

@@ -34,5 +34,7 @@ class ThuocTinhSeeder extends Seeder
                 ]);
             }
         }
+
+
     }
 }

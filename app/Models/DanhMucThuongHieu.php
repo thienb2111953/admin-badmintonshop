@@ -24,6 +24,16 @@ class DanhMucThuongHieu extends Model
         return $this->belongsTo(DanhMuc::class, 'id_danh_muc', 'id_danh_muc');
     }
 
+    public function thuocTinhs()
+    {
+        return $this->belongsToMany(
+            ThuocTinh::class,
+            'danh_muc_thuoc_tinh', // bảng pivot
+            'id_danh_muc',
+            'id_thuoc_tinh'
+        )->with('chiTiets'); // load luôn chi tiết thuộc tính
+    }
+
     public function thuongHieu()
     {
         return $this->belongsTo(ThuongHieu::class, 'id_thuong_hieu', 'id_thuong_hieu');

@@ -17,6 +17,7 @@ return new class extends Migration {
       $table->string('slug');
       $table->text('mo_ta')->nullable();
       $table->string('trang_thai')->default('Đang sản xuất');
+      $table->json('thuoc_tinh');
       $table
         ->foreignId('id_danh_muc_thuong_hieu')
         ->constrained('danh_muc_thuong_hieu', 'id_danh_muc_thuong_hieu')

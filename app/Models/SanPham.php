@@ -21,7 +21,17 @@ class SanPham extends Model
     'id_danh_muc_thuong_hieu',
   ];
 
-  public function danhMucThuongHieu()
+    public function thuocTinhs()
+    {
+        return $this->belongsToMany(
+            ThuocTinhChiTiet::class,
+            'san_pham_thuoc_tinh',
+            'id_san_pham',
+            'id_thuoc_tinh_chi_tiet'
+        )->with('thuocTinh');
+    }
+
+    public function danhMucThuongHieu()
   {
     return $this->belongsTo(DanhMucThuongHieu::class, 'id_danh_muc_thuong_hieu', 'id_danh_muc_thuong_hieu');
   }

@@ -9,7 +9,9 @@ import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
 import { san_pham_thuong_hieu, san_pham } from '@/routes';
 
-export default function SanPhamPage({ san_phams, info_dmth }: { san_phams: SanPham[]; info_dmth: DanhMucThuongHieu }) {
+export default function SanPhamPage({ san_phams, info_dmth }:
+{ san_phams: SanPham[]; info_dmth: DanhMucThuongHieu }) {
+
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<SanPham | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);

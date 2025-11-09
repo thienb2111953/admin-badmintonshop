@@ -30,10 +30,23 @@ class NhapHangChiTietController extends Controller
         ];
       });
 
+      $sanPhamChiTiets = SanPhamChiTiet::query()
+          ->join('mau', 'san_pham_chi_tiet.id_mau', '=', 'mau.id_mau')
+          ->join('kich_thuoc', 'san_pham_chi_tiet.id_kich_thuoc', '=', 'kich_thuoc.id_kich_thuoc')
+          ->orderBy('san_pham_chi_tiet.ten_san_pham_chi_tiet')
+          ->orderBy('mau.ten_mau')
+          ->orderBy('kich_thuoc.ten_kich_thuoc')
+          ->select(
+              'san_pham_chi_tiet.*',
+              'mau.ten_mau',
+              'kich_thuoc.ten_kich_thuoc'
+          )
+          ->get();
+
     return Inertia::render('admin/nhap-hang-chi-tiet/nhap-hang-chi-tiet', [
       'nhap_hang_info' => $nhapHang,
       'nhap_hang_chi_tiets' => $chiTiet,
-      'san_pham_chi_tiets' => SanPhamChiTiet::all(),
+        'san_pham_chi_tiets' => $sanPhamChiTiets,
     ]);
   }
 

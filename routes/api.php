@@ -24,6 +24,8 @@ Route::group(['prefix' => 'danh-muc'], function () {
 
 Route::get('trang-chu', [TrangChuController::class, 'getViewHome'])->name('TrangChuController.getViewHome');
 Route::group(['prefix' => 'san-pham'], function () {
+    Route::get('/ds', [SanPhamController::class, 'dsSanPhamChiTiet'])->name('SanPhamController.dsSanPhamChiTiet');
+
     Route::get('/{param}', [SanPhamController::class, 'getProductsDetail'])->name('SanPhamController.getProductsDetail');
 });
 

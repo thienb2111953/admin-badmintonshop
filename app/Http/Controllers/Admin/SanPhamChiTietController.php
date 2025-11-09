@@ -47,10 +47,9 @@ class SanPhamChiTietController extends Controller
       })
       ->values();
 
-    // $san_pham_chi_tiet = SanPhamChiTiet::where('id_san_pham', $id_san_pham)->get();
-
     $san_pham_chi_tiet = SanPhamChiTiet::with(['mau', 'kichThuoc', 'kho'])
       ->where('id_san_pham', $id_san_pham)
+        ->orderBy('id_mau', 'asc')
       ->get();
 
     return Inertia::render('admin/san-pham-chi-tiet/san-pham-chi-tiet', [
