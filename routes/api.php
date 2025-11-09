@@ -44,7 +44,7 @@ Route::middleware('jwt')->group(function () {
         Route::get('/', [CartController::class, 'cart']);
         Route::post('/add', [CartController::class, 'addToCart']);
         Route::post('/remove', [CartController::class, 'removeFromCart']);
-        Route::put('/update', [CartController::class, 'updateQuantity']);
+        Route::post('/update', [CartController::class, 'updateQuantity']);
     });
 });
 

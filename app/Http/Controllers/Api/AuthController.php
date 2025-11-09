@@ -36,7 +36,7 @@ class AuthController extends Controller
         ]);
 
         DB::table('gio_hang')->insert([
-           'id_nguoi_dung' => $user['id_nguoi_dung']
+            'id_nguoi_dung' => $user['id_nguoi_dung']
         ]);
 
         return Response::Success($user, 'Đăng ký thành công');

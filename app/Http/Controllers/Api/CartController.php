@@ -13,6 +13,49 @@ use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
+    public function cart()
+    {
+        $userId = Auth::guard('api')->id();
+
+        if (!$userId) {
+            return Response::Success([], 'User not authenticated');
+        }
+
+        $data = DB::table('gio_hang')
+            ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
+            ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
+            ->join('anh_san_pham', function ($join) {
+                $join->on('anh_san_pham.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
+                    ->where('anh_san_pham.thu_tu', '=', 1);
+            })
+            ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
+            ->join('mau', 'mau.id_mau', 'san_pham_chi_tiet.id_mau')
+            ->join('kich_thuoc', 'kich_thuoc.id_kich_thuoc', 'san_pham_chi_tiet.id_kich_thuoc')
+            ->where('gio_hang.id_nguoi_dung', $userId)
+            ->select(
+                'san_pham_chi_tiet.id_san_pham_chi_tiet',
+                'san_pham_chi_tiet.ten_san_pham_chi_tiet',
+                'san_pham_chi_tiet.gia_ban',
+                'gio_hang_chi_tiet.so_luong',
+                'san_pham_chi_tiet.id_san_pham',
+                'san_pham_chi_tiet.id_mau',
+                'san_pham_chi_tiet.id_kich_thuoc',
+                'san_pham_chi_tiet.so_luong_ton',
+                'san_pham.ten_san_pham',
+                'gio_hang_chi_tiet.id_gio_hang_chi_tiet',
+                'gio_hang_chi_tiet.tong_tien',
+                'gio_hang_chi_tiet.so_luong',
+                'mau.id_mau',
+                'mau.ten_mau',
+                'kich_thuoc.id_kich_thuoc',
+                'kich_thuoc.ten_kich_thuoc',
+                'anh_san_pham.anh_url'
+            )
+            ->orderBy('san_pham.ten_san_pham')
+            ->get();
+        return Response::Success($data, 'Cart loaded successfully');
+    }
+
     public function addToCart(Request $request)
     {
         $validated = $request->validate([
@@ -86,50 +129,7 @@ class CartController extends Controller
             return Response::Error('Lỗi cập nhật giỏ hàng', '');
         }
 
-        $gio_hang_moi = DB::table('gio_hang')
-            ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
-            ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
-            ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
-            ->where('gio_hang.id_nguoi_dung', $id_nguoi_dung)
-            ->get();
-
-        return Response::Success($gio_hang_moi, '');
-    }
-
-    public function cart(Request $request)
-    {
-        $userId = Auth::guard('api')->id();
-
-        if (!$userId) {
-            return Response::Success([], 'User not authenticated');
-        }
-
-        $data = DB::table('gio_hang')
-            ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
-            ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
-            ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
-            ->join('mau', 'mau.id_mau', 'san_pham_chi_tiet.id_mau')
-            ->join('kich_thuoc', 'kich_thuoc.id_kich_thuoc', 'san_pham_chi_tiet.id_kich_thuoc')
-            ->where('gio_hang.id_nguoi_dung', $userId)
-            ->select(
-                'san_pham_chi_tiet.id_san_pham_chi_tiet',
-                'san_pham_chi_tiet.ten_san_pham_chi_tiet',
-                'san_pham_chi_tiet.gia_ban',
-                'gio_hang_chi_tiet.so_luong',
-                'san_pham_chi_tiet.id_san_pham',
-                'san_pham_chi_tiet.id_mau',
-                'san_pham_chi_tiet.id_kich_thuoc',
-                'san_pham.ten_san_pham',
-                'gio_hang_chi_tiet.id_gio_hang_chi_tiet',
-                'gio_hang_chi_tiet.tong_tien',
-                'gio_hang_chi_tiet.so_luong',
-                'mau.id_mau',
-                'mau.ten_mau',
-                'kich_thuoc.id_kich_thuoc',
-                'kich_thuoc.ten_kich_thuoc',
-            )
-            ->get();
-        return Response::Success($data, 'Cart loaded successfully');
+        return Response::Success($this->cart(), '');
     }
 
     public function removeFromCart(Request $request)
@@ -139,13 +139,7 @@ class CartController extends Controller
         $result = DB::table('gio_hang_chi_tiet')->where('id_gio_hang_chi_tiet', $id_gio_hang_chi_tiet)->delete();
 
         if ($result) {
-            $gio_hang_moi = DB::table('gio_hang')
-                ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
-                ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
-                ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
-                ->where('gio_hang.id_nguoi_dung', Auth::guard('api')->id())
-                ->get();
-            return Response::Success($gio_hang_moi, 'Cart removed successfully');
+            return Response::Success($this->cart(), 'Cart removed successfully');
         }
     }
 
@@ -154,18 +148,29 @@ class CartController extends Controller
         $id_gio_hang_chi_tiet = $request->input('id_gio_hang_chi_tiet');
         $so_luong = $request->input('so_luong');
 
-        $result = DB::table('gio_hang_chi_tiet')
+        $item = DB::table('gio_hang_chi_tiet')
+            ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
+            ->select('gio_hang_chi_tiet.id_gio_hang_chi_tiet', 'san_pham_chi_tiet.so_luong_ton')
+            ->where('gio_hang_chi_tiet.id_gio_hang_chi_tiet', $id_gio_hang_chi_tiet)
+            ->first();
+
+        if (!$item) {
+            return Response::Error('Không tìm thấy sản phẩm trong giỏ hàng.');
+        }
+
+        if ($so_luong > $item->so_luong_ton) {
+            return Response::Error('Số lượng yêu cầu vượt quá số lượng tồn kho.');
+        }
+
+        $updated = DB::table('gio_hang_chi_tiet')
             ->where('id_gio_hang_chi_tiet', $id_gio_hang_chi_tiet)
             ->update(['so_luong' => $so_luong]);
 
-        if ($result) {
-            $gio_hang_moi = DB::table('gio_hang')
-                ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
-                ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
-                ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
-                ->where('gio_hang.id_nguoi_dung', Auth::guard('api')->id())
-                ->get();
-            return Response::Success($gio_hang_moi, 'Cart removed successfully');
+        if ($updated) {
+            return Response::Success($this->cart(), 'Cập nhật số lượng thành công.');
         }
+
+        return Response::Error('Không thể cập nhật số lượng.');
     }
+
 }
