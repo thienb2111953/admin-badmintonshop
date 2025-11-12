@@ -25,50 +25,58 @@ class SanPhamController extends Controller
                 'san_pham.ma_san_pham',
                 'san_pham.ten_san_pham',
                 'san_pham.mo_ta',
+                'san_pham.trang_thai',
+                'thuong_hieu.ten_thuong_hieu',
+                // Chi tiết biến thể
+                'san_pham_chi_tiet.id_san_pham_chi_tiet',
                 'san_pham_chi_tiet.gia_niem_yet',
                 'san_pham_chi_tiet.gia_ban',
                 'san_pham_chi_tiet.so_luong_ton',
-                'san_pham.trang_thai',
-                'thuong_hieu.ten_thuong_hieu',
+                // Màu
                 'mau.id_mau',
                 'mau.ten_mau',
+                // Kích thước
                 'kich_thuoc.id_kich_thuoc',
                 'kich_thuoc.ten_kich_thuoc',
+                // Ảnh
                 'anh_san_pham.anh_url',
                 'anh_san_pham.thu_tu',
-                // Quan trọng: Thêm id_san_pham_chi_tiet để liên kết ảnh đúng
-                'san_pham_chi_tiet.id_san_pham_chi_tiet'
             ])
             ->where('san_pham.slug', $param)
+            ->whereNotNull('san_pham_chi_tiet.id_san_pham_chi_tiet')
             ->get();
 
-        // Xử lý trường hợp không tìm thấy sản phẩm
         if ($query->isEmpty()) {
-            // Bạn có thể trả về lỗi 404
             return Response::Error('Product not found', 404);
         }
 
         $result = $query->groupBy('ma_san_pham')->map(function ($items) {
             $first = $items->first();
 
-            $kich_thuoc = $items
+            $mau_options = $items
+                ->filter(fn($item) => !is_null($item->id_mau))
+                ->unique('id_mau')
+                ->map(fn($item) => [
+                    'id_mau' => $item->id_mau,
+                    'ten_mau' => $item->ten_mau,
+                ])
+                ->values();
+
+            $kich_thuoc_options = $items
                 ->filter(fn($item) => !is_null($item->id_kich_thuoc))
                 ->unique('id_kich_thuoc')
-                ->map(function ($item) {
-                    return [
-                        'id_kich_thuoc' => $item->id_kich_thuoc,
-                        'ten_kich_thuoc' => $item->ten_kich_thuoc,
-                    ];
-                })->values();
+                ->map(fn($item) => [
+                    'id_kich_thuoc' => $item->id_kich_thuoc,
+                    'ten_kich_thuoc' => $item->ten_kich_thuoc,
+                ])
+                ->values();
 
-            $mau = $items
-                ->filter(fn($item) => !is_null($item->id_mau))
-                ->groupBy('id_mau')
-                ->map(function ($colorItems) {
+            $variants = $items
+                ->groupBy('id_san_pham_chi_tiet')
+                ->map(function ($variantItems) {
+                    $firstVariant = $variantItems->first();
 
-                    $firstColorItem = $colorItems->first();
-
-                    $anh_san_pham = $colorItems
+                    $anh_san_pham = $variantItems
                         ->filter(fn($item) => !is_null($item->anh_url))
                         ->unique('anh_url')
                         ->sortBy('thu_tu')
@@ -77,31 +85,54 @@ class SanPhamController extends Controller
                                 'anh_url' => env('APP_URL') . '/storage/' . $imageItem->anh_url,
                                 'thu_tu' => $imageItem->thu_tu,
                             ];
-                        })->values();
+                        })
+                        ->values();
 
-                    // Trả về cấu trúc lồng nhau như bạn yêu cầu
                     return [
-                        'id_mau' => $firstColorItem->id_mau,
-                        'ten_mau' => $firstColorItem->ten_mau,
-                        'anh' => $anh_san_pham
+                        'id_san_pham_chi_tiet' => $firstVariant->id_san_pham_chi_tiet,
+                        'id_mau' => $firstVariant->id_mau,
+                        'id_kich_thuoc' => $firstVariant->id_kich_thuoc,
+                        'so_luong_ton' => $firstVariant->so_luong_ton,
+                        'gia_niem_yet' => $firstVariant->gia_niem_yet,
+                        'gia_ban' => $firstVariant->gia_ban,
+                        'anh' => $anh_san_pham,
                     ];
-                })->values();
+                })
+                ->values();
 
             return [
                 'id_san_pham' => $first->id_san_pham,
                 'ma_san_pham' => $first->ma_san_pham,
                 'ten_san_pham' => $first->ten_san_pham,
                 'mo_ta' => $first->mo_ta,
-                'gia_niem_yet' => $first->gia_niem_yet,
-                'gia_ban' => $first->gia_ban,
                 'trang_thai' => $first->trang_thai,
                 'ten_thuong_hieu' => $first->ten_thuong_hieu,
-                'so_luong_ton' => $first->so_luong_ton,
-                'mau' => $mau,
-                'kich_thuoc' => $kich_thuoc,
+                'options' => [
+                    'mau' => $mau_options,
+                    'kich_thuoc' => $kich_thuoc_options,
+                ],
+                'variants' => $variants,
             ];
         })->first();
 
         return Response::Success($result, '');
+    }
+
+    public function productSearch(Request $request)
+    {
+        $searchString = $request->input('keyword', '');
+
+        $query = DB::table('san_pham')
+            ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham', '=', 'san_pham.id_san_pham')
+            ->when($searchString, function ($query, $searchString) {
+                return $query->where('ten_san_pham', 'ilike', '%' . $searchString . '%');
+            })
+            ->get();
+
+        if(!$query->isEmpty()) {
+            return Response::Success($query, 'Response search successfully');
+        }
+
+        return Response::Success([], 'Response search successfully');
     }
 }

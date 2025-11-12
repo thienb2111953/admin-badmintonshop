@@ -25,10 +25,9 @@ Route::group(['prefix' => 'danh-muc'], function () {
 Route::get('trang-chu', [TrangChuController::class, 'getViewHome'])->name('TrangChuController.getViewHome');
 Route::group(['prefix' => 'san-pham'], function () {
     Route::get('/{param}', [SanPhamController::class, 'getProductsDetail'])->name('SanPhamController.getProductsDetail');
+    Route::get('/search', [SanPhamController::class, 'productSearch'])->name('SanPhamController.productSearch');
 });
 
-Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
-Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
@@ -44,6 +43,9 @@ Route::middleware('jwt')->group(function () {
         Route::post('/remove', [CartController::class, 'removeFromCart']);
         Route::post('/update', [CartController::class, 'updateQuantity']);
     });
+
+    Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
+    Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
 });
 
 

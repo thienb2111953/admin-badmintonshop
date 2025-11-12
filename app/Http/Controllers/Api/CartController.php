@@ -64,8 +64,8 @@ class CartController extends Controller
             'id_kich_thuoc' => 'required',
             'so_luong' => 'required|integer|min:1',
         ], [
-            'id_san_pham.required' => 'Sản phẩm không được để trống.',
             'id_mau.required' => 'Màu sắc không được để trống.',
+            'id_san_pham.required' => 'Sản phẩm không được để trống.',
             'id_kich_thuoc.required' => 'Kích thước không được để trống.',
             'so_luong.required' => 'Số lượng không được để trống.',
             'so_luong.integer' => 'Số lượng phải là số nguyên.',
@@ -84,7 +84,6 @@ class CartController extends Controller
         $so_luong_them = (int)$validated['so_luong'];
 
         $gio_hang = DB::table('gio_hang')->where('id_nguoi_dung', $id_nguoi_dung)->first();
-
 
         $id_gio_hang = $gio_hang->id_gio_hang;
 
@@ -172,5 +171,6 @@ class CartController extends Controller
 
         return Response::Error('Không thể cập nhật số lượng.');
     }
+
 
 }
