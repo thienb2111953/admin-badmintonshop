@@ -4,8 +4,6 @@ use App\Http\Controllers\Admin\NguoiDungController;
 use App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Api\TrangChuController;
 use App\Http\Controllers\ChatBotController;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DanhMucController;
 use App\Http\Controllers\Api\SanPhamController;
@@ -13,6 +11,7 @@ use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\UserAddressController;
+use App\Http\Controllers\Api\PaymentController;
 
 Route::post('/chatbot', [ChatbotController::class, 'reply']);
 
@@ -53,6 +52,7 @@ Route::middleware('jwt')->group(function () {
         Route::get('/default', [UserAddressController::class, 'getDefaultAddress']);
     });
 
+    Route::post('checkout', [PaymentController::class, 'checkout']);
 
     Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
     Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
