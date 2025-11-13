@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\SanPhamController;
 use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\UserAddressController;
 
 Route::post('/chatbot', [ChatbotController::class, 'reply']);
 
@@ -43,6 +44,15 @@ Route::middleware('jwt')->group(function () {
         Route::post('/remove', [CartController::class, 'removeFromCart']);
         Route::post('/update', [CartController::class, 'updateQuantity']);
     });
+
+    Route::prefix('addresses')->group(function () {
+        Route::get('/', [UserAddressController::class, 'index']);
+        Route::post('/', [UserAddressController::class, 'store']);
+        Route::put('/{id}', [UserAddressController::class, 'edit']);
+        Route::delete('/{id}', [UserAddressController::class, 'destroy']);
+        Route::get('/default', [UserAddressController::class, 'getDefaultAddress']);
+    });
+
 
     Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
     Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
