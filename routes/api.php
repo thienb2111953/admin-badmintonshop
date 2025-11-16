@@ -4,14 +4,14 @@ use App\Http\Controllers\Admin\NguoiDungController;
 use App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Api\TrangChuController;
 use App\Http\Controllers\ChatBotController;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DanhMucController;
 use App\Http\Controllers\Api\SanPhamController;
 use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\UserAddressController;
+use App\Http\Controllers\Api\PaymentController;
 
 Route::post('/chatbot', [ChatbotController::class, 'reply']);
 
@@ -27,10 +27,9 @@ Route::group(['prefix' => 'san-pham'], function () {
     Route::get('/ds', [SanPhamController::class, 'dsSanPhamChiTiet'])->name('SanPhamController.dsSanPhamChiTiet');
 
     Route::get('/{param}', [SanPhamController::class, 'getProductsDetail'])->name('SanPhamController.getProductsDetail');
+    Route::get('/search', [SanPhamController::class, 'productSearch'])->name('SanPhamController.productSearch');
 });
 
-Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
-Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
@@ -46,6 +45,19 @@ Route::middleware('jwt')->group(function () {
         Route::post('/remove', [CartController::class, 'removeFromCart']);
         Route::post('/update', [CartController::class, 'updateQuantity']);
     });
+
+    Route::prefix('addresses')->group(function () {
+        Route::get('/', [UserAddressController::class, 'index']);
+        Route::post('/', [UserAddressController::class, 'store']);
+        Route::put('/{id}', [UserAddressController::class, 'edit']);
+        Route::delete('/{id}', [UserAddressController::class, 'destroy']);
+        Route::get('/default', [UserAddressController::class, 'getDefaultAddress']);
+    });
+
+    Route::post('checkout', [PaymentController::class, 'checkout']);
+
+    Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
+    Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
 });
 
 

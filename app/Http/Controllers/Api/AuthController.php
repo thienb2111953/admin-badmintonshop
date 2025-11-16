@@ -60,7 +60,11 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        return $this->respondWithToken(Auth::guard('api')->refresh());
+        $newToken = Auth::guard('api')->refresh();
+
+        $user = Auth::guard('api')->setToken($newToken)->user();
+
+        return $this->respondWithToken($newToken, $user);
     }
 
     protected function respondWithToken($token)
