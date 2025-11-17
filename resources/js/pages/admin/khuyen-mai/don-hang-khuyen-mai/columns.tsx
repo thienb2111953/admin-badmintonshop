@@ -24,6 +24,16 @@ export function Columns(
               return isNaN(value) ? '' : value.toLocaleString('vi-VN') + ' đ';
           },
       },
+      {
+          accessorKey: 'gia_sau_khuyen_mai',
+          header: ({ column }) => <ColumnHeader column={column} title="Giá sau khuyến mãi" />,
+          cell: ({ row }) => {
+              const raw = row.getValue('gia_sau_khuyen_mai');
+              const value = Number(raw);
+
+              return isNaN(value) ? '' : value.toLocaleString('vi-VN') + ' đ';
+          },
+      },
 
     {
       id: 'actions',

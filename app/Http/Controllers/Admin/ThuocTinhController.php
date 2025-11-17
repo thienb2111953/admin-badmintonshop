@@ -53,8 +53,6 @@ class ThuocTinhController extends Controller
         return back()->with('success', 'Thêm thành công');
     }
 
-
-
     public function update(Request $request)
     {
         $validatedData = $request->validate([
