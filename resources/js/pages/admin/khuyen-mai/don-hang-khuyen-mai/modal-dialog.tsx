@@ -1,0 +1,77 @@
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { type InertiaFormProps } from '@inertiajs/react';
+import { KhuyenMai, DonHangKhuyenMai } from '@/types';
+import { Label } from '@/components/ui/label';
+import { Combobox } from '@/components/ui/combobox';
+import { formatNumber } from '@/utils/helper';
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  btnTitle: string;
+  form: InertiaFormProps<DonHangKhuyenMai>;
+    khuyenMaiOptions: KhuyenMai[];
+  onSubmit: () => void;
+}
+
+export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, khuyenMaiOptions }: Props) {
+  const { data, setData, errors } = form;
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleFormSubmit} className="mt-4 space-y-4">
+          <div className="grid gap-4">
+              <div className="grid gap-3">
+                  <Label>Khuyến mãi</Label>
+                  <Combobox
+                      options={khuyenMaiOptions.map((spct) => ({
+                          value: spct.id_khuyen_mai,
+                          label: spct.ten_khuyen_mai,
+                      }))}
+                      value={data.id_khuyen_mai}
+                      onChange={(val) => setData('id_khuyen_mai', val as number)}
+                      placeholder="Chọn chương trình khuyến mãi..."
+                      className="w-full"
+                  />
+                  {errors.id_khuyen_mai && <p className="text-red-500">{errors.id_khuyen_mai}</p>}
+              </div>
+
+              <div className="grid gap-2">
+                  <Label htmlFor="gia_tri_duoc_giam">Giá trị được giảm</Label>
+                  <Input
+                      id="gia_tri_duoc_giam"
+                      type="text"
+                      placeholder="Nhập giá trị"
+                      value={formatNumber(data.gia_tri_duoc_giam)}
+                      onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, '');
+                          setData('gia_tri_duoc_giam', raw ? Number(raw) : 0);
+                      }}
+                  />
+                  {errors.gia_tri_duoc_giam && <p className="text-red-500">{errors.gia_tri_duoc_giam}</p>}
+              </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Hủy
+            </Button>
+            <Button type="submit">{btnTitle}</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

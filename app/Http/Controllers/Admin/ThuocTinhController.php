@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ThuocTinh;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Validator;
+
 
 class ThuocTinhController extends Controller
 {
@@ -16,18 +18,42 @@ class ThuocTinhController extends Controller
         ]);
     }
 
+//    public function store(Request $request)
+//    {
+//        $validator = Validator::make($request->all(), [
+//            'ten_thuoc_tinh' => 'required|string|max:255'
+//        ], [
+//            'ten_thuoc_tinh.required' => 'Tên thuộc tính không được để trống.'
+//        ]);
+//
+//        if ($validator->fails()) {
+//            return Inertia::render('admin/thuoc-tinh/thuoc-tinh', [
+//                'thuoc_tinhs' => ThuocTinh::all(),
+//                'errors' => $validator->errors()->getMessages()
+//            ])->withViewData([
+//                'errors' => $validator->errors()
+//            ]);
+//        }
+//
+//        ThuocTinh::create($validator->validated());
+//
+//        return redirect()->back();
+//    }
+
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'ten_thuoc_tinh' => 'required|string'
+        $validated = $request->validate([
+            'ten_thuoc_tinh' => 'required|string|max:255'
         ], [
             'ten_thuoc_tinh.required' => 'Tên thuộc tính không được để trống.'
         ]);
 
-        ThuocTinh::create($validatedData);
+        ThuocTinh::create($validated);
 
-        return redirect()->route('thuoc_tinh');
+        return back()->with('success', 'Thêm thành công');
     }
+
+
 
     public function update(Request $request)
     {
@@ -36,11 +62,12 @@ class ThuocTinhController extends Controller
         ], [
             'ten_thuoc_tinh.required' => 'Tên thuộc tính không được để trống.'
         ]);
+
         $thuoc_tinh = ThuocTinh::findOrFail($request->id_thuoc_tinh);
 
         $thuoc_tinh->update($validatedData);
 
-        return redirect()->route('thuoc_tinh');
+        return redirect()->back();
     }
 
     public function destroy(Request $request)
@@ -48,6 +75,6 @@ class ThuocTinhController extends Controller
         $thuoc_tinh = ThuocTinh::findOrFail($request->id_thuoc_tinh);
         $thuoc_tinh->delete();
 
-        return redirect()->route('thuoc_tinh');
+        return redirect()->back();
     }
 }

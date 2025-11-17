@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 
-class GioHanhChiTietController extends Controller
+class GioHangChiTietController extends Controller
 {
 
 }

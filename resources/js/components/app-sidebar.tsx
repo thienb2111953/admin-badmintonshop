@@ -12,20 +12,18 @@ import {
 } from '@/components/ui/sidebar';
 import {
     dashboard,
-    quyen,
     thuong_hieu,
     nguoi_dung,
     danh_muc,
     thuoc_tinh,
     san_pham_thuong_hieu,
-    cai_dat,
     mau,
     kich_thuoc,
     banner,
     nhap_hang,
     thanh_toan,
     don_hang,
-    thong_ke,
+    thong_ke, khuyen_mai
 } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -115,6 +113,10 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Thanh toán',
         href: thanh_toan()
+    },
+    {
+        title: 'Khuyến mãi',
+        href: khuyen_mai()
     }
 ];
 

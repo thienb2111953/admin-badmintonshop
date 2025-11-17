@@ -7,20 +7,21 @@ use App\Http\Controllers\Admin\DanhMucController;
 use App\Http\Controllers\Admin\DanhMucThuongHieuController;
 use App\Http\Controllers\Admin\DonHangChiTietController;
 use App\Http\Controllers\Admin\DonHangController;
+use App\Http\Controllers\Admin\DonHangKhuyenMaiController;
+use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\KichThuocController;
 use App\Http\Controllers\Admin\MauController;
 use App\Http\Controllers\Admin\NguoiDungController;
 use App\Http\Controllers\Admin\NhapHangChiTietController;
 use App\Http\Controllers\Admin\NhapHangController;
-use App\Http\Controllers\Admin\QuyenController;
 use App\Http\Controllers\Admin\SanPhamChiTietController;
 use App\Http\Controllers\Admin\SanPhamController;
+use App\Http\Controllers\Admin\SanPhamKhuyenMaiController;
 use App\Http\Controllers\Admin\ThanhToanController;
 use App\Http\Controllers\Admin\ThongKeController;
 use App\Http\Controllers\Admin\ThuocTinhChiTietController;
 use App\Http\Controllers\Admin\ThuocTinhController;
 use App\Http\Controllers\Admin\ThuongHieuController;
-use App\Http\Controllers\CheckOutController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -34,15 +35,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
-
-//  Route::prefix('quyen')->group(function () {
-//    Route::get('/', [QuyenController::class, 'index'])->name('quyen');
-//    Route::post('/', [QuyenController::class, 'store'])->name('quyen.store');
-//    Route::put('/', [QuyenController::class, 'update'])->name('quyen.update');
-//    Route::delete('/', [QuyenController::class, 'destroy'])->name('quyen.destroy');
-//    Route::delete('xoa-nhieu', [QuyenController::class, 'destroyMultiple'])->name('quyen.destroyMultiple');
-//    Route::get('ds-quyen', [QuyenController::class, 'dsQuyen'])->name('quyen.dsQuyen');
-//  });
 
     Route::prefix('nguoi-dung')->group(function () {
         Route::get('/', [NguoiDungController::class, 'index'])->name('nguoi_dung');
@@ -177,6 +169,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/doanh-thu', [ThongKeController::class, 'doanhThu'])->name('thong_ke.doanh_thu');
         Route::get('/san-pham', [ThongKeController::class, 'thongKeSanPham'])->name('thong_ke.san_pham');
     });
+
+    Route::prefix('khuyen-mai')->group(function () {
+        Route::get('/', [KhuyenMaiController::class, 'index'])->name('khuyen_mai');
+        Route::post('/', [KhuyenMaiController::class, 'store'])->name('khuyen_mai.store');
+        Route::put('/', [KhuyenMaiController::class, 'update'])->name('khuyen_mai.update');
+        Route::delete('/', [KhuyenMaiController::class, 'destroy'])->name('khuyen_mai.destroy');
+    });
+
+    Route::prefix('san-pham-khuyen-mai')->group(function () {
+        Route::post('/', [SanPhamKhuyenMaiController::class, 'store'])->name('san_pham_khuyen_mai.store');
+        Route::put('/', [SanPhamKhuyenMaiController::class, 'update'])->name('san_pham_khuyen_mai.update');
+        Route::delete('/', [SanPhamKhuyenMaiController::class, 'destroy'])->name('san_pham_khuyen_mai.destroy');
+    });
+
+    Route::prefix('don-hang-khuyen-mai')->group(function () {
+        Route::post('/', [DonHangKhuyenMaiController::class, 'store'])->name('don_hang_khuyen_mai.store');
+        Route::put('/', [DonHangKhuyenMaiController::class, 'update'])->name('don_hang_khuyen_mai.update');
+        Route::delete('/', [DonHangKhuyenMaiController::class, 'destroy'])->name('don_hang_khuyen_mai.destroy');
+    });
+
 
 //    Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
 //    Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');

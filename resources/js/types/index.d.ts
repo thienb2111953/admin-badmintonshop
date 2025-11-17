@@ -187,3 +187,25 @@ export interface DonHangChiTiet {
   so_luong: number | null;
   don_gia: number;
 }
+
+export interface KhuyenMai {
+    id_khuyen_mai: number,
+    ma_khuyen_mai: string,
+    ten_khuyen_mai: string,
+    gia_tri: number,
+    don_vi_tinh: string,
+    ngay_bat_dau: Date;
+    ngay_ket_thuc: Date,
+}
+
+export interface SanPhamKhuyenMai{
+    id_san_pham_khuyen_mai: number,
+    id_san_pham: number,
+    id_khuyen_mai: number
+}
+
+export interface DonHangKhuyenMai {
+    id_don_hang_khuyen_mai: number,
+    id_khuyen_mai: number,
+    gia_tri_duoc_giam: number,
+}
