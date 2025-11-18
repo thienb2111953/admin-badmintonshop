@@ -19,10 +19,12 @@ class TrangChuController extends Controller
                 'sct.gia_niem_yet',
                 'sct.gia_ban',
                 'asp.anh_url',
+                DB::raw('MIN(sct.gia_ban) OVER(PARTITION BY sct.id_san_pham) as gia_thap_nhat'),
+                DB::raw('MAX(sct.gia_ban) OVER(PARTITION BY sct.id_san_pham) as gia_cao_nhat'),
                 DB::raw('ROW_NUMBER() OVER(
-                    PARTITION BY sct.id_san_pham
-                    ORDER BY sct.gia_ban ASC
-                ) as rn')
+                PARTITION BY sct.id_san_pham
+                ORDER BY sct.gia_ban ASC
+            ) as rn')
             )
             ->where('asp.thu_tu', 1);
 
@@ -38,9 +40,11 @@ class TrangChuController extends Controller
                 'san_pham.id_san_pham',
                 'san_pham.ma_san_pham',
                 'san_pham.ten_san_pham',
-                'san_pham.slug as slug_san_pham',
+                'san_pham.slug',
                 'variants.gia_niem_yet',
                 'variants.gia_ban',
+                'variants.gia_thap_nhat',
+                'variants.gia_cao_nhat',
                 'variants.anh_url'
             ])
             ->orderBy('san_pham.created_at', 'desc');

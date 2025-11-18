@@ -45,4 +45,169 @@ class DanhMucController extends Controller
         }
         return Response::Error('Lỗi phát sinh !', 'Lỗi');
     }
+
+    public function getProductByCategory(Request $request, $slug)
+    {
+        $query = DB::table('san_pham as sp')
+            ->select('sp.*')
+            ->addSelect(['anh_url' => function ($q) {
+                $q->select('asp.anh_url')
+                    ->from('san_pham_chi_tiet as spct')
+                    ->join('anh_san_pham as asp', 'spct.id_san_pham_chi_tiet', '=', 'asp.id_san_pham_chi_tiet')
+                    ->whereColumn('spct.id_san_pham', 'sp.id_san_pham')
+                    ->where('asp.thu_tu', 1)
+                    ->orderBy('spct.id_san_pham_chi_tiet', 'asc')
+                    ->limit(1);
+            }])
+            ->addSelect(['gia_thap_nhat' => function ($q) {
+                $q->selectRaw('MIN(gia_ban)')
+                    ->from('san_pham_chi_tiet')
+                    ->whereColumn('id_san_pham', 'sp.id_san_pham');
+            }])
+            ->addSelect(['gia_cao_nhat' => function ($q) {
+                $q->selectRaw('MAX(gia_ban)')
+                    ->from('san_pham_chi_tiet')
+                    ->whereColumn('id_san_pham', 'sp.id_san_pham');
+            }])
+            ->join('danh_muc_thuong_hieu as dmth', 'sp.id_danh_muc_thuong_hieu', '=', 'dmth.id_danh_muc_thuong_hieu')
+             ->join('thuong_hieu as th', 'dmth.id_thuong_hieu', '=', 'th.id_thuong_hieu')
+            ->join('danh_muc as dm', 'dmth.id_danh_muc', '=', 'dm.id_danh_muc')
+            ->where('dm.slug', $slug);
+
+        if ($request->has('brands') && is_array($request->brands) && count($request->brands) > 0) {
+            $query->whereIn('th.ten_thuong_hieu', $request->brands);
+        }
+
+        if ($request->has('price_ranges') && is_array($request->price_ranges) && count($request->price_ranges) > 0) {
+            $query->where(function ($q) use ($request) {
+                foreach ($request->price_ranges as $range) {
+                    $q->orWhereExists(function ($subQuery) use ($range) {
+                        $subQuery->select(DB::raw(1))
+                            ->from('san_pham_chi_tiet as spct_filter')
+                            ->whereColumn('spct_filter.id_san_pham', 'sp.id_san_pham');
+
+                        switch ($range) {
+                            case 'range_1': // Dưới 500k
+                                $subQuery->where('gia_ban', '<', 500000);
+                                break;
+                            case 'range_2': // 500k - 1tr
+                                $subQuery->whereBetween('gia_ban', [500000, 1000000]);
+                                break;
+                            case 'range_3': // 1tr - 2tr
+                                $subQuery->whereBetween('gia_ban', [1000000, 2000000]);
+                                break;
+                            case 'range_4': // Trên 2tr
+                                $subQuery->where('gia_ban', '>', 2000000);
+                                break;
+                        }
+                    });
+                }
+            });
+        }
+
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'low_to_hight':
+                case 'low_to_high':
+                    $query->orderBy('gia_thap_nhat', 'asc');
+                    break;
+                case 'hight_to_low':
+                case 'high_to_low':
+                    $query->orderBy('gia_thap_nhat', 'desc');
+                    break;
+                default:
+                    $query->orderBy('sp.created_at', 'desc');
+                    break;
+            }
+        } else {
+            $query->orderBy('sp.created_at', 'desc');
+        }
+
+        $products = $query->paginate(12);
+
+        return Response::Success($products, 'Lấy danh sách sản phẩm thành công');
+    }
+
+    public function getProductByCategoryBrand(Request $request, $categorySlug, $categoryBrandSlug)
+    {
+        $query = DB::table('san_pham as sp')
+            ->select('sp.*', 'th.ten_thuong_hieu')
+            ->addSelect(['anh_url' => function ($q) {
+                $q->select('asp.anh_url')
+                    ->from('san_pham_chi_tiet as spct')
+                    ->join('anh_san_pham as asp', 'spct.id_san_pham_chi_tiet', '=', 'asp.id_san_pham_chi_tiet')
+                    ->whereColumn('spct.id_san_pham', 'sp.id_san_pham')
+                    ->where('asp.thu_tu', 1)
+                    ->orderBy('spct.id_san_pham_chi_tiet', 'asc')
+                    ->limit(1);
+            }])
+            ->addSelect(['gia_thap_nhat' => function ($q) {
+                $q->selectRaw('MIN(gia_ban)')
+                    ->from('san_pham_chi_tiet')
+                    ->whereColumn('id_san_pham', 'sp.id_san_pham');
+            }])
+            ->addSelect(['gia_cao_nhat' => function ($q) {
+                $q->selectRaw('MAX(gia_ban)')
+                    ->from('san_pham_chi_tiet')
+                    ->whereColumn('id_san_pham', 'sp.id_san_pham');
+            }])
+            ->join('danh_muc_thuong_hieu as dmth', 'sp.id_danh_muc_thuong_hieu', '=', 'dmth.id_danh_muc_thuong_hieu')
+            ->join('thuong_hieu as th', 'dmth.id_thuong_hieu', '=', 'th.id_thuong_hieu')
+            ->join('danh_muc as dm', 'dmth.id_danh_muc', '=', 'dm.id_danh_muc')
+            ->where('dm.slug', $categorySlug)
+            ->where('dmth.slug', $categoryBrandSlug);
+
+        if ($request->has('brands') && is_array($request->brands) && count($request->brands) > 0) {
+            $query->whereIn('th.ten_thuong_hieu', $request->brands);
+        }
+
+        if ($request->has('price_ranges') && is_array($request->price_ranges) && count($request->price_ranges) > 0) {
+            $query->where(function ($q) use ($request) {
+                foreach ($request->price_ranges as $range) {
+                    $q->orWhereExists(function ($subQuery) use ($range) {
+                        $subQuery->select(DB::raw(1))
+                            ->from('san_pham_chi_tiet as spct_filter')
+                            ->whereColumn('spct_filter.id_san_pham', 'sp.id_san_pham');
+
+                        switch ($range) {
+                            case 'range_1': // Dưới 500k
+                                $subQuery->where('gia_ban', '<', 500000);
+                                break;
+                            case 'range_2': // 500k - 1tr
+                                $subQuery->whereBetween('gia_ban', [500000, 1000000]);
+                                break;
+                            case 'range_3': // 1tr - 2tr
+                                $subQuery->whereBetween('gia_ban', [1000000, 2000000]);
+                                break;
+                            case 'range_4': // Trên 2tr
+                                $subQuery->where('gia_ban', '>', 2000000);
+                                break;
+                        }
+                    });
+                }
+            });
+        }
+
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'low_to_hight':
+                case 'low_to_high':
+                    $query->orderBy('gia_thap_nhat', 'asc');
+                    break;
+                case 'hight_to_low':
+                case 'high_to_low':
+                    $query->orderBy('gia_thap_nhat', 'desc');
+                    break;
+                default:
+                    $query->orderBy('sp.created_at', 'desc');
+                    break;
+            }
+        } else {
+            $query->orderBy('sp.created_at', 'desc');
+        }
+
+        $products = $query->paginate(12);
+
+        return Response::Success($products, 'Lấy danh sách sản phẩm thành công');
+    }
 }

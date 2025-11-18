@@ -12,23 +12,30 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\UserAddressController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\ThuongHieuController;
 
 Route::post('/chatbot', [ChatbotController::class, 'reply']);
 
 Route::get('quyen', [QuyenController::class, 'dsQuyen'])->name('QuyenController.dsQuyen');
 Route::post('quyen', [QuyenController::class, 'them'])->name('QuyenController.them');
 
+Route::get('trang-chu', [TrangChuController::class, 'getViewHome'])->name('TrangChuController.getViewHome');
+
 Route::group(['prefix' => 'danh-muc'], function () {
     Route::get('/', [DanhMucController::class, 'getDanhMuc'])->name('DanhMucController.getDanhMuc');
+    Route::get('/{param}', [DanhMucController::class, 'getProductByCategory'])->name('DanhMucController.getProductByCategory');
+    Route::get('/{categorySlug}/{categoryBrandSlug}', [DanhMucController::class, 'getProductByCategoryBrand']);
 });
 
-Route::get('trang-chu', [TrangChuController::class, 'getViewHome'])->name('TrangChuController.getViewHome');
+
 Route::group(['prefix' => 'san-pham'], function () {
     Route::get('/ds', [SanPhamController::class, 'dsSanPhamChiTiet'])->name('SanPhamController.dsSanPhamChiTiet');
 
     Route::get('/{param}', [SanPhamController::class, 'getProductsDetail'])->name('SanPhamController.getProductsDetail');
     Route::get('/search', [SanPhamController::class, 'productSearch'])->name('SanPhamController.productSearch');
 });
+
+Route::get('/thuong-hieu', [ThuongHieuController::class, 'getAllThuongHieu'])->name('ThuongHieuController.getAllThuongHieu');
 
 
 Route::post('login', [AuthController::class, 'login']);
