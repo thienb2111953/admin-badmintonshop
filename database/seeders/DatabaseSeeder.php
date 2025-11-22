@@ -47,7 +47,11 @@ class DatabaseSeeder extends Seeder
                     'ten_thuoc_tinh_chi_tiet' => $tenChiTiet,
                 ]);
             }
-        }
 
+        }
+        $this->call([
+            MauSeeder::class,
+            KichThuocSeeder::class,
+        ]);
     }
 }
