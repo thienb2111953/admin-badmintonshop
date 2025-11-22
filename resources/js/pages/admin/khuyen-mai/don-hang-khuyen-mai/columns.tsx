@@ -16,7 +16,7 @@ export function Columns(
     },
       {
           accessorKey: 'gia_tri_duoc_giam',
-          header: ({ column }) => <ColumnHeader column={column} title="Giá trị được giảm" />,
+          header: ({ column }) => <ColumnHeader column={column} title="Mã khuyến mãi có hiệu lực" />,
           cell: ({ row }) => {
               const raw = row.getValue('gia_tri_duoc_giam');
               const value = Number(raw);
@@ -24,16 +24,16 @@ export function Columns(
               return isNaN(value) ? '' : value.toLocaleString('vi-VN') + ' đ';
           },
       },
-      {
-          accessorKey: 'gia_sau_khuyen_mai',
-          header: ({ column }) => <ColumnHeader column={column} title="Giá sau khuyến mãi" />,
-          cell: ({ row }) => {
-              const raw = row.getValue('gia_sau_khuyen_mai');
-              const value = Number(raw);
-
-              return isNaN(value) ? '' : value.toLocaleString('vi-VN') + ' đ';
-          },
-      },
+      // {
+      //     accessorKey: 'gia_sau_khuyen_mai',
+      //     header: ({ column }) => <ColumnHeader column={column} title="Giá sau khuyến mãi" />,
+      //     cell: ({ row }) => {
+      //         const raw = row.getValue('gia_sau_khuyen_mai');
+      //         const value = Number(raw);
+      //
+      //         return isNaN(value) ? '' : value.toLocaleString('vi-VN') + ' đ';
+      //     },
+      // },
 
     {
       id: 'actions',

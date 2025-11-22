@@ -35,7 +35,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, kh
         <form onSubmit={handleFormSubmit} className="mt-4 space-y-4">
           <div className="grid gap-4">
               <div className="grid gap-3">
-                  <Label>Khuyến mãi</Label>
+                  <Label>Chương trình khuyến mãi</Label>
                   <Combobox
                       options={khuyenMaiOptions.map((spct) => ({
                           value: spct.id_khuyen_mai,
@@ -50,7 +50,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, kh
               </div>
 
               <div className="grid gap-2">
-                  <Label htmlFor="gia_tri_duoc_giam">Giá trị được giảm</Label>
+                  <Label htmlFor="gia_tri_duoc_giam">Giá trị đơn hàng</Label>
                   <Input
                       id="gia_tri_duoc_giam"
                       type="text"

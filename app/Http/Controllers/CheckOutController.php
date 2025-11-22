@@ -31,15 +31,24 @@ class CheckOutController extends Controller
         return true;
     }
 
-    public function taoDonHang(array $id_gio_hang_chi_tiet)
+    public function taoDonHang($id_nguoi_dung, array $sanPhamChiTietIds)
     {
-        $gioHangChiTietIds = $id_gio_hang_chi_tiet;
+        if (!is_array($sanPhamChiTietIds)) {
+            return 'Không có sản phẩm nào được chọn';
+        }
+
+        $gioHangChiTietIds = DB::table('gio_hang_chi_tiet')
+            ->join('gio_hang', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
+            ->where('gio_hang.id_nguoi_dung', $id_nguoi_dung)
+            ->whereIn('gio_hang_chi_tiet.id_san_pham_chi_tiet', $sanPhamChiTietIds)
+            ->pluck('gio_hang_chi_tiet.id_gio_hang_chi_tiet')
+            ->toArray();
+
+        if (empty($gioHangChiTietIds)) {
+            return 'Không tìm thấy sản phẩm trong giỏ hàng';
+        }
 
         $tong_tien = 0;
-
-        if (!is_array($gioHangChiTietIds) || empty($gioHangChiTietIds)) {
-            return 'Không có ID giỏ hàng';
-        }
 
         // ✅ Kiểm tra tồn kho trước khi tạo đơn
         $kiemTra = $this->kiemTraTonKho($gioHangChiTietIds);

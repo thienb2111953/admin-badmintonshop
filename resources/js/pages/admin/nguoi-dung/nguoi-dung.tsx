@@ -97,7 +97,7 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
             form.appendChild(csrfInput);
         }
 
-        const ids = [1];
+        const ids = [3,4];
         const inputName = 'id_gio_hang_chi_tiet';
 
         ids.forEach(id => {

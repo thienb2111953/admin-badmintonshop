@@ -51,7 +51,6 @@ class DatabaseSeeder extends Seeder
         }
         $this->call([
             MauSeeder::class,
-            KichThuocSeeder::class,
         ]);
     }
 }

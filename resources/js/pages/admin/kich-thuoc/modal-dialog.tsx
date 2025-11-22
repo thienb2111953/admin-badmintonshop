@@ -22,8 +22,16 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+    // <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        // chỉ gọi onClose khi Dialog thực sự đóng
+        if (!isOpen) onClose();
+      }}
+    >
+
+    <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

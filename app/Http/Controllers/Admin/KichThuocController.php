@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use  App\Http\Controllers\Controller;
 use App\Models\KichThuoc;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,7 +19,7 @@ class KichThuocController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'ten_kich_thuoc' => 'required|string|max:255'
+            'ten_kich_thuoc' => 'required|filled|string|max:255'
         ], [
             'ten_kich_thuoc.required' => 'Tên kích thước không được để trống'
         ]);

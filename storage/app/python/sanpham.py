@@ -13,21 +13,24 @@ def getDanhMuc(cursor):
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
 
+    # Xóa dữ liệu cũ
+    cursor.execute("DELETE FROM danh_muc")
+
     titles = soup.find_all('a', class_='hmega')
 
     for title in titles:
         name = title.text.strip()
-        slug = to_slug(name)
-        print(f"Đang thêm: {name} → {slug}")
-        cursor.execute("""
-                       INSERT INTO danh_muc (ten_danh_muc, slug)
-                       VALUES (%s, %s)
-                       """, (name, slug))
 
-def getAllSlugDanhMuc(cursor):
-    cursor.execute("SELECT slug FROM danh_muc;")
-    rows = cursor.fetchall()
-    return [row[0] for row in rows]
+        # Kiểm tra chỉ lấy danh mục liên quan cầu lông
+        keywords = ['cầu lông']  # có thể thêm các từ khác
+        if any(keyword.lower() in name.lower() for keyword in keywords):
+            slug = to_slug(name)
+            print(f"Đang thêm: {name} → {slug}")
+            cursor.execute("""
+                           INSERT INTO danh_muc (ten_danh_muc, slug)
+                           VALUES (%s, %s)
+                           """, (name, slug))
+
 
 def getThuongHieu(cursor, slug_category):
     url = f"https://shopvnb.com/{slug_category}.html"
@@ -256,13 +259,12 @@ def main():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # getDanhMuc(cursor)
-    # conn.commit()
+#     getDanhMuc(cursor)
+#     conn.commit()
 
-    # slugs = getAllSlugDanhMuc(cursor)
-    # for slug in slugs:
-    #     getThuongHieu(cursor, slug)
-    #     conn.commit()
+    slug_category = "cau-long"
+    getThuongHieu(cursor, slug_category)
+    conn.commit()
 
     # createDanhMucThuongHieu(cursor)
     # conn.commit()
@@ -270,8 +272,8 @@ def main():
 #     createSanPham(cursor, "Lining", "Vợt cầu lông")
 #     conn.commit()
 
-    createSanPhamChiTiet(cursor)
-    conn.commit()
+#     createSanPhamChiTiet(cursor)
+#     conn.commit()
 
     cursor.close()
     conn.close()

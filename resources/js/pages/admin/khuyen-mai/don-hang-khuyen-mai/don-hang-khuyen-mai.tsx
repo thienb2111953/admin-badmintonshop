@@ -96,7 +96,7 @@ export default function DonHangKhuyenMaiPage({
             <ModalDialog
                 open={openDialog}
                 onClose={() => setOpenDialog(false)}
-                title={selectedRow ? 'Sửa sản phẩm khuyến mãi' : 'Thêm sản phẩm khuyến mãi'}
+                title={selectedRow ? 'Sửa đơn hàng khuyến mãi' : 'Thêm sản phẩm khuyến mãi'}
                 btnTitle={selectedRow ? 'Cập nhật' : 'Thêm mới'}
                 form={form}
                 onSubmit={handleSubmit}
