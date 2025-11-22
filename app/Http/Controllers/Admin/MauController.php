@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Mau;
+use App\Models\SanPhamChiTiet;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -52,7 +53,16 @@ class MauController extends Controller
   {
     $mau = Mau::findOrFail($request->id_mau);
 
-    $mau->delete();
+      if (
+          SanPhamChiTiet::where('id_mau', $request->id_mau)
+              ->whereHas('nhapHangChiTiet')
+              ->exists()
+      ) {
+          return back()->withErrors('Không thể xóa màu vì đang được sử dụng trong nhập hàng.');
+      }
+
+
+      $mau->delete();
     return redirect()->back()->with('success', 'Xóa thành công');
   }
 }

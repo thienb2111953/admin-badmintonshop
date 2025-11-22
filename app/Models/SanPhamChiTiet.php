@@ -35,4 +35,10 @@ class SanPhamChiTiet extends Model
   {
     return $this->belongsTo(KichThuoc::class, 'id_kich_thuoc', 'id_kich_thuoc');
   }
+
+    public function nhapHangChiTiet()
+    {
+        return $this->hasMany(NhapHangChiTiet::class, 'id_san_pham_chi_tiet');
+    }
+
 }
