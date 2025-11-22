@@ -46,6 +46,8 @@ class SanPhamController extends Controller
 
     public function getProductsDetail(Request $request, $param)
     {
+        $now = now();
+
         $query = DB::table('san_pham')
             ->leftJoin('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham', '=', 'san_pham.id_san_pham')
             ->leftJoin('anh_san_pham', 'anh_san_pham.id_san_pham_chi_tiet', '=', 'san_pham_chi_tiet.id_san_pham_chi_tiet')
@@ -54,6 +56,18 @@ class SanPhamController extends Controller
             ->leftJoin('danh_muc_thuong_hieu', 'danh_muc_thuong_hieu.id_danh_muc_thuong_hieu', '=', 'san_pham.id_danh_muc_thuong_hieu')
             ->leftJoin('thuong_hieu', 'thuong_hieu.id_thuong_hieu', '=', 'danh_muc_thuong_hieu.id_thuong_hieu')
             ->leftJoin('danh_muc', 'danh_muc.id_danh_muc', '=', 'danh_muc_thuong_hieu.id_danh_muc')
+            ->leftJoin('san_pham_thuoc_tinh', 'san_pham_thuoc_tinh.id_san_pham', '=', 'san_pham.id_san_pham')
+            ->leftJoin('thuoc_tinh_chi_tiet', 'thuoc_tinh_chi_tiet.id_thuoc_tinh_chi_tiet', '=', 'san_pham_thuoc_tinh.id_thuoc_tinh_chi_tiet')
+            ->leftJoin('thuoc_tinh', 'thuoc_tinh.id_thuoc_tinh', '=', 'thuoc_tinh_chi_tiet.id_thuoc_tinh')
+
+            // --- [MỚI] Join bảng khuyến mãi ---
+            ->leftJoin('san_pham_khuyen_mai', 'san_pham_khuyen_mai.id_san_pham', '=', 'san_pham.id_san_pham')
+            ->leftJoin('khuyen_mai', function ($join) use ($now) {
+                $join->on('khuyen_mai.id_khuyen_mai', '=', 'san_pham_khuyen_mai.id_khuyen_mai')
+                    ->where('khuyen_mai.ngay_bat_dau', '<=', $now)
+                    ->where('khuyen_mai.ngay_ket_thuc', '>=', $now);
+            })
+
             ->select([
                 'san_pham.id_san_pham',
                 'san_pham.ma_san_pham',
@@ -61,20 +75,23 @@ class SanPhamController extends Controller
                 'san_pham.mo_ta',
                 'san_pham.trang_thai',
                 'thuong_hieu.ten_thuong_hieu',
+
                 // Chi tiết biến thể
                 'san_pham_chi_tiet.id_san_pham_chi_tiet',
                 'san_pham_chi_tiet.gia_niem_yet',
                 'san_pham_chi_tiet.gia_ban',
                 'san_pham_chi_tiet.so_luong_ton',
-                // Màu
-                'mau.id_mau',
-                'mau.ten_mau',
-                // Kích thước
-                'kich_thuoc.id_kich_thuoc',
-                'kich_thuoc.ten_kich_thuoc',
+                // Màu & Size
+                'mau.id_mau', 'mau.ten_mau',
+                'kich_thuoc.id_kich_thuoc', 'kich_thuoc.ten_kich_thuoc',
                 // Ảnh
-                'anh_san_pham.anh_url',
-                'anh_san_pham.thu_tu',
+                'anh_san_pham.anh_url', 'anh_san_pham.thu_tu',
+                // Thông số
+                'thuoc_tinh.ten_thuoc_tinh', 'thuoc_tinh_chi_tiet.ten_thuoc_tinh_chi_tiet',
+
+                // --- [MỚI] Thông tin khuyến mãi ---
+                'khuyen_mai.gia_tri as km_gia_tri',
+                'khuyen_mai.don_vi_tinh as km_don_vi_tinh',
             ])
             ->where('san_pham.slug', $param)
             ->whereNotNull('san_pham_chi_tiet.id_san_pham_chi_tiet')
@@ -102,6 +119,17 @@ class SanPhamController extends Controller
                 ->map(fn($item) => [
                     'id_kich_thuoc' => $item->id_kich_thuoc,
                     'ten_kich_thuoc' => $item->ten_kich_thuoc,
+                ])
+                ->values();
+
+            $specifications = $items
+                ->filter(fn($item) => !is_null($item->ten_thuoc_tinh) && !is_null($item->ten_thuoc_tinh_chi_tiet))
+                ->unique(function ($item) {
+                    return $item->ten_thuoc_tinh . '-' . $item->ten_thuoc_tinh_chi_tiet;
+                })
+                ->map(fn($item) => [
+                    'name' => $item->ten_thuoc_tinh,
+                    'value' => $item->ten_thuoc_tinh_chi_tiet,
                 ])
                 ->values();
 
@@ -141,6 +169,9 @@ class SanPhamController extends Controller
                 'mo_ta' => $first->mo_ta,
                 'trang_thai' => $first->trang_thai,
                 'ten_thuong_hieu' => $first->ten_thuong_hieu,
+                'km_gia_tri' => $first->km_gia_tri,
+                'km_don_vi_tinh' => $first->km_don_vi_tinh,
+                'thong_so_ky_thuat' => $specifications,
                 'options' => [
                     'mau' => $mau_options,
                     'kich_thuoc' => $kich_thuoc_options,
