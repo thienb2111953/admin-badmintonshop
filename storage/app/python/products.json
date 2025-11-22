@@ -1,0 +1,18 @@
+[
+    {
+        "id_san_pham": 1,
+        "ten": "Vợt cầu lông Yonex Astrox 100ZZ",
+        "loai": "vợt",
+        "muc_gia": 3500000,
+        "phong_cach": "tấn công",
+        "trinh_do": "chuyên nghiệp"
+    },
+    {
+        "id": 2,
+        "ten": "Giày cầu lông Mizuno Wave Claw",
+        "loai": "giày",
+        "muc_gia": 2100000,
+        "phong_cach": "linh hoạt",
+        "trinh_do": "trung cấp"
+    }
+]
