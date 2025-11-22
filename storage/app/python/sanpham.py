@@ -1,11 +1,13 @@
 import psycopg2
 import requests
+import os
 from bs4 import BeautifulSoup
 from conn import get_db_connection
 from func import to_slug
 from func import parse_price
 from slugify import slugify
 import random
+from datetime import date, timedelta
 
 def getDanhMuc(cursor):
     url = "https://shopvnb.com/"
@@ -134,8 +136,13 @@ def createDanhMucThuongHieu(cursor):
 
 
 def createSanPham(cursor, ten_thuong_hieu_input, ten_danh_muc_input):
+#     cursor.execute("TRUNCATE san_pham CASCADE")
+
+    dm_slug = slugify(ten_danh_muc_input)
+    th_slug = slugify(ten_thuong_hieu_input)
+
     headers = {"User-Agent": "Mozilla/5.0"}
-    base_url = "https://shopvnb.com/vot-cau-long-yonex.html"
+    base_url = f"https://shopvnb.com/{dm_slug}-{th_slug}.html"
 
     response = requests.get(base_url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -197,9 +204,17 @@ def createSanPham(cursor, ten_thuong_hieu_input, ten_danh_muc_input):
         except Exception as e:
             print(f"⚠️ Lỗi khi thêm sản phẩm '{ten_san_pham}': {e}")
 
+def random_date_2025():
+    start = date(2025, 1, 1)
+    end = date(2025, 12, 31)
+    delta_days = (end - start).days
+    return start + timedelta(days=random.randint(0, delta_days))
+
 def createSanPhamChiTiet(cursor):
+    cursor.execute("TRUNCATE san_pham_chi_tiet CASCADE")
+
     # Lấy toàn bộ dữ liệu san_pham, mau, kich_thuoc
-    cursor.execute("SELECT id_san_pham, ten_san_pham FROM san_pham")
+    cursor.execute("SELECT id_san_pham, ten_san_pham, ma_san_pham FROM san_pham")
     san_phams = cursor.fetchall()
 
     cursor.execute("SELECT id_mau, ten_mau FROM mau")
@@ -213,7 +228,17 @@ def createSanPhamChiTiet(cursor):
         return
 
     for sp in san_phams:
-        id_san_pham, ten_san_pham = sp
+        # CHỖ NÀY PHẢI LẤY 3 BIẾN
+        id_san_pham, ten_san_pham, ma_san_pham = sp
+
+        # 👉 Tạo 1 phiếu nhập cho mỗi sản phẩm
+        ngay_nhap = random_date_2025()
+        cursor.execute("""
+            INSERT INTO nhap_hang (ma_nhap_hang, ngay_nhap)
+            VALUES (%s, %s)
+            RETURNING id_nhap_hang
+        """, (ma_san_pham, ngay_nhap))
+        id_nhap_hang = cursor.fetchone()[0]
 
         # Random 2 màu khác nhau
         selected_maus = random.sample(maus, 2)
@@ -232,10 +257,13 @@ def createSanPhamChiTiet(cursor):
                 gia_ban = gia_niem_yet - random.randint(0, 300000)  # giảm nhẹ random
 
                 try:
+                    # 1️⃣ Tạo bản ghi san_pham_chi_tiet
                     cursor.execute("""
                         INSERT INTO san_pham_chi_tiet
-                        (id_san_pham, id_mau, id_kich_thuoc, so_luong_ton, ten_san_pham_chi_tiet, gia_niem_yet, gia_ban)
+                        (id_san_pham, id_mau, id_kich_thuoc, so_luong_ton,
+                         ten_san_pham_chi_tiet, gia_niem_yet, gia_ban)
                         VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        RETURNING id_san_pham_chi_tiet
                     """, (
                         id_san_pham,
                         id_mau,
@@ -246,13 +274,89 @@ def createSanPhamChiTiet(cursor):
                         gia_ban
                     ))
 
+                    id_san_pham_chi_tiet = cursor.fetchone()[0]
+
                     print(f"✅ Tạo chi tiết: {ten_chi_tiet}")
+
+                    # 2️⃣ Tạo bản ghi nhap_hang_chi_tiet
+                    cursor.execute("""
+                        INSERT INTO nhap_hang_chi_tiet
+                        (id_nhap_hang, id_san_pham_chi_tiet, so_luong, don_gia)
+                        VALUES (%s, %s, %s, %s)
+                    """, (
+                        id_nhap_hang,
+                        id_san_pham_chi_tiet,
+                        10,          # so_luong = 10
+                        gia_ban      # don_gia = gia_ban
+                    ))
 
                 except Exception as e:
                     print(f"❌ Lỗi khi thêm chi tiết sản phẩm '{ten_chi_tiet}': {e}")
 
-    print("🎉 Hoàn tất tạo dữ liệu san_pham_chi_tiet!")
+    print("🎉 Hoàn tất tạo dữ liệu san_pham_chi_tiet + nhap_hang_chi_tiet!")
 
+def createAnhSanPham(cursor, storage_folder=None):
+    # Nếu không truyền vào → dùng default
+    if not storage_folder:
+        storage_folder = r"C:\Users\huyph\Downloads\badminton"
+
+    # Tạo thư mục gốc nếu chưa có
+    if not os.path.exists(storage_folder):
+        os.makedirs(storage_folder, exist_ok=True)
+
+    # Lấy danh sách sản phẩm: slug + mã sản phẩm để đặt tên folder
+    cursor.execute("SELECT slug, ma_san_pham FROM san_pham")
+    san_phams = cursor.fetchall()
+
+    if not san_phams:
+        print("❌ Không có sản phẩm nào để tải ảnh.")
+        return
+
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    for slug, ma_san_pham in san_phams:
+        product_url = f"https://shopvnb.com/{slug}.html"
+        print(f"\n🔍 Đang xử lý: {product_url}")
+
+        try:
+            response = requests.get(product_url, headers=headers, timeout=10)
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            slides = soup.select(".swiper-wrapper .swiper-slide img")
+
+            if not slides:
+                print(f"⚠️ Không tìm thấy ảnh cho sản phẩm {ma_san_pham}")
+                continue
+
+            # Thư mục theo từng mã sản phẩm
+            product_folder = os.path.join(storage_folder, ma_san_pham)
+            os.makedirs(product_folder, exist_ok=True)
+
+            for idx, img_tag in enumerate(slides, start=1):
+                img_url = img_tag.get("src") or img_tag.get("data-src")
+                if not img_url:
+                    continue
+
+                # Fix URL
+                if img_url.startswith("//"):
+                    img_url = "https:" + img_url
+                elif img_url.startswith("/"):
+                    img_url = "https://shopvnb.com" + img_url
+
+                file_path = os.path.join(product_folder, f"image_{idx}.jpg")
+
+                try:
+                    img_data = requests.get(img_url, headers=headers, timeout=10).content
+                    with open(file_path, "wb") as f:
+                        f.write(img_data)
+                    print(f"   📥 Đã tải: image_{idx}.jpg")
+                except Exception as e:
+                    print(f"   ❌ Lỗi tải ảnh {img_url}: {e}")
+
+        except Exception as e:
+            print(f"❌ Lỗi truy cập trang {product_url}: {e}")
+
+    print("\n🎉 Hoàn tất tải ảnh tất cả sản phẩm!")
 
 
 def main():
@@ -261,19 +365,27 @@ def main():
 
 #     getDanhMuc(cursor)
 #     conn.commit()
+#
+#     slug_category = "vot-cau-long"
+#     getThuongHieu(cursor, slug_category)
+#     conn.commit()
+#
+#     createDanhMucThuongHieu(cursor)
+#     conn.commit()
 
-    slug_category = "cau-long"
-    getThuongHieu(cursor, slug_category)
+#     createSanPham(cursor, "Mizuno", "Vợt cầu lông")
+#     conn.commit()
+
+    createAnhSanPham(
+        cursor,
+        storage_folder=r"C:\Users\huyph\Downloads\badminton"
+    )
     conn.commit()
 
-    # createDanhMucThuongHieu(cursor)
-    # conn.commit()
 
-#     createSanPham(cursor, "Lining", "Vợt cầu lông")
-#     conn.commit()
-
-#     createSanPhamChiTiet(cursor)
-#     conn.commit()
+    # tao het san pham roi hay chay
+    createSanPhamChiTiet(cursor)
+    conn.commit()
 
     cursor.close()
     conn.close()

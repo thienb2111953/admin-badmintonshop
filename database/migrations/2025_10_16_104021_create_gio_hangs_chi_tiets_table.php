@@ -20,6 +20,7 @@ return new class extends Migration
                 ->onDelete('restrict');
 
             $table->integer('so_luong');
+            $table->decimal('tong_tien', 15, 0);
 
             $table->timestamp('created_at', 6)->useCurrent();
             $table->timestamp('updated_at', 6)->useCurrent();

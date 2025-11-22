@@ -26,3 +26,4 @@ yarn-error.log
 /.vscode
 /.zed
 resources/js/ziggyGenerated.js
+storage/app/python/conn.py
