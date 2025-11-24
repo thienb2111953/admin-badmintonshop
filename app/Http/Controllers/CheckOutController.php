@@ -23,15 +23,6 @@ class CheckOutController extends Controller
             return "Sản phẩm không đáp ứng đủ số lượng";
 
         }
-
-//            if ($sanPhamChiTiet->so_luong_ton < $sanPhamChiTiet->so_luong) {
-//                $tenSanPham = DB::table('san_pham_chi_tiet')
-//                    ->where('id_san_pham_chi_tiet', $sanPhamChiTiet->id_san_pham_chi_tiet)
-//                    ->value('ten_san_pham_chi_tiet');
-//
-//                return "Sản phẩm {$tenSanPham} không đủ hàng";
-//            }
-
         return true;
     }
 
@@ -41,20 +32,7 @@ class CheckOutController extends Controller
             return DB::transaction(function () use ($request) {
 
                 $sanPhamArr = $request->input('san_pham');
-                $sanPhamArr = [
-                    [
-                        'id_san_pham_chi_tiet' => 726,
-                        'so_luong' => 1,
-                    ],
-                    [
-                        'id_san_pham_chi_tiet' => 727,
-                        'so_luong' => 2,
-                    ],
-                    [
-                        'id_san_pham_chi_tiet' => 728,
-                        'so_luong' => 3,
-                    ],
-                ];
+                
                 $id_dia_chi_nguoi_dung = $request->input('id_dia_chi_nguoi_dung');
 
                 if (!is_array($sanPhamArr) || count($sanPhamArr) === 0) {
