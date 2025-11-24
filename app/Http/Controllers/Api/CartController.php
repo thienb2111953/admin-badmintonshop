@@ -24,7 +24,7 @@ class CartController extends Controller
         $data = DB::table('gio_hang')
             ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
             ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
-            ->join('anh_san_pham', function ($join) {
+            ->leftJoin('anh_san_pham', function ($join) {
                 $join->on('anh_san_pham.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
                     ->where('anh_san_pham.thu_tu', '=', 1);
             })

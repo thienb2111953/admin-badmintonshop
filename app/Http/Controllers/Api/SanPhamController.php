@@ -33,7 +33,6 @@ class SanPhamController extends Controller
                 'kich_thuoc.ten_kich_thuoc',
                 'anh_san_pham.anh_url',
                 'anh_san_pham.thu_tu',
-                // Quan trọng: Thêm id_san_pham_chi_tiet để liên kết ảnh đúng
                 'san_pham_chi_tiet.id_san_pham_chi_tiet'
             ])
             ->orderBy('san_pham.id_san_pham')
@@ -42,6 +41,39 @@ class SanPhamController extends Controller
 
 
         return Response::Success($query, '');
+    }
+
+    public function getRelatedProduct($categorySlug, $categoryBrandSlug)
+    {
+        return DB::table('san_pham as sp')
+            ->select('sp.*')
+            ->addSelect(['anh_url' => function ($q) {
+                $q->selectRaw("CONCAT('" . env('APP_URL') . "/storage/', asp.anh_url)")
+                    ->from('san_pham_chi_tiet as spct')
+                    ->join('anh_san_pham as asp', 'spct.id_san_pham_chi_tiet', '=', 'asp.id_san_pham_chi_tiet')
+                    ->whereColumn('spct.id_san_pham', 'sp.id_san_pham')
+                    ->where('asp.thu_tu', 1)
+                    ->orderBy('spct.id_san_pham_chi_tiet', 'asc')
+                    ->limit(1);
+            }])
+            ->addSelect(['gia_thap_nhat' => function ($q) {
+                $q->selectRaw('MIN(gia_ban)')
+                    ->from('san_pham_chi_tiet')
+                    ->whereColumn('id_san_pham', 'sp.id_san_pham');
+            }])
+            ->addSelect(['gia_cao_nhat' => function ($q) {
+                $q->selectRaw('MAX(gia_ban)')
+                    ->from('san_pham_chi_tiet')
+                    ->whereColumn('id_san_pham', 'sp.id_san_pham');
+            }])
+            ->join('danh_muc_thuong_hieu as dmth', 'sp.id_danh_muc_thuong_hieu', '=', 'dmth.id_danh_muc_thuong_hieu')
+            ->join('thuong_hieu as th', 'dmth.id_thuong_hieu', '=', 'th.id_thuong_hieu')
+            ->join('danh_muc as dm', 'dmth.id_danh_muc', '=', 'dm.id_danh_muc')
+            ->where('dm.slug', $categorySlug)
+            ->where('dmth.slug', $categoryBrandSlug)
+            ->limit(5)
+            ->orderBy('sp.created_at', 'desc')
+            ->get();
     }
 
     public function getProductsDetail(Request $request, $param)
@@ -59,8 +91,6 @@ class SanPhamController extends Controller
             ->leftJoin('san_pham_thuoc_tinh', 'san_pham_thuoc_tinh.id_san_pham', '=', 'san_pham.id_san_pham')
             ->leftJoin('thuoc_tinh_chi_tiet', 'thuoc_tinh_chi_tiet.id_thuoc_tinh_chi_tiet', '=', 'san_pham_thuoc_tinh.id_thuoc_tinh_chi_tiet')
             ->leftJoin('thuoc_tinh', 'thuoc_tinh.id_thuoc_tinh', '=', 'thuoc_tinh_chi_tiet.id_thuoc_tinh')
-
-            // --- [MỚI] Join bảng khuyến mãi ---
             ->leftJoin('san_pham_khuyen_mai', 'san_pham_khuyen_mai.id_san_pham', '=', 'san_pham.id_san_pham')
             ->leftJoin('khuyen_mai', function ($join) use ($now) {
                 $join->on('khuyen_mai.id_khuyen_mai', '=', 'san_pham_khuyen_mai.id_khuyen_mai')
@@ -82,16 +112,23 @@ class SanPhamController extends Controller
                 'san_pham_chi_tiet.gia_ban',
                 'san_pham_chi_tiet.so_luong_ton',
                 // Màu & Size
-                'mau.id_mau', 'mau.ten_mau',
-                'kich_thuoc.id_kich_thuoc', 'kich_thuoc.ten_kich_thuoc',
+                'mau.id_mau',
+                'mau.ten_mau',
+                'kich_thuoc.id_kich_thuoc',
+                'kich_thuoc.ten_kich_thuoc',
                 // Ảnh
-                'anh_san_pham.anh_url', 'anh_san_pham.thu_tu',
+                'anh_san_pham.anh_url',
+                'anh_san_pham.thu_tu',
                 // Thông số
-                'thuoc_tinh.ten_thuoc_tinh', 'thuoc_tinh_chi_tiet.ten_thuoc_tinh_chi_tiet',
+                'thuoc_tinh.ten_thuoc_tinh',
+                'thuoc_tinh_chi_tiet.ten_thuoc_tinh_chi_tiet',
 
-                // --- [MỚI] Thông tin khuyến mãi ---
+                // --- Thông tin khuyến mãi ---
                 'khuyen_mai.gia_tri as km_gia_tri',
                 'khuyen_mai.don_vi_tinh as km_don_vi_tinh',
+
+                'danh_muc.slug',
+                'danh_muc_thuong_hieu.slug as slug_danh_muc_thuong_hieu'
             ])
             ->where('san_pham.slug', $param)
             ->whereNotNull('san_pham_chi_tiet.id_san_pham_chi_tiet')
@@ -101,7 +138,11 @@ class SanPhamController extends Controller
             return Response::Error('Product not found', 404);
         }
 
-        $result = $query->groupBy('ma_san_pham')->map(function ($items) {
+        $categorySlug = $query->first()->slug;
+        $categoryBrandSlug = $query->first()->slug_danh_muc_thuong_hieu;
+        $relatedProduct = $this->getRelatedProduct($categorySlug, $categoryBrandSlug);
+
+        $result = $query->groupBy('ma_san_pham')->map(function ($items) use ($relatedProduct) {
             $first = $items->first();
 
             $mau_options = $items
@@ -134,7 +175,7 @@ class SanPhamController extends Controller
                 ->values();
 
             $variants = $items
-                ->groupBy('id_san_pham_chi_tiet')
+                ->groupBy('id_mau')
                 ->map(function ($variantItems) {
                     $firstVariant = $variantItems->first();
 
@@ -177,6 +218,7 @@ class SanPhamController extends Controller
                     'kich_thuoc' => $kich_thuoc_options,
                 ],
                 'variants' => $variants,
+                'related_products' => $relatedProduct,
             ];
         })->first();
 
