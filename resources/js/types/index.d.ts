@@ -173,7 +173,10 @@ ngay_thanh_toan: date;
 export interface DonHang {
   id_don_hang: number;
   ma_don_hang: string;
-  id_nguoi_dung: number;
+  id_dia_chi_nguoi_dung: number;
+  dia_chi: string;
+  so_dien_thoai: string;
+  tong_tien: number;
   trang_thai_thanh_toan: string; // CHUA_THANH_TOAN / DA_THANH_TOAN
   ngay_dat_hang: date;
   phuong_thuc_thanh_toan: string; // COD hoặc VNPAY

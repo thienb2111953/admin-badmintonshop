@@ -12,16 +12,18 @@ class DonHangController extends Controller
     public function index()
     {
         $donHangs = DB::table('don_hang')
-            ->join('nguoi_dung', 'don_hang.id_nguoi_dung', '=', 'nguoi_dung.id_nguoi_dung')
-            ->join('don_hang_chi_tiet', 'don_hang.id_don_hang', '=', 'don_hang_chi_tiet.id_don_hang')
+            ->leftJoin('dia_chi_nguoi_dung', 'dia_chi_nguoi_dung.id_dia_chi_nguoi_dung', '=', 'don_hang.id_dia_chi_nguoi_dung')
+            ->leftJoin('nguoi_dung', 'nguoi_dung.id_nguoi_dung', '=', 'dia_chi_nguoi_dung.id_nguoi_dung')
+            ->leftJoin('don_hang_chi_tiet', 'don_hang.id_don_hang', '=', 'don_hang_chi_tiet.id_don_hang')
             ->select(
                 'don_hang.*',
+                'dia_chi_nguoi_dung.dia_chi',
+                'dia_chi_nguoi_dung.so_dien_thoai',
                 DB::raw("CONCAT(nguoi_dung.name, ' (', nguoi_dung.email, ')') as nguoi_dung_thong_tin"),
-                DB::raw('SUM(don_hang_chi_tiet.so_luong * don_hang_chi_tiet.don_gia) as tong_tien')
             )
             ->groupBy(
                 'don_hang.id_don_hang',
-                'don_hang.id_nguoi_dung',
+                'don_hang.tong_tien',
                 'don_hang.ma_don_hang',
                 'don_hang.trang_thai_don_hang',
                 'don_hang.trang_thai_thanh_toan',
@@ -29,8 +31,11 @@ class DonHangController extends Controller
                 'don_hang.created_at',
                 'don_hang.updated_at',
                 'nguoi_dung.name',
-                'nguoi_dung.email'
+                'nguoi_dung.email',
+                'dia_chi_nguoi_dung.dia_chi',
+                'dia_chi_nguoi_dung.so_dien_thoai',
             )
+            ->orderBy('id_don_hang', 'desc')
             ->get();
 
         return Inertia::render('admin/don-hang/don-hang', [

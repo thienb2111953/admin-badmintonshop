@@ -18,27 +18,27 @@ export function Columns(
       accessorKey: 'ma_khuyen_mai',
       header: ({ column }) => <ColumnHeader column={column} title="Mã khuyến mãi" />,
     },
-      // {
-      //     accessorKey: 'gia_ban',
-      //     header: ({ column }) => <ColumnHeader column={column} title="Giá bán" />,
-      //     cell: ({ row }) => {
-      //         const raw = row.getValue('gia_ban');
-      //         const value = Number(raw);
-      //
-      //         return isNaN(value) ? '' : value.toLocaleString('vi-VN') + ' đ';
-      //     },
-      // },
-      // {
-      //     accessorKey: 'gia_sau_khuyen_mai',
-      //     header: ({ column }) => <ColumnHeader column={column} title="Giá sau khuyến mãi" />,
-      //     cell: ({ row }) => {
-      //         const raw = row.getValue('gia_sau_khuyen_mai');
-      //         const value = Number(raw);
-      //
-      //         return isNaN(value) ? '' : value.toLocaleString('vi-VN') + ' đ';
-      //     },
-      // },
+      {
+          accessorKey: 'gia_ban',
+          header: ({ column }) => <ColumnHeader column={column} title="Giá bán" />,
+          cell: ({ row }) => {
+              const raw = row.getValue('gia_ban');
+              const value = Number(raw);
 
+              return isNaN(value) ? '' : value.toLocaleString('vi-VN') + ' đ';
+          },
+      },
+      {
+          accessorKey: 'gia_sau_khuyen_mai',
+          header: ({ column }) => <ColumnHeader column={column} title="Giá sau khuyến mãi" />,
+          cell: ({ row }) => {
+              const raw = row.getValue('gia_sau_khuyen_mai');
+              const value = Number(raw);
+
+              const final = Math.round(value / 1000) * 1000;
+              return final.toLocaleString('vi-VN') + ' đ';
+          },
+      },
     {
       id: 'actions',
       cell: ({ row }) => {

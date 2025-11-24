@@ -17,7 +17,10 @@ export function columns(
     {
       accessorKey: 'don_gia',
       header: ({ column }) => <ColumnHeader column={column} title="Đơn giá" />,
-      cell: ({ row }) => row.original.don_gia.toLocaleString('vi-VN'),
+        cell: ({ row }) => {
+            const value = Number(row.original.don_gia || 0)
+            return value.toLocaleString('vi-VN') + ' ₫'
+        }
     },
     {
       accessorKey: 'so_luong',

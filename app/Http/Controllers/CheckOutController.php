@@ -2,140 +2,190 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DonHang;
+use App\Models\KhuyenMai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CheckOutController extends Controller
 {
-    public function kiemTraTonKho($gioHangChiTietIds)
+    public function kiemTraTonKho($id_san_pham_chi_tiet, $so_luong)
     {
-        foreach ($gioHangChiTietIds as $id) {
-            $sanPhamChiTiet = DB::table('gio_hang_chi_tiet')
-                ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
-                ->where('gio_hang_chi_tiet.id_gio_hang_chi_tiet', $id)
-                ->first();
+        $sanPhamChiTiet = DB::table('san_pham_chi_tiet')
+            ->where('id_san_pham_chi_tiet', $id_san_pham_chi_tiet)
+            ->first();
 
-            if (!$sanPhamChiTiet) {
-                return "Sản phẩm không tồn tại";
-            }
-
-            if ($sanPhamChiTiet->so_luong_ton < $sanPhamChiTiet->so_luong) {
-                $tenSanPham = DB::table('san_pham_chi_tiet')
-                    ->where('id_san_pham_chi_tiet', $sanPhamChiTiet->id_san_pham_chi_tiet)
-                    ->value('ten_san_pham_chi_tiet');
-
-                return "Sản phẩm {$tenSanPham} không đủ hàng";
-            }
+        if (!$sanPhamChiTiet) {
+            return "Sản phẩm không tồn tại";
         }
+
+        if ($sanPhamChiTiet->so_luong_ton < $so_luong) {
+            return "Sản phẩm không đáp ứng đủ số lượng";
+
+        }
+
+//            if ($sanPhamChiTiet->so_luong_ton < $sanPhamChiTiet->so_luong) {
+//                $tenSanPham = DB::table('san_pham_chi_tiet')
+//                    ->where('id_san_pham_chi_tiet', $sanPhamChiTiet->id_san_pham_chi_tiet)
+//                    ->value('ten_san_pham_chi_tiet');
+//
+//                return "Sản phẩm {$tenSanPham} không đủ hàng";
+//            }
 
         return true;
     }
 
-    public function taoDonHang($id_nguoi_dung, array $sanPhamChiTietIds)
+    public function taoDonHang(Request $request)
     {
-        if (!is_array($sanPhamChiTietIds)) {
-            return 'Không có sản phẩm nào được chọn';
+        try {
+            return DB::transaction(function () use ($request) {
+
+                $sanPhamArr = $request->input('san_pham');
+                $sanPhamArr = [
+                    [
+                        'id_san_pham_chi_tiet' => 726,
+                        'so_luong' => 1,
+                    ],
+                    [
+                        'id_san_pham_chi_tiet' => 727,
+                        'so_luong' => 2,
+                    ],
+                    [
+                        'id_san_pham_chi_tiet' => 728,
+                        'so_luong' => 3,
+                    ],
+                ];
+                $id_dia_chi_nguoi_dung = $request->input('id_dia_chi_nguoi_dung');
+
+                if (!is_array($sanPhamArr) || count($sanPhamArr) === 0) {
+                    return response()->json(['message' => 'Không có sản phẩm nào được chọn'], 400);
+                }
+
+                // ================================
+                // 1️⃣ TẠO ĐƠN HÀNG
+                // ================================
+                $ma_don_hang = 'DH' . strtoupper(uniqid());
+                $id_don_hang = DB::table('don_hang')->insertGetId([
+                    'id_dia_chi_nguoi_dung' => $id_dia_chi_nguoi_dung,
+                    'ma_don_hang' => $ma_don_hang,
+                    'trang_thai_don_hang' => 'Đang xử lý',
+                    'trang_thai_thanh_toan' => 'Chưa thanh toán',
+                    'phuong_thuc_thanh_toan' => 'VNPay',
+                    'ngay_dat_hang' => now(),
+                ], 'id_don_hang');
+
+                $tongTien = 0;
+
+                // ================================
+                // 2️⃣ XỬ LÝ TỪNG SẢN PHẨM
+                // ================================
+                foreach ($sanPhamArr as $item) {
+
+                    $id_san_pham_chi_tiet = $item['id_san_pham_chi_tiet'];
+                    $so_luong            = (int) $item['so_luong'];
+
+                    // 2.1 – Kiểm tra tồn kho
+                    $kiemTra = $this->kiemTraTonKho($id_san_pham_chi_tiet, $so_luong);
+                    if ($kiemTra !== true) {
+                        return response()->json(['message' => $kiemTra], 400);
+                    }
+
+                    // 2.2 – Lấy chi tiết SP
+                    $spct = DB::table('san_pham_chi_tiet')
+                        ->where('id_san_pham_chi_tiet', $id_san_pham_chi_tiet)
+                        ->first();
+
+                    if (!$spct) {
+                        return response()->json(['message' => 'Sản phẩm không tồn tại'], 400);
+                    }
+
+                    $donGia = $spct->gia_ban;
+
+                    // 2.3 – Check khuyến mãi sản phẩm
+                    $kmSP = DB::table('san_pham_khuyen_mai')
+                        ->leftJoin('khuyen_mai', 'khuyen_mai.id_khuyen_mai', '=', 'san_pham_khuyen_mai.id_khuyen_mai')
+                        ->where('san_pham_khuyen_mai.id_san_pham', $spct->id_san_pham)
+                        ->where('khuyen_mai.ngay_ket_thuc', '>=', now())
+                        ->orderBy('san_pham_khuyen_mai.id_san_pham_khuyen_mai', 'desc')
+                        ->first();
+
+                    if ($kmSP) {
+                        if ($kmSP->don_vi_tinh == 'percent') {
+                            $donGia = $donGia - ($donGia * $kmSP->gia_tri / 100);
+                            $donGia = round($donGia / 1000) * 1000;
+                        } else {
+                            $donGia = $donGia - $kmSP->gia_tri;
+                        }
+                    }
+
+                    // 2.4 – Insert chi tiết đơn hàng
+                    DB::table('don_hang_chi_tiet')->insert([
+                        'id_don_hang'          => $id_don_hang,
+                        'id_san_pham_chi_tiet' => $id_san_pham_chi_tiet,
+                        'so_luong'             => $so_luong,
+                        'don_gia'              => $donGia,
+                    ]);
+
+                    // 2.5 – Trừ tồn kho
+                    DB::table('san_pham_chi_tiet')
+                        ->where('id_san_pham_chi_tiet', $id_san_pham_chi_tiet)
+                        ->decrement('so_luong_ton', $so_luong);
+
+                    // 2.6 – Cộng tiền
+                    $tongTien += $donGia * $so_luong;
+                }
+
+                // ================================
+                // 3️⃣ KHÁM GIÁ / KM ĐƠN HÀNG
+                // ================================
+                $kmDH = DB::table('don_hang_khuyen_mai')
+                    ->leftJoin('khuyen_mai', 'khuyen_mai.id_khuyen_mai', '=', 'don_hang_khuyen_mai.id_khuyen_mai')
+                    ->where('khuyen_mai.ngay_ket_thuc', '>=', now())
+                    ->orderBy('khuyen_mai.id_khuyen_mai', 'desc')
+                    ->first();
+
+                if ($kmDH && $tongTien > $kmDH->gia_tri_duoc_giam) {
+                    if ($kmDH->don_vi_tinh === 'percent') {
+                        $tongTien = $tongTien - ($tongTien * $kmDH->gia_tri / 100);
+                    } else {
+                        $tongTien = $tongTien - $kmDH->gia_tri;
+                    }
+                }
+
+                // ================================
+                // 4️⃣ UPDATE TỔNG TIỀN
+                // ================================
+                DB::table('don_hang')
+                    ->where('id_don_hang', $id_don_hang)
+                    ->update(['tong_tien' => $tongTien]);
+
+                return response()->json([
+                    'id_don_hang' => $id_don_hang,
+                    'ma_don_hang' => $ma_don_hang,
+                    'tong_tien'   => $tongTien,
+                ], 201);
+            });
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Lỗi đặt hàng, đã rollback!',
+                'error'   => $e->getMessage(),
+            ], 500);
         }
-
-        $gioHangChiTietIds = DB::table('gio_hang_chi_tiet')
-            ->join('gio_hang', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
-            ->where('gio_hang.id_nguoi_dung', $id_nguoi_dung)
-            ->whereIn('gio_hang_chi_tiet.id_san_pham_chi_tiet', $sanPhamChiTietIds)
-            ->pluck('gio_hang_chi_tiet.id_gio_hang_chi_tiet')
-            ->toArray();
-
-        if (empty($gioHangChiTietIds)) {
-            return 'Không tìm thấy sản phẩm trong giỏ hàng';
-        }
-
-        $tong_tien = 0;
-
-        // ✅ Kiểm tra tồn kho trước khi tạo đơn
-        $kiemTra = $this->kiemTraTonKho($gioHangChiTietIds);
-        if ($kiemTra !== true) {
-            return $kiemTra; // trả message lỗi
-        }
-
-        // ✅ Tạo đơn hàng
-        $ma_don_hang = 'DH' . strtoupper(uniqid());
-        $id_don_hang = DB::table('don_hang')->insertGetId([
-            'id_nguoi_dung' => 1,
-            'ma_don_hang' => $ma_don_hang,
-            'trang_thai_don_hang' => 'Đang xử lý',
-            'trang_thai_thanh_toan' => 'Chưa thanh toán',
-            'phuong_thuc_thanh_toan' => 'VNPay',
-            'ngay_dat_hang' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ], 'id_don_hang');
-
-        // ✅ Thêm chi tiết đơn hàng
-        foreach ($gioHangChiTietIds as $id) {
-            $gio_hang = DB::table('gio_hang_chi_tiet')->where('id_gio_hang_chi_tiet', $id)->first();
-
-            if (!$gio_hang) continue;
-
-            $sanPhamChiTiet = DB::table('san_pham_chi_tiet')
-                ->where('san_pham_chi_tiet.id_san_pham_chi_tiet', $gio_hang->id_san_pham_chi_tiet)
-                ->first();
-
-            DB::table('don_hang_chi_tiet')->insert([
-                'id_don_hang' => $id_don_hang,
-                'id_san_pham_chi_tiet' => $gio_hang->id_san_pham_chi_tiet,
-                'so_luong' => $gio_hang->so_luong,
-                'don_gia' => $sanPhamChiTiet->gia_ban,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            // Nếu đủ hàng -> trừ tồn kho
-            $gio_hang_chi_tiet = DB::table('gio_hang_chi_tiet')
-                ->where('id_gio_hang_chi_tiet', $id)
-                ->first();
-
-            if ($gio_hang_chi_tiet) {
-                DB::table('san_pham_chi_tiet')
-                    ->where('id_san_pham_chi_tiet', $gio_hang_chi_tiet->id_san_pham_chi_tiet)
-                    ->decrement('so_luong_ton', $gio_hang_chi_tiet->so_luong);
-            }
-        }
-
-        // ✅ Tính tổng tiền
-        $tong_tien = DB::table('don_hang_chi_tiet')
-            ->where('id_don_hang', $id_don_hang)
-            ->select(DB::raw('SUM(so_luong * don_gia) as tong_tien'))
-            ->value('tong_tien');
-
-        return [
-            'id_don_hang' => $id_don_hang,
-            'ma_don_hang' => $ma_don_hang,
-            'tong_tien' => $tong_tien,
-        ];
     }
 
-    public function vnpayPayment()
+    public function vnpayPayment(Request $request)
     {
-        $data = request()->all();
+//        $data = request()->all();
 
-        $kiemTra = $this->kiemTraTonKho($data['id_gio_hang_chi_tiet']);
+        $id_don_hang = $request->input('id_don_hang');
+        $ma_don_hang = $request->input('ma_don_hang');
+        $tong_tien = $request->input('tong_tien');
 
-        if ($kiemTra !== true) {
-            return response()->json([
-                'message' => $kiemTra,
-            ], 400);
+
+        if (!$id_don_hang || !$tong_tien) {
+            return response()->json(['message' => 'Thiếu thông tin đơn hàng.'], 400);
         }
-
-        $don_hang = $this->taoDonHang($data['id_gio_hang_chi_tiet']);
-
-        if (!is_array($don_hang)) {
-            return response()->json([
-                'message' => $don_hang,
-            ], 400);
-        }
-
-        $id_don_hang = $don_hang['id_don_hang'];
-        $ma_don_hang = $don_hang['ma_don_hang'];
-        $tong_tien = $don_hang['tong_tien'];
 
 
         $vnp_TmnCode = 'DO7YTD4A'; //Mã định danh merchant kết nối (Terminal Id)
@@ -195,8 +245,12 @@ class CheckOutController extends Controller
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
 
-        header('Location: ' . $vnp_Url);
-        die();
+        return response()->json([
+            'vnp_url' => $vnp_Url,
+        ]);
+
+//        header('Location: ' . $vnp_Url);
+//        die();
 
     }
 
@@ -226,12 +280,12 @@ class CheckOutController extends Controller
             // ✅ Thanh toán thành công
             $this->xuLySauThanhToanThanhCong($id_don_hang, $amount, $bankCode, $ngayThanhToan);
 
-            return redirect('http://127.0.0.1:8000/dashboard')->with('success', 'Thanh toán thành công');
+            return redirect('http://localhost:3000')->with('success', 'Thanh toán thành công');
         } else {
             // ❌ Thanh toán thất bại → rollback
             $this->xuLySauThanhToanThatBai($id_don_hang);
 
-            return redirect('http://127.0.0.1:8000/quyen')->with('error', 'Thanh toán thất bại');
+            return redirect('http://localhost:3000')->with('success', 'Thanh toán thất bại');
         }
     }
 

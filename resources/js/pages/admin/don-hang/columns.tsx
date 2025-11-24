@@ -25,7 +25,17 @@ export function columns(onEdit: (row: DonHang) => void, onDelete: (row: DonHang)
     {
       accessorKey: 'nguoi_dung_thong_tin',
       header: ({ column }) => <ColumnHeader column={column} title="Người dùng" />,
-      cell: ({ row }) => row.original.nguoi_dung_thong_tin || '',
+        cell: ({ row }) => {
+            const { nguoi_dung_thong_tin, dia_chi, so_dien_thoai } = row.original;
+
+            return (
+                <div className="flex flex-col">
+                    <span className="font-medium">{nguoi_dung_thong_tin || ''}</span>
+                    {dia_chi && <span className="text-gray-500">{dia_chi}</span>}
+                    {so_dien_thoai && <span className="text-gray-500">{so_dien_thoai}</span>}
+                </div>
+            );
+        },
     },
     {
       accessorKey: 'phuong_thuc_thanh_toan',
@@ -68,7 +78,7 @@ export function columns(onEdit: (row: DonHang) => void, onDelete: (row: DonHang)
       cell: ({ row }) => {
         const dateStr = row.original.ngay_dat_hang;
         if (!dateStr) return '';
-        return format(new Date(dateStr), 'dd/MM/yyyy');
+        return format(new Date(dateStr), 'dd/MM/yyyy HH:mm:ss');
       },
     },
     {

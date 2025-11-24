@@ -2,8 +2,8 @@ import psycopg2
 
 def get_db_connection():
     return psycopg2.connect(
-        host="localhost",
+        host="172.22.166.22",
         user="postgres",
-        password="1",
+        password="123456",
         dbname="badminton_shop"
     )

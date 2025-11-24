@@ -63,8 +63,9 @@ Route::middleware('jwt')->group(function () {
 
     Route::post('checkout', [PaymentController::class, 'checkout']);
 
-    Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
-    Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
 });
 
+Route::post('tao-don-hang', [CheckOutController::class, 'taoDonHang'])->name('CheckOutController.taoDonHang');
+Route::post('check-out', [CheckOutController::class, 'vnpayPayment'])->name('CheckOutController.vnpayPayment');
+Route::get('vnpay-return', [CheckOutController::class, 'vnpayReturn'])->name('CheckOutController.vnpayReturn');
 

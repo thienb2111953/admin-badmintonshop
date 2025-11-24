@@ -97,8 +97,8 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
             form.appendChild(csrfInput);
         }
 
-        const ids = [3,4];
-        const inputName = 'id_gio_hang_chi_tiet';
+        const ids = [54];
+        const inputName = 'id_don_hang';
 
         ids.forEach(id => {
             const input = document.createElement('input');
@@ -108,6 +108,19 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
             form.appendChild(input);
         });
 
+        // 👉 Thêm ma_don_hang
+        const inputMaDonHang = document.createElement('input');
+        inputMaDonHang.type = 'hidden';
+        inputMaDonHang.name = 'ma_don_hang';
+        inputMaDonHang.value = "DH69233275C0B1C";
+        form.appendChild(inputMaDonHang);
+
+        // 👉 Thêm tong_tien
+        const inputTongTien = document.createElement('input');
+        inputTongTien.type = 'hidden';
+        inputTongTien.name = 'tong_tien';
+        inputTongTien.value = "4368276";
+        form.appendChild(inputTongTien);
 
         document.body.appendChild(form);
         form.submit();
@@ -125,13 +138,13 @@ export default function NguoiDungPage({ users }: { users: User[] }) {
                 />
             </div>
 
-          <button
-            type="button"
-            onClick={handlePayment}
-            className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-          >
-            Thanh toán
-          </button>
+          {/*<button*/}
+          {/*  type="button"*/}
+          {/*  onClick={handlePayment}*/}
+          {/*  className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"*/}
+          {/*>*/}
+          {/*  Thanh toán*/}
+          {/*</button>*/}
 
             <ModalDialog
                 open={openDialog}

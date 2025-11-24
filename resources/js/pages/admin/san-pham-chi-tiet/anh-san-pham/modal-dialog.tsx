@@ -80,77 +80,79 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
                 }}
               />
 
-              {/* Preview ảnh cũ từ DB */}
-              {data.path_anh_san_pham_old?.length > 0 && (
-                <div className="mt-2 grid gap-2">
-                  {data.path_anh_san_pham_old.map((file, index) => (
-                    <div key={index} className="flex items-center gap-3 rounded-md border p-2">
-                      <img
-                        src={`/storage/${file.anh_url ?? file}`}
-                        alt={`anh-${index}`}
-                        className="h-16 w-16 rounded-md border object-cover"
-                      />
 
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <p className="text-sm font-medium text-gray-700">Ảnh đã lưu</p>
-                        {/* Input thu_tu cho ảnh DB */}
-                        <Input
-                          type="number"
-                          placeholder="Thứ tự"
-                          value={file.thu_tu ?? ''}
-                          onChange={(e) => {
-                            const newUrls = [...data.path_anh_san_pham_old];
-                            newUrls[index] = { ...file, thu_tu: e.target.value };
-                            setData('path_anh_san_pham_old', newUrls);
-                          }}
-                          className="h-8 w-24"
-                        />
-                      </div>
+                {/* Preview ảnh cũ từ DB */}
+                {data.path_anh_san_pham_old?.length > 0 && (
+                    <div className="mt-2 grid gap-2 max-h-72 overflow-y-auto pr-2">
+                        {data.path_anh_san_pham_old.map((file, index) => (
+                            <div key={index} className="flex items-center gap-3 rounded-md border p-2">
+                                <img
+                                    src={`/storage/${file.anh_url ?? file}`}
+                                    alt={`anh-${index}`}
+                                    className="h-16 w-16 rounded-md border object-cover"
+                                />
 
-                      <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveUrl(index)}>
-                        Xóa
-                      </Button>
+                                <div className="min-w-0 flex-1 space-y-1">
+                                    <p className="text-sm font-medium text-gray-700">Ảnh đã lưu</p>
+
+                                    <Input
+                                        type="number"
+                                        placeholder="Thứ tự"
+                                        value={file.thu_tu ?? ''}
+                                        onChange={(e) => {
+                                            const newUrls = [...data.path_anh_san_pham_old];
+                                            newUrls[index] = { ...file, thu_tu: e.target.value };
+                                            setData('path_anh_san_pham_old', newUrls);
+                                        }}
+                                        className="h-8 w-24"
+                                    />
+                                </div>
+
+                                <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveUrl(index)}>
+                                    Xóa
+                                </Button>
+                            </div>
+                        ))}
                     </div>
-                  ))}
-                </div>
-              )}
+                )}
 
-              {/* Preview file mới upload */}
-              {previewFiles.length > 0 && (
-                <div className="mt-2 grid gap-2">
-                  {previewFiles.map((item, index) => (
-                    <div key={index} className="flex items-center gap-3 rounded-md border p-2">
-                      <img
-                        src={URL.createObjectURL(item.file)}
-                        alt={item.file.name}
-                        className="h-16 w-16 rounded-md border object-cover"
-                      />
+                {/* Preview file mới upload */}
+                {previewFiles.length > 0 && (
+                    <div className="mt-2 grid gap-2 max-h-72 overflow-y-auto pr-2">
+                        {previewFiles.map((item, index) => (
+                            <div key={index} className="flex items-center gap-3 rounded-md border p-2">
+                                <img
+                                    src={URL.createObjectURL(item.file)}
+                                    alt={item.file.name}
+                                    className="h-16 w-16 rounded-md border object-cover"
+                                />
 
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <p className="max-w-[300px] truncate text-sm font-medium">{item.file.name}</p>
-                        <p className="text-xs text-gray-500">{(item.file.size / 1024).toFixed(1)} KB</p>
-                        {/* Input thu_tu cho ảnh mới */}
-                        <Input
-                          type="number"
-                          placeholder="Thứ tự"
-                          value={item.thu_tu}
-                          onChange={(e) => {
-                            const newFiles = [...previewFiles];
-                            newFiles[index] = { ...item, thu_tu: e.target.value };
-                            setPreviewFiles(newFiles);
-                            setData('files_anh_san_pham_new', newFiles);
-                          }}
-                          className="h-8 w-24"
-                        />
-                      </div>
+                                <div className="min-w-0 flex-1 space-y-1">
+                                    <p className="max-w-[300px] truncate text-sm font-medium">{item.file.name}</p>
+                                    <p className="text-xs text-gray-500">{(item.file.size / 1024).toFixed(1)} KB</p>
 
-                      <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveFile(index)}>
-                        Xóa
-                      </Button>
+                                    <Input
+                                        type="number"
+                                        placeholder="Thứ tự"
+                                        value={item.thu_tu}
+                                        onChange={(e) => {
+                                            const newFiles = [...previewFiles];
+                                            newFiles[index] = { ...item, thu_tu: e.target.value };
+                                            setPreviewFiles(newFiles);
+                                            setData('files_anh_san_pham_new', newFiles);
+                                        }}
+                                        className="h-8 w-24"
+                                    />
+                                </div>
+
+                                <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveFile(index)}>
+                                    Xóa
+                                </Button>
+                            </div>
+                        ))}
                     </div>
-                  ))}
-                </div>
-              )}
+                )}
+
             </div>
           </div>
 
