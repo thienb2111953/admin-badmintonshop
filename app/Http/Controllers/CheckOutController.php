@@ -49,6 +49,7 @@ class CheckOutController extends Controller
                     'trang_thai_don_hang' => 'Đang xử lý',
                     'trang_thai_thanh_toan' => 'Chưa thanh toán',
                     'phuong_thuc_thanh_toan' => 'VNPay',
+                    'tong_tien' => 0,
                     'ngay_dat_hang' => now(),
                 ], 'id_don_hang');
 
