@@ -71,7 +71,7 @@ class SanPhamController extends Controller
             ->join('danh_muc as dm', 'dmth.id_danh_muc', '=', 'dm.id_danh_muc')
             ->where('dm.slug', $categorySlug)
             ->where('dmth.slug', $categoryBrandSlug)
-            ->limit(5)
+            ->limit(8)
             ->orderBy('sp.created_at', 'desc')
             ->get();
     }

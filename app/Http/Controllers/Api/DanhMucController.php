@@ -48,8 +48,14 @@ class DanhMucController extends Controller
 
     public function getProductByCategory(Request $request, $slug)
     {
+        $now = now();
+
         $query = DB::table('san_pham as sp')
             ->select('sp.*')
+            ->addSelect([
+                'km_gia_tri' => 'km.gia_tri as km_gia_tri',
+                'km_don_vi_tinh' => 'km.don_vi_tinh as km_don_vi_tinh'
+            ])
             ->addSelect(['anh_url' => function ($q) {
                 $q->select('asp.anh_url')
                     ->from('san_pham_chi_tiet as spct')
@@ -70,8 +76,14 @@ class DanhMucController extends Controller
                     ->whereColumn('id_san_pham', 'sp.id_san_pham');
             }])
             ->join('danh_muc_thuong_hieu as dmth', 'sp.id_danh_muc_thuong_hieu', '=', 'dmth.id_danh_muc_thuong_hieu')
-             ->join('thuong_hieu as th', 'dmth.id_thuong_hieu', '=', 'th.id_thuong_hieu')
+            ->join('thuong_hieu as th', 'dmth.id_thuong_hieu', '=', 'th.id_thuong_hieu')
             ->join('danh_muc as dm', 'dmth.id_danh_muc', '=', 'dm.id_danh_muc')
+            ->leftJoin('san_pham_khuyen_mai as spkm', 'spkm.id_san_pham', '=', 'sp.id_san_pham')
+            ->leftJoin('khuyen_mai as km', function ($join) use ($now) {
+                $join->on('km.id_khuyen_mai', '=', 'spkm.id_khuyen_mai')
+                    ->where('km.ngay_bat_dau', '<=', $now)
+                    ->where('km.ngay_ket_thuc', '>=', $now);
+            })
             ->where('dm.slug', $slug);
 
         if ($request->has('brands') && is_array($request->brands) && count($request->brands) > 0) {
@@ -130,8 +142,15 @@ class DanhMucController extends Controller
 
     public function getProductByCategoryBrand(Request $request, $categorySlug, $categoryBrandSlug)
     {
+        $now = now();
+
         $query = DB::table('san_pham as sp')
-            ->select('sp.*', 'th.ten_thuong_hieu')
+            ->select('sp.*')
+            ->addSelect([
+                'km_gia_tri' => 'km.gia_tri as km_gia_tri',
+                'km_don_vi_tinh' => 'km.don_vi_tinh as km_don_vi_tinh',
+                'th.ten_thuong_hieu'
+            ])
             ->addSelect(['anh_url' => function ($q) {
                 $q->select('asp.anh_url')
                     ->from('san_pham_chi_tiet as spct')
@@ -154,6 +173,12 @@ class DanhMucController extends Controller
             ->join('danh_muc_thuong_hieu as dmth', 'sp.id_danh_muc_thuong_hieu', '=', 'dmth.id_danh_muc_thuong_hieu')
             ->join('thuong_hieu as th', 'dmth.id_thuong_hieu', '=', 'th.id_thuong_hieu')
             ->join('danh_muc as dm', 'dmth.id_danh_muc', '=', 'dm.id_danh_muc')
+            ->leftJoin('san_pham_khuyen_mai as spkm', 'spkm.id_san_pham', '=', 'sp.id_san_pham')
+            ->leftJoin('khuyen_mai as km', function ($join) use ($now) {
+                $join->on('km.id_khuyen_mai', '=', 'spkm.id_khuyen_mai')
+                    ->where('km.ngay_bat_dau', '<=', $now)
+                    ->where('km.ngay_ket_thuc', '>=', $now);
+            })
             ->where('dm.slug', $categorySlug)
             ->where('dmth.slug', $categoryBrandSlug);
 
