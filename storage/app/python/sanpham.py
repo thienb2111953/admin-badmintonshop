@@ -425,7 +425,6 @@ def createAnhSanPham(cursor, storage_folder=None):
     print("\n🎉 Hoàn tất tải ảnh tất cả sản phẩm!")
 
 
-
 def ganAnhSanPham(cursor, connection, storage_folder=None):
     print("🗑️ TRUNCATE bảng anh_san_pham…")
     cursor.execute("TRUNCATE anh_san_pham CASCADE")
@@ -469,7 +468,7 @@ def ganAnhSanPham(cursor, connection, storage_folder=None):
 
         # Lấy toàn bộ id_san_pham_chi_tiet của sản phẩm này
         cursor.execute("""
-            SELECT DISTINCT ON (id_mau) id_san_pham_chi_tiet, id_mau FROM san_pham_chi_tiet WHERE id_san_pham = %s ORDER BY id_mau, id_san_pham_chi_tiet;
+            SELECT id_san_pham_chi_tiet, id_mau FROM san_pham_chi_tiet WHERE id_san_pham = %s ORDER BY id_mau, id_san_pham_chi_tiet;
         """, (id_san_pham,))
         list_ct = [r[0] for r in cursor.fetchall()]
 
@@ -533,20 +532,20 @@ def main():
 #     createDanhMucThuongHieu(cursor)
 #     conn.commit()
 
-#     createSanPham(cursor, "Lining", "Vợt cầu lông")
+#     createSanPham(cursor, "Yonex", "Vợt cầu lông")
 #     conn.commit()
 
 # thêm thuộc tính cho danh mục
 
     # tao het san pham roi hay chay
-#     createSanPhamChiTiet(cursor)
-#     conn.commit()
+    createSanPhamChiTiet(cursor)
+    conn.commit()
 
-#     createAnhSanPham(
-#         cursor,
-#         storage_folder=r"C:\Users\huyph\Downloads\badminton"
-#     )
-#     conn.commit()
+    createAnhSanPham(
+        cursor,
+        storage_folder=r"C:\Users\huyph\Downloads\badminton"
+    )
+    conn.commit()
 
     ganAnhSanPham(
             cursor,

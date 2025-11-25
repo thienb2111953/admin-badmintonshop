@@ -7,6 +7,7 @@ use App\Models\AnhSanPham;
 use App\Models\SanPham;
 use App\Models\SanPhamChiTiet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -38,10 +39,18 @@ class AnhSanPhamController extends Controller
 
                 $path = $file->storeAs('anh_san_phams', $filename, 'public');
 
-                AnhSanPham::create([
-                    'id_san_pham_chi_tiet' => $request->id_san_pham_chi_tiet,
-                    'anh_url'     => $path,
-                ]);
+                $list_ct_ids = DB::table('san_pham_chi_tiet')
+                    ->where('id_san_pham', $id_san_pham)
+                    ->where('id_mau', $request->id_mau)
+                    ->pluck('id_san_pham_chi_tiet')
+                    ->toArray();
+
+                foreach ($list_ct_ids as $ct_id) {
+                    AnhSanPham::create([
+                        'id_san_pham_chi_tiet' => $ct_id,
+                        'anh_url' => $path,
+                    ]);
+                }
             }
         }
         return redirect()->back()->with('success', 'Thêm thuộc tính chi tiết thành công');
@@ -105,11 +114,20 @@ class AnhSanPhamController extends Controller
 
                 $path = $file->storeAs('anh_san_phams', $filename, 'public');
 
-                AnhSanPham::create([
-                    'id_san_pham_chi_tiet' => $request->id_san_pham_chi_tiet,
-                    'anh_url'  => $path,
-                    'thu_tu'   => $item['thu_tu'] ?? null,
-                ]);
+
+                $list_ct_ids = DB::table('san_pham_chi_tiet')
+                    ->where('id_san_pham', $id_san_pham)
+                    ->where('id_mau', $request->id_mau)
+                    ->pluck('id_san_pham_chi_tiet')
+                    ->toArray();
+
+                foreach ($list_ct_ids as $ct_id) {
+                    AnhSanPham::create([
+                        'id_san_pham_chi_tiet' => $ct_id,
+                        'anh_url'  => $path,
+                        'thu_tu'   => $item['thu_tu'] ?? null,
+                    ]);
+                }
             }
         }
 

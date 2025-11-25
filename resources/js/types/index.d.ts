@@ -128,6 +128,7 @@ export interface AnhSanPham {
   id_anh_san_pham: number;
   id_san_pham_chi_tiet: number;
   ten_mau: string;
+  id_mau: number;
   files_anh_san_pham_new: File[];
   path_anh_san_pham_old: string[];
 }

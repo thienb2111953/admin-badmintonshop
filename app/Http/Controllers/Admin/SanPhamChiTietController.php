@@ -11,6 +11,7 @@ use App\Models\Mau;
 use App\Models\SanPham;
 use App\Models\SanPhamChiTiet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -22,32 +23,45 @@ class SanPhamChiTietController extends Controller
   {
     $sanPham = SanPham::with('danhMucThuongHieu')->find($id_san_pham);
 
-    $anh_san_pham = SanPhamChiTiet::with(['anhSanPham', 'mau'])
-      ->where('id_san_pham', $id_san_pham)
-      ->get()
-      ->groupBy(fn($item) => $item->mau->ten_mau ?? 'Không rõ')
-      ->map(function ($items) {
-        return [
-          'id_san_pham_chi_tiet' => $items->first()->id_san_pham_chi_tiet,
-          'ten_mau' => $items->first()->mau->ten_mau ?? null,
-          'path_anh_san_pham_old' => $items
-            ->flatMap(function ($item) {
-              return $item->anhSanPham->map(function ($anh) {
-                return [
-                  'id_anh_san_pham' => $anh->id_anh_san_pham,
-                  'id_san_pham_chi_tiet' => $anh->id_san_pham_chi_tiet,
-                  'anh_url' => $anh->anh_url,
-                  'thu_tu' => $anh->thu_tu,
-                ];
-              });
-            })
-            ->values()
-            ->toArray(),
-        ];
-      })
-      ->values();
+      $ds_mau = DB::table('san_pham_chi_tiet as spct')
+          ->leftJoin('mau as m', 'm.id_mau', '=', 'spct.id_mau')
+          ->where('spct.id_san_pham', $id_san_pham)
+          ->select(
+              'spct.id_mau',
+              'm.ten_mau',
+              DB::raw('MIN(spct.id_san_pham_chi_tiet) as id_san_pham_chi_tiet_dai_dien')
+          )
+          ->groupBy('spct.id_mau', 'm.ten_mau')
+          ->get();
 
-    $san_pham_chi_tiet = SanPhamChiTiet::with(['mau', 'kichThuoc', 'kho'])
+      $anh_theo_mau = $ds_mau->map(function ($mau) {
+
+          // Lấy ảnh theo id_san_pham_chi_tiet đại diện
+          $anh = DB::table('anh_san_pham')
+              ->where('id_san_pham_chi_tiet', $mau->id_san_pham_chi_tiet_dai_dien)
+              ->orderBy('thu_tu')
+              ->get()
+              ->map(function ($x) {
+                  return [
+                      'id_anh_san_pham'      => $x->id_anh_san_pham,
+                      'anh_url'              => $x->anh_url,
+                      'thu_tu'               => $x->thu_tu,
+                      'id_san_pham_chi_tiet' => $x->id_san_pham_chi_tiet,
+                  ];
+              })
+              ->values();
+
+          return [
+              'id_mau'                 => $mau->id_mau,
+              'ten_mau'                => $mau->ten_mau,
+              'id_san_pham_chi_tiet'   => $mau->id_san_pham_chi_tiet_dai_dien,
+
+              // ⭐ FE dùng cái này để update ảnh — GIỮ FORMAT Y CHANG bạn đang dùng
+              'path_anh_san_pham_old'  => $anh,
+          ];
+      });
+
+      $san_pham_chi_tiet = SanPhamChiTiet::with(['mau', 'kichThuoc', 'kho'])
       ->where('id_san_pham', $id_san_pham)
         ->orderBy('id_mau', 'asc')
       ->get();
@@ -56,7 +70,7 @@ class SanPhamChiTietController extends Controller
       'maus' => Mau::all(),
       'kich_thuocs' => KichThuoc::all(),
       'san_pham_info' => $sanPham,
-      'anh_san_phams' => $anh_san_pham,
+      'anh_san_phams' => $anh_theo_mau,
       'san_pham_chi_tiets' => $san_pham_chi_tiet,
     ]);
   }
