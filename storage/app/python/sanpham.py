@@ -5,6 +5,11 @@ from bs4 import BeautifulSoup
 from conn import get_db_connection
 from func import to_slug
 from func import parse_price
+from func import get_product_info_from_shopvnb
+from func import random_date_2025
+from func import natural_sort_key
+
+
 from slugify import slugify
 import random
 from datetime import date, timedelta
@@ -209,20 +214,17 @@ def createSanPham(cursor, ten_thuong_hieu_input, ten_danh_muc_input):
         except Exception as e:
             print(f"⚠️ Lỗi khi thêm sản phẩm '{ten_san_pham}': {e}")
 
-def random_date_2025():
-    start = date(2025, 1, 1)
-    end = date(2025, 12, 31)
-    delta_days = (end - start).days
-    return start + timedelta(days=random.randint(0, delta_days))
 
 def createSanPhamChiTiet(cursor):
     cursor.execute("TRUNCATE san_pham_chi_tiet CASCADE")
     cursor.execute("TRUNCATE nhap_hang CASCADE")
+    cursor.execute("TRUNCATE san_pham_thuoc_tinh CASCADE")
 
-    # Lấy toàn bộ dữ liệu san_pham, mau, kich_thuoc
-    cursor.execute("SELECT id_san_pham, ten_san_pham, ma_san_pham FROM san_pham")
+    # Lấy sản phẩm
+    cursor.execute("SELECT id_san_pham, ten_san_pham, ma_san_pham, slug FROM san_pham")
     san_phams = cursor.fetchall()
 
+    # Lấy màu + kích thước
     cursor.execute("SELECT id_mau, ten_mau FROM mau")
     maus = cursor.fetchall()
 
@@ -230,14 +232,19 @@ def createSanPhamChiTiet(cursor):
     kich_thuocs = cursor.fetchall()
 
     if not san_phams or not maus or not kich_thuocs:
-        print("❌ Thiếu dữ liệu san_pham / mau / kich_thuoc để tạo chi tiết!")
+        print("❌ Thiếu dữ liệu san_pham / mau / kich_thuoc!")
         return
 
     for sp in san_phams:
-        # CHỖ NÀY PHẢI LẤY 3 BIẾN
-        id_san_pham, ten_san_pham, ma_san_pham = sp
+        id_san_pham, ten_san_pham, ma_san_pham, slug = sp
 
-        # 👉 Tạo 1 phiếu nhập cho mỗi sản phẩm
+        # Lấy giá + thuộc tính từ web
+        info = get_product_info_from_shopvnb(slug)
+        gia_ban = info["gia_ban"]
+        gia_niem_yet = info["gia_niem_yet"]
+        attributes = info["attributes"]
+
+        # Tạo phiếu nhập
         ngay_nhap = random_date_2025()
         cursor.execute("""
             INSERT INTO nhap_hang (ma_nhap_hang, ngay_nhap)
@@ -246,24 +253,17 @@ def createSanPhamChiTiet(cursor):
         """, (ma_san_pham, ngay_nhap))
         id_nhap_hang = cursor.fetchone()[0]
 
-        # Random 2 màu khác nhau
+        # Random màu + size
         selected_maus = random.sample(maus, 2)
-
-        # Random 2 kích thước khác nhau
         selected_sizes = random.sample(kich_thuocs, 2)
 
-        for mau in selected_maus:
-            id_mau, ten_mau = mau
-
-            for kt in selected_sizes:
-                id_kich_thuoc, ten_kich_thuoc = kt
+        for id_mau, ten_mau in selected_maus:
+            for id_kich_thuoc, ten_kich_thuoc in selected_sizes:
 
                 ten_chi_tiet = f"{ten_san_pham} - {ten_mau} - {ten_kich_thuoc}"
-                gia_niem_yet = random.randint(300000, 5000000)
-                gia_ban = gia_niem_yet - random.randint(0, 300000)  # giảm nhẹ random
 
                 try:
-                    # 1️⃣ Tạo bản ghi san_pham_chi_tiet
+                    # Tạo chi tiết SP
                     cursor.execute("""
                         INSERT INTO san_pham_chi_tiet
                         (id_san_pham, id_mau, id_kich_thuoc, so_luong_ton,
@@ -281,10 +281,9 @@ def createSanPhamChiTiet(cursor):
                     ))
 
                     id_san_pham_chi_tiet = cursor.fetchone()[0]
-
                     print(f"✅ Tạo chi tiết: {ten_chi_tiet}")
 
-                    # 2️⃣ Tạo bản ghi nhap_hang_chi_tiet
+                    # Tạo chi tiết nhập hàng
                     cursor.execute("""
                         INSERT INTO nhap_hang_chi_tiet
                         (id_nhap_hang, id_san_pham_chi_tiet, so_luong, don_gia)
@@ -292,18 +291,69 @@ def createSanPhamChiTiet(cursor):
                     """, (
                         id_nhap_hang,
                         id_san_pham_chi_tiet,
-                        10,          # so_luong = 10
-                        gia_ban      # don_gia = gia_ban
+                        10,
+                        gia_ban
                     ))
 
                 except Exception as e:
-                    print(f"❌ Lỗi khi thêm chi tiết sản phẩm '{ten_chi_tiet}': {e}")
+                    print(f"❌ Lỗi khi tạo SP chi tiết '{ten_chi_tiet}': {e}")
 
-    print("🎉 Hoàn tất tạo dữ liệu san_pham_chi_tiet + nhap_hang_chi_tiet!")
+        # ===============================
+        #  🔥  XỬ LÝ THUỘC TÍNH SẢN PHẨM
+        # ===============================
+        for attr_name, attr_value in attributes:
+
+            # 1) Tìm hoặc tạo thuộc tính
+            cursor.execute(
+                "SELECT id_thuoc_tinh FROM thuoc_tinh WHERE LOWER(ten_thuoc_tinh) = LOWER(%s) LIMIT 1",
+                (attr_name,)
+            )
+            row = cursor.fetchone()
+
+            if row:
+                id_thuoc_tinh = row[0]
+            else:
+                cursor.execute("""
+                    INSERT INTO thuoc_tinh (ten_thuoc_tinh)
+                    VALUES (%s)
+                    RETURNING id_thuoc_tinh
+                """, (attr_name,))
+                id_thuoc_tinh = cursor.fetchone()[0]
+
+            # 2) Tìm hoặc tạo thuộc tính chi tiết
+            cursor.execute("""
+                SELECT id_thuoc_tinh_chi_tiet
+                FROM thuoc_tinh_chi_tiet
+                WHERE LOWER(ten_thuoc_tinh_chi_tiet)=LOWER(%s)
+                AND id_thuoc_tinh=%s
+                LIMIT 1
+            """, (attr_value, id_thuoc_tinh))
+
+            row2 = cursor.fetchone()
+
+            if row2:
+                id_chi_tiet = row2[0]
+            else:
+                cursor.execute("""
+                    INSERT INTO thuoc_tinh_chi_tiet (id_thuoc_tinh, ten_thuoc_tinh_chi_tiet)
+                    VALUES (%s, %s)
+                    RETURNING id_thuoc_tinh_chi_tiet
+                """, (id_thuoc_tinh, attr_value))
+                id_chi_tiet = cursor.fetchone()[0]
+
+            # 3) Gán thuộc tính vào sản phẩm
+            cursor.execute("""
+                INSERT INTO san_pham_thuoc_tinh (id_san_pham, id_thuoc_tinh_chi_tiet)
+                VALUES (%s, %s)
+                ON CONFLICT DO NOTHING
+            """, (id_san_pham, id_chi_tiet))
+
+        print(f"📌 Đã gán {len(attributes)} thuộc tính cho sản phẩm {ten_san_pham}")
+
+    print("🎉 Hoàn tất tạo dữ liệu!")
 
 
 def createAnhSanPham(cursor, storage_folder=None):
-
     # Nếu không truyền vào → dùng default
     if not storage_folder:
         storage_folder = r"C:\Users\huyph\Downloads\badminton"
@@ -375,9 +425,6 @@ def createAnhSanPham(cursor, storage_folder=None):
     print("\n🎉 Hoàn tất tải ảnh tất cả sản phẩm!")
 
 
-# Hàm natural sort
-def natural_sort_key(s):
-    return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', s)]
 
 def ganAnhSanPham(cursor, connection, storage_folder=None):
     print("🗑️ TRUNCATE bảng anh_san_pham…")
@@ -486,8 +533,10 @@ def main():
 #     createDanhMucThuongHieu(cursor)
 #     conn.commit()
 
-#     createSanPham(cursor, "Mizuno", "Vợt cầu lông")
+#     createSanPham(cursor, "Lining", "Vợt cầu lông")
 #     conn.commit()
+
+# thêm thuộc tính cho danh mục
 
     # tao het san pham roi hay chay
 #     createSanPhamChiTiet(cursor)

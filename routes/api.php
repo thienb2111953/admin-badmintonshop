@@ -61,8 +61,6 @@ Route::middleware('jwt')->group(function () {
         Route::get('/default', [UserAddressController::class, 'getDefaultAddress']);
     });
 
-    Route::post('checkout', [PaymentController::class, 'checkout']);
-
 });
 
 Route::post('tao-don-hang', [CheckOutController::class, 'taoDonHang'])->name('CheckOutController.taoDonHang');

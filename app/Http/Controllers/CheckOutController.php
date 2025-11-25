@@ -32,7 +32,7 @@ class CheckOutController extends Controller
             return DB::transaction(function () use ($request) {
 
                 $sanPhamArr = $request->input('san_pham');
-                
+
                 $id_dia_chi_nguoi_dung = $request->input('id_dia_chi_nguoi_dung');
 
                 if (!is_array($sanPhamArr) || count($sanPhamArr) === 0) {
@@ -77,7 +77,9 @@ class CheckOutController extends Controller
                         return response()->json(['message' => 'Sản phẩm không tồn tại'], 400);
                     }
 
-                    $donGia = $spct->gia_ban;
+                    $donGiaOld = $spct->gia_ban;
+
+                    $donGiaNew = $donGiaOld;
 
                     // 2.3 – Check khuyến mãi sản phẩm
                     $kmSP = DB::table('san_pham_khuyen_mai')
@@ -89,10 +91,10 @@ class CheckOutController extends Controller
 
                     if ($kmSP) {
                         if ($kmSP->don_vi_tinh == 'percent') {
-                            $donGia = $donGia - ($donGia * $kmSP->gia_tri / 100);
-                            $donGia = round($donGia / 1000) * 1000;
+                            $donGiaOld = $donGiaOld - ($donGiaOld * $kmSP->gia_tri / 100);
+                            $donGiaNew = round($donGiaOld / 1000) * 1000;
                         } else {
-                            $donGia = $donGia - $kmSP->gia_tri;
+                            $donGiaNew = $donGiaOld - $kmSP->gia_tri;
                         }
                     }
 
@@ -101,7 +103,7 @@ class CheckOutController extends Controller
                         'id_don_hang'          => $id_don_hang,
                         'id_san_pham_chi_tiet' => $id_san_pham_chi_tiet,
                         'so_luong'             => $so_luong,
-                        'don_gia'              => $donGia,
+                        'don_gia'              => $donGiaNew,
                     ]);
 
                     // 2.5 – Trừ tồn kho
@@ -110,7 +112,7 @@ class CheckOutController extends Controller
                         ->decrement('so_luong_ton', $so_luong);
 
                     // 2.6 – Cộng tiền
-                    $tongTien += $donGia * $so_luong;
+                    $tongTien += $donGiaNew * $so_luong;
                 }
 
                 // ================================
