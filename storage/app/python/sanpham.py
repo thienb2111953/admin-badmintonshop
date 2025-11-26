@@ -356,7 +356,7 @@ def createSanPhamChiTiet(cursor):
 def createAnhSanPham(cursor, storage_folder=None):
     # Nếu không truyền vào → dùng default
     if not storage_folder:
-        storage_folder = r"C:\Users\huyph\Downloads\badminton"
+        storage_folder = r"C:\Users\sxnd\Downloads\badminton_image"
 
     # Tạo thư mục gốc nếu chưa có
     if not os.path.exists(storage_folder):
@@ -431,9 +431,9 @@ def ganAnhSanPham(cursor, connection, storage_folder=None):
     connection.commit()
 
     if not storage_folder:
-        storage_folder = r"C:\Users\huyph\Downloads\badminton"
+        storage_folder = r"C:\Users\sxnd\Downloads\badminton_image"
 
-    laravel_storage = r"D:\Project\badminton-shop\admin-badmintonshop\storage\app\public\anh_san_phams"
+    laravel_storage = r"E:\FreeLancer\ShopCauLong\admin-badmintonshop\storage\app\public\anh_san_phams"
     os.makedirs(laravel_storage, exist_ok=True)
 
     # XÓA file storage cũ
@@ -531,7 +531,7 @@ def main():
 #
 #     createDanhMucThuongHieu(cursor)
 #     conn.commit()
-
+#
 #     createSanPham(cursor, "Yonex", "Vợt cầu lông")
 #     conn.commit()
 
@@ -543,14 +543,14 @@ def main():
 
     createAnhSanPham(
         cursor,
-        storage_folder=r"C:\Users\huyph\Downloads\badminton"
+        storage_folder=r"C:\Users\sxnd\Downloads\badminton_image"
     )
     conn.commit()
 
     ganAnhSanPham(
             cursor,
             conn,
-            storage_folder=r"C:\Users\huyph\Downloads\badminton"
+            storage_folder=r"C:\Users\sxnd\Downloads\badminton_image"
         )
     conn.commit()
 

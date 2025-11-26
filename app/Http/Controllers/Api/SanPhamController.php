@@ -175,7 +175,7 @@ class SanPhamController extends Controller
                 ->values();
 
             $variants = $items
-                ->groupBy('id_mau')
+                ->groupBy('id_san_pham_chi_tiet')
                 ->map(function ($variantItems) {
                     $firstVariant = $variantItems->first();
 
