@@ -45,6 +45,7 @@ Route::middleware('jwt')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
+    Route::put('/user/update', [AuthController::class, 'updateProfile']);
 
     Route::prefix('cart')->group(function () {
         Route::get('/', [CartController::class, 'cart']);
