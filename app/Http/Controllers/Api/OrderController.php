@@ -52,7 +52,7 @@ class OrderController extends Controller
                 'ngay_dat' => Carbon::parse($orderInfo->ngay_dat)->format('d/m/Y'),
                 'chi_tiet' => $items->map(function ($item) {
                     return [
-                        'id_san_pham_chi_tiet'=> $item->id_san_pham_chi_tiet,
+                        'id_san_pham_chi_tiet' => $item->id_san_pham_chi_tiet,
                         'ten_san_pham' => $item->ten_san_pham,
                         'gia_ban' => $item->gia_ban,
                         'so_luong' => $item->so_luong,
@@ -65,5 +65,73 @@ class OrderController extends Controller
         })->values();
 
         return Response::Success($groupedOrders, 'Lấy danh sách đơn hàng thành công');
+    }
+
+    public function getOrderDetail($id_don_hang)
+    {
+        $orderDetails = DB::table('don_hang')
+            ->join('don_hang_chi_tiet', 'don_hang.id_don_hang', '=', 'don_hang_chi_tiet.id_don_hang') // Sửa lại chỗ này
+            ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'don_hang_chi_tiet.id_san_pham_chi_tiet')
+            ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
+            ->join('mau', 'mau.id_mau', '=', 'san_pham_chi_tiet.id_mau')
+            ->join('kich_thuoc', 'kich_thuoc.id_kich_thuoc', '=', 'san_pham_chi_tiet.id_kich_thuoc')
+            ->join('dia_chi_nguoi_dung', 'dia_chi_nguoi_dung.id_dia_chi_nguoi_dung', '=', 'don_hang.id_dia_chi_nguoi_dung')
+            ->where('don_hang.id_don_hang', $id_don_hang)
+            ->select(
+            // Thông tin chung đơn hàng
+                'don_hang.id_don_hang',
+                'don_hang.ngay_dat_hang',
+                'don_hang.trang_thai_don_hang',
+                'don_hang.phuong_thuc_thanh_toan',
+                'don_hang.tong_tien',
+
+                // Thông tin khách hàng
+                'dia_chi_nguoi_dung.ten_nguoi_dung',
+                'dia_chi_nguoi_dung.so_dien_thoai',
+                'dia_chi_nguoi_dung.dia_chi',
+
+                // Thông tin sản phẩm chi tiết
+                'san_pham.ten_san_pham',
+                'mau.ten_mau',
+                'kich_thuoc.ten_kich_thuoc',
+                'don_hang_chi_tiet.so_luong',
+                'don_hang_chi_tiet.don_gia',
+                'san_pham_chi_tiet.id_san_pham_chi_tiet'
+            )
+            ->get();
+
+        if ($orderDetails->isEmpty()) {
+            return response()->json(['message' => 'Không tìm thấy đơn hàng'], 404);
+        }
+
+        $firstRow = $orderDetails->first();
+
+        $data = [
+            'id_don_hang' => $firstRow->id_don_hang,
+            'ngay_dat_hang' => Carbon::parse($firstRow->ngay_dat_hang)->format('d/m/Y'),
+            'trang_thai_don_hang' => $firstRow->trang_thai_don_hang,
+            'phuong_thuc_thanh_toan' => $firstRow->phuong_thuc_thanh_toan,
+            'tong_tien' => (int)$firstRow->tong_tien,
+
+            'dia_chi_giao_hang' => [
+                'ten_nguoi_dung' => $firstRow->ten_nguoi_dung,
+                'so_dien_thoai' => $firstRow->so_dien_thoai,
+                'dia_chi' => $firstRow->dia_chi,
+            ],
+
+            'san_pham' => $orderDetails->map(function ($item) {
+                return [
+                    'id_san_pham_chi_tiet' => $item->id_san_pham_chi_tiet,
+                    'ten_san_pham' => $item->ten_san_pham,
+                    'mau' => $item->ten_mau,
+                    'kich_thuoc' => $item->ten_kich_thuoc,
+                    'so_luong' => $item->so_luong,
+                    'don_gia' => (int)$item->don_gia,
+                    'thanh_tien' => (int)$item->don_gia * $item->so_luong
+                ];
+            }),
+        ];
+
+        return Response::Success($data, 'Lấy thông tin đơn hàng thành công');
     }
 }

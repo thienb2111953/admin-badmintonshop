@@ -65,6 +65,7 @@ Route::middleware('jwt')->group(function () {
 
     Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'getOrders']);
+        Route::get('/{id_don_hang}', [OrderController::class, 'getOrderDetail']);
     });
 });
 
