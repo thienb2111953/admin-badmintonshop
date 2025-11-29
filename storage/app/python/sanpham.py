@@ -433,7 +433,7 @@ def ganAnhSanPham(cursor, connection, storage_folder=None):
     if not storage_folder:
         storage_folder = r"C:\Users\huyph\Downloads\badminton"
 
-    laravel_storage = r"D:\Project\badminton-shop\admin-badmintonshop\storage\app\public\anh_san_phams"
+    laravel_storage = r"D:\Class\HK4_2026\admin-badmintonshop\storage\app\public\anh_san_phams"
     os.makedirs(laravel_storage, exist_ok=True)
 
     # XÓA file storage cũ
@@ -531,7 +531,7 @@ def main():
 #
 #     createDanhMucThuongHieu(cursor)
 #     conn.commit()
-
+#
 #     createSanPham(cursor, "Yonex", "Vợt cầu lông")
 #     conn.commit()
 
@@ -543,14 +543,14 @@ def main():
 
     createAnhSanPham(
         cursor,
-        storage_folder=r"C:\Users\huyph\Downloads\badminton"
+        storage_folder=r"D:\Class\HK4_2026\anhSP"
     )
     conn.commit()
 
     ganAnhSanPham(
             cursor,
             conn,
-            storage_folder=r"C:\Users\huyph\Downloads\badminton"
+            storage_folder=r"D:\Class\HK4_2026\anhSP"
         )
     conn.commit()
 
