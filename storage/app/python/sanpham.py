@@ -433,7 +433,11 @@ def ganAnhSanPham(cursor, connection, storage_folder=None):
     if not storage_folder:
         storage_folder = r"C:\Users\sxnd\Downloads\badminton_image"
 
+<<<<<<< HEAD
+    laravel_storage = r"D:\Class\HK4_2026\admin-badmintonshop\storage\app\public\anh_san_phams"
+=======
     laravel_storage = r"E:\FreeLancer\ShopCauLong\admin-badmintonshop\storage\app\public\anh_san_phams"
+>>>>>>> 5162171fc3c31b7a8844af0f26b25ef2ba648494
     os.makedirs(laravel_storage, exist_ok=True)
 
     # XÓA file storage cũ
@@ -543,14 +547,22 @@ def main():
 
     createAnhSanPham(
         cursor,
+<<<<<<< HEAD
+        storage_folder=r"D:\Class\HK4_2026\anhSP"
+=======
         storage_folder=r"C:\Users\sxnd\Downloads\badminton_image"
+>>>>>>> 5162171fc3c31b7a8844af0f26b25ef2ba648494
     )
     conn.commit()
 
     ganAnhSanPham(
             cursor,
             conn,
+<<<<<<< HEAD
+            storage_folder=r"D:\Class\HK4_2026\anhSP"
+=======
             storage_folder=r"C:\Users\sxnd\Downloads\badminton_image"
+>>>>>>> 5162171fc3c31b7a8844af0f26b25ef2ba648494
         )
     conn.commit()
 
