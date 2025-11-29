@@ -34,6 +34,7 @@ class CheckOutController extends Controller
             return DB::transaction(function () use ($request) {
 
                 $sanPhamArr = $request->input('san_pham');
+                $id_nguoi_dung = $request->input('id_nguoi_dung');
 
                 $id_dia_chi_nguoi_dung = $request->input('id_dia_chi_nguoi_dung');
 
@@ -47,6 +48,7 @@ class CheckOutController extends Controller
                 $ma_don_hang = 'DH' . strtoupper(uniqid());
                 $id_don_hang = DB::table('don_hang')->insertGetId([
                     'id_dia_chi_nguoi_dung' => $id_dia_chi_nguoi_dung,
+                    'id_nguoi_dung' => $id_nguoi_dung,
                     'ma_don_hang' => $ma_don_hang,
                     'trang_thai_don_hang' => 'Đang xử lý',
                     'trang_thai_thanh_toan' => 'Chưa thanh toán',
@@ -142,7 +144,13 @@ class CheckOutController extends Controller
                     ->where('id_don_hang', $id_don_hang)
                     ->update(['tong_tien' => $tongTien]);
 
+                DB::table('gio_hang_chi_tiet')
+                    ->leftJoin('gio_hang','gio_hang.id_gio_hang','=','gio_hang_chi_tiet.id_gio_hang')
+                    ->where('gio_hang.id_nguoi_dung', $id_nguoi_dung)
+                    ->delete();
+
                 return response()->json([
+                    'id_nguoi_dung' => $id_nguoi_dung,
                     'id_don_hang' => $id_don_hang,
                     'ma_don_hang' => $ma_don_hang,
                     'tong_tien'   => $tongTien,
@@ -161,6 +169,7 @@ class CheckOutController extends Controller
     {
 //        $data = request()->all();
 
+        $id_nguoi_dung = $request->input('id_nguoi_dung');
         $id_don_hang = $request->input('id_don_hang');
         $ma_don_hang = $request->input('ma_don_hang');
         $tong_tien = $request->input('tong_tien');
