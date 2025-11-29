@@ -16,9 +16,6 @@ use App\Http\Controllers\Api\ThuongHieuController;
 
 Route::post('/chatbot', [ChatbotController::class, 'reply']);
 
-Route::get('quyen', [QuyenController::class, 'dsQuyen'])->name('QuyenController.dsQuyen');
-Route::post('quyen', [QuyenController::class, 'them'])->name('QuyenController.them');
-
 Route::get('trang-chu', [TrangChuController::class, 'getViewHome'])->name('TrangChuController.getViewHome');
 
 Route::group(['prefix' => 'danh-muc'], function () {

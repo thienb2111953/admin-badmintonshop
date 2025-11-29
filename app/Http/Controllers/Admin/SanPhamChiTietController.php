@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AnhSanPham;
 use App\Models\DanhMucThuongHieu;
-use App\Models\Kho;
 use App\Models\KichThuoc;
 use App\Models\Mau;
 use App\Models\SanPham;
@@ -61,7 +60,7 @@ class SanPhamChiTietController extends Controller
           ];
       });
 
-      $san_pham_chi_tiet = SanPhamChiTiet::with(['mau', 'kichThuoc', 'kho'])
+      $san_pham_chi_tiet = SanPhamChiTiet::with(['mau', 'kichThuoc'])
       ->where('id_san_pham', $id_san_pham)
         ->orderBy('id_mau', 'asc')
       ->get();

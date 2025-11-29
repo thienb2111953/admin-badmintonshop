@@ -21,11 +21,6 @@ class SanPhamChiTiet extends Model
     return $this->hasMany(AnhSanPham::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
   }
 
-  public function kho(): HasMany
-  {
-    return $this->hasMany(Kho::class, 'id_san_pham_chi_tiet', 'id_san_pham_chi_tiet');
-  }
-
   public function mau(): BelongsTo
   {
     return $this->belongsTo(Mau::class, 'id_mau', 'id_mau');
