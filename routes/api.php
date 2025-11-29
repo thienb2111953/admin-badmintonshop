@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\NguoiDungController;
 use App\Http\Controllers\Admin\QuyenController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\TrangChuController;
 use App\Http\Controllers\ChatBotController;
 use Illuminate\Support\Facades\Route;
@@ -15,9 +16,6 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ThuongHieuController;
 
 Route::post('/chatbot', [ChatbotController::class, 'reply']);
-
-Route::get('quyen', [QuyenController::class, 'dsQuyen'])->name('QuyenController.dsQuyen');
-Route::post('quyen', [QuyenController::class, 'them'])->name('QuyenController.them');
 
 Route::get('trang-chu', [TrangChuController::class, 'getViewHome'])->name('TrangChuController.getViewHome');
 
@@ -45,6 +43,7 @@ Route::middleware('jwt')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
+    Route::put('/user/update', [AuthController::class, 'updateProfile']);
 
     Route::prefix('cart')->group(function () {
         Route::get('/', [CartController::class, 'cart']);
@@ -61,6 +60,10 @@ Route::middleware('jwt')->group(function () {
         Route::get('/default', [UserAddressController::class, 'getDefaultAddress']);
     });
 
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'getOrders']);
+        Route::get('/{id_don_hang}', [OrderController::class, 'getOrderDetail']);
+    });
 });
 
 Route::post('tao-don-hang', [CheckOutController::class, 'taoDonHang'])->name('CheckOutController.taoDonHang');

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\DonHang;
 use App\Models\KhuyenMai;
+use App\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CheckOutController extends Controller
 {
@@ -49,7 +51,7 @@ class CheckOutController extends Controller
                     'trang_thai_don_hang' => 'Đang xử lý',
                     'trang_thai_thanh_toan' => 'Chưa thanh toán',
                     'phuong_thuc_thanh_toan' => 'VNPay',
-                    'tong_tien' => 0,
+                    'tong_tien'=> 0,
                     'ngay_dat_hang' => now(),
                 ], 'id_don_hang');
 
@@ -288,6 +290,8 @@ class CheckOutController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+
     }
 
     public function xuLySauThanhToanThatBai(int $id_don_hang)

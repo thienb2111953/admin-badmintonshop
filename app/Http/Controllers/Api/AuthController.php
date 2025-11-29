@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -88,5 +89,38 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return response()->json(Auth::guard('api')->user());
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+
+        $validatedData = $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+            ],
+            'sdt'   => ['nullable', 'regex:/(84|0[3|5|7|8|9])+([0-9]{8})\b/'],
+        ], [
+            'name.required' => 'Vui lòng nhập họ tên.',
+            'email.unique'  => 'Email này đã được sử dụng bởi tài khoản khác.',
+            'sdt.regex'     => 'Số điện thoại không đúng định dạng.',
+        ]);
+
+        $user->fill($validatedData);
+
+        if ($user->save()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Cập nhật thông tin thành công!',
+                'data' => $user
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Không thể lưu vào cơ sở dữ liệu.'
+        ], 500);
     }
 }

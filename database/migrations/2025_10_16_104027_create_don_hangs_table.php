@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id('id_don_hang');
             $table->string('ma_don_hang')->unique();
             $table->foreignId('id_dia_chi_nguoi_dung')->nullable()->constrained('dia_chi_nguoi_dung', 'id_dia_chi_nguoi_dung')->onDelete('set null');
+            $table->integer('id_nguoi_dung')->constrained('nguoi_dung', 'id_nguoi_dung')->onDelete('cascade');
             $table->string('trang_thai_thanh_toan', 50)->default('Chưa thanh toán');
             $table->string('trang_thai_don_hang', 50)->default('Đang xử lý');
             $table->string('phuong_thuc_thanh_toan', 50)->nullable();

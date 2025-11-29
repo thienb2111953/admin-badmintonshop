@@ -21,16 +21,31 @@ class CartController extends Controller
             return Response::Success([], 'User not authenticated');
         }
 
+        $now = now();
+
         $data = DB::table('gio_hang')
             ->join('gio_hang_chi_tiet', 'gio_hang_chi_tiet.id_gio_hang', '=', 'gio_hang.id_gio_hang')
             ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
+
             ->leftJoin('anh_san_pham', function ($join) {
                 $join->on('anh_san_pham.id_san_pham_chi_tiet', '=', 'gio_hang_chi_tiet.id_san_pham_chi_tiet')
                     ->where('anh_san_pham.thu_tu', '=', 1);
             })
+
             ->join('san_pham', 'san_pham.id_san_pham', '=', 'san_pham_chi_tiet.id_san_pham')
             ->join('mau', 'mau.id_mau', 'san_pham_chi_tiet.id_mau')
             ->join('kich_thuoc', 'kich_thuoc.id_kich_thuoc', 'san_pham_chi_tiet.id_kich_thuoc')
+
+
+            ->leftJoinSub(function ($join) use ($now) {
+                $join->select('spkm.id_san_pham', 'km.gia_tri', 'km.don_vi_tinh')
+                    ->from('san_pham_khuyen_mai as spkm')
+                    ->join('khuyen_mai as km', 'spkm.id_khuyen_mai', '=', 'km.id_khuyen_mai')
+                    ->where('km.ngay_bat_dau', '<=', $now)
+                    ->where('km.ngay_ket_thuc', '>=', $now)
+                    ->distinct();
+            }, 'active_km', 'san_pham.id_san_pham', '=', 'active_km.id_san_pham')
+
             ->where('gio_hang.id_nguoi_dung', $userId)
             ->select(
                 'san_pham_chi_tiet.id_san_pham_chi_tiet',
@@ -49,10 +64,14 @@ class CartController extends Controller
                 'mau.ten_mau',
                 'kich_thuoc.id_kich_thuoc',
                 'kich_thuoc.ten_kich_thuoc',
-                'anh_san_pham.anh_url'
+                'anh_san_pham.anh_url',
+
+                'active_km.gia_tri as km_gia_tri',
+                'active_km.don_vi_tinh as km_don_vi_tinh'
             )
             ->orderBy('san_pham.ten_san_pham')
             ->get();
+
         return Response::Success($data, 'Cart loaded successfully');
     }
 

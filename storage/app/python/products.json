@@ -1,7 +1,8 @@
 [
     {
         "id_san_pham": 1,
-        "ten": "Vợt cầu lông Yonex Astrox 100ZZ",
+        "ma_san_pham": "",
+        "ten_san_pham": "Vợt cầu lông Yonex Astrox 100ZZ",
         "loai": "vợt",
         "muc_gia": 3500000,
         "phong_cach": "tấn công",
