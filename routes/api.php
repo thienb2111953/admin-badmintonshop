@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\NguoiDungController;
 use App\Http\Controllers\Admin\QuyenController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\TrangChuController;
 use App\Http\Controllers\ChatBotController;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +60,10 @@ Route::middleware('jwt')->group(function () {
         Route::get('/default', [UserAddressController::class, 'getDefaultAddress']);
     });
 
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'getOrders']);
+        Route::get('/{id_don_hang}', [OrderController::class, 'getOrderDetail']);
+    });
 });
 
 Route::post('tao-don-hang', [CheckOutController::class, 'taoDonHang'])->name('CheckOutController.taoDonHang');
