@@ -14,9 +14,9 @@ client = Groq(api_key=GROQ_API_KEY)
 
 def db():
     return psycopg2.connect(
-        host="172.22.166.22",
+        host="localhost",
         user="postgres",
-        password="123456",
+        password="123",
         dbname="badminton_shop",
         cursor_factory=RealDictCursor
     )

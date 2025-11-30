@@ -20,7 +20,6 @@ class SanPhamController extends Controller
             ->leftJoin('danh_muc_thuong_hieu', 'danh_muc_thuong_hieu.id_danh_muc_thuong_hieu', '=', 'san_pham.id_danh_muc_thuong_hieu')
             ->leftJoin('thuong_hieu', 'thuong_hieu.id_thuong_hieu', '=', 'danh_muc_thuong_hieu.id_thuong_hieu')
             ->leftJoin('danh_muc', 'danh_muc.id_danh_muc', '=', 'danh_muc_thuong_hieu.id_danh_muc')
-            ->leftJoin('thuoc_tinh','thuoc_tinh.id_thuoc_tinh','=','danh_muc.id_thuoc_tinh')
             ->select([
                 'san_pham.id_san_pham',
                 'san_pham.ma_san_pham',
@@ -227,19 +226,36 @@ class SanPhamController extends Controller
 
     public function productSearch(Request $request)
     {
-        $searchString = $request->input('keyword', '');
+        $keyword = $request->input('keyword');
 
-        $query = DB::table('san_pham')
-            ->join('san_pham_chi_tiet', 'san_pham_chi_tiet.id_san_pham', '=', 'san_pham.id_san_pham')
-            ->when($searchString, function ($query, $searchString) {
-                return $query->where('ten_san_pham', 'ilike', '%' . $searchString . '%');
-            })
-            ->get();
+        $model = new TrangChuController();
 
-        if(!$query->isEmpty()) {
-            return Response::Success($query, 'Response search successfully');
+        $query = $model->buildBaseProductQuery();
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('san_pham.ten_san_pham', 'like', "%{$keyword}%")
+                    ->orWhere('san_pham.slug', 'like', "%{$keyword}%")
+                    ->orWhere('thuong_hieu.ten_thuong_hieu', 'like', "%{$keyword}%")
+                    ->orWhere('danh_muc.ten_danh_muc', 'like', "%{$keyword}%");
+            });
         }
 
-        return Response::Success([], 'Response search successfully');
+        $sort = $request->input('sort');
+        switch ($sort) {
+            case 'price_asc':
+                $query->orderBy('variants.gia_ban', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('variants.gia_ban', 'desc');
+                break;
+            default:
+                $query->orderBy('san_pham.created_at', 'desc');
+                break;
+        }
+
+        $products = $query->limit(5)->get();
+
+        return Response::Success($products, '');
     }
 }

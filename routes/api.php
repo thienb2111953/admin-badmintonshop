@@ -27,10 +27,9 @@ Route::group(['prefix' => 'danh-muc'], function () {
 
 
 Route::group(['prefix' => 'san-pham'], function () {
+    Route::get('/', [SanPhamController::class, 'productSearch'])->name('SanPhamController.productSearch');
     Route::get('/ds', [SanPhamController::class, 'dsSanPhamChiTiet'])->name('SanPhamController.dsSanPhamChiTiet');
-
     Route::get('/{param}', [SanPhamController::class, 'getProductsDetail'])->name('SanPhamController.getProductsDetail');
-    Route::get('/search', [SanPhamController::class, 'productSearch'])->name('SanPhamController.productSearch');
 });
 
 Route::get('/thuong-hieu', [ThuongHieuController::class, 'getAllThuongHieu'])->name('ThuongHieuController.getAllThuongHieu');
