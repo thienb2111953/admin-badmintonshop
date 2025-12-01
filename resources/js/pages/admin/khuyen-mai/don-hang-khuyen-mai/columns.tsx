@@ -16,7 +16,11 @@ export function Columns(
     },
       {
           accessorKey: 'gia_tri_duoc_giam',
-          header: ({ column }) => <ColumnHeader column={column} title="Mã khuyến mãi có hiệu lực" />,
+          header: ({ column }) => <ColumnHeader column={column} title="Điều kiện để mã khuyến mãi có hiệu lực
+
+
+
+          " />,
           cell: ({ row }) => {
               const raw = row.getValue('gia_tri_duoc_giam');
               const value = Number(raw);

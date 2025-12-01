@@ -1,9 +1,9 @@
 import AppLayout from '@/layouts/app-layout';
-import { columns } from './columns';
+import { columns, sortThuongHieuByLogo } from './columns';
 import { DataTable } from '@/components/custom/data-table';
 import { type BreadcrumbItem, ThuongHieu } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
@@ -15,6 +15,13 @@ export default function ThuongHieuPage({ thuong_hieus }: { thuong_hieus: ThuongH
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<ThuongHieu | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
+
+  // Lưu dữ liệu bảng vào state để sắp xếp logo lên đầu
+  const [tableData, setTableData] = useState<ThuongHieu[]>(sortThuongHieuByLogo(thuong_hieus));
+
+  useEffect(() => {
+    setTableData(sortThuongHieuByLogo(thuong_hieus));
+  }, [thuong_hieus]);
 
   const form = useForm<ThuongHieu>({
     id_thuong_hieu: 0,
@@ -96,7 +103,11 @@ export default function ThuongHieuPage({ thuong_hieus }: { thuong_hieus: ThuongH
       <Head title="Quản lý Thương hiệu" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={thuong_hieus} onAdd={handleAdd} />
+        <DataTable
+          columns={columns(handleEdit, handleDelete)}
+          data={tableData} // dùng dữ liệu đã sắp xếp
+          onAdd={handleAdd}
+        />
       </div>
 
       <ModalDialog
@@ -108,7 +119,11 @@ export default function ThuongHieuPage({ thuong_hieus }: { thuong_hieus: ThuongH
         onSubmit={handleSubmit}
       />
 
-      <DialogConfirmDelete open={openConfirm} onClose={() => setOpenConfirm(false)} onConfirm={confirmDelete} />
+      <DialogConfirmDelete
+        open={openConfirm}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={confirmDelete}
+      />
     </AppLayout>
   );
 }

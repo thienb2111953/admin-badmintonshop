@@ -50,7 +50,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle, kh
               </div>
 
               <div className="grid gap-2">
-                  <Label htmlFor="gia_tri_duoc_giam">Giá trị đơn hàng</Label>
+                  <Label htmlFor="gia_tri_duoc_giam">Điều kiện giảm giá cho đơn hàng</Label>
                   <Input
                       id="gia_tri_duoc_giam"
                       type="text"

@@ -71,7 +71,7 @@ def getThuongHieu(cursor, slug_category):
 
 def createDanhMucThuongHieu(cursor):
     headers = {"User-Agent": "Mozilla/5.0"}
-    base_url = "https://shopvnb.com.html"
+    base_url = "https://shopvnb.com/vot-cau-long.html"
 
     # Gửi request đến trang chính
     response = requests.get(base_url, headers=headers)
@@ -440,9 +440,9 @@ def ganAnhSanPham(cursor, connection, storage_folder=None):
     connection.commit()
 
     if not storage_folder:
-        storage_folder = r"C:\Users\huyph\Downloads\badminton"
+        storage_folder = r"D:\Class\HK4_2026\admin-badmintonshop"
 
-    laravel_storage = r"D:\Project\badminton-shop\admin-badmintonshop\storage\app\public\anh_san_phams"
+    laravel_storage = r"D:\Class\HK4_2026\admin-badmintonshop\storage\app\public\anh_san_phams"
 
     os.makedirs(laravel_storage, exist_ok=True)
 
@@ -535,31 +535,31 @@ def main():
 #     getDanhMuc(cursor)
 #     conn.commit()
 #
-
-#     slug_category = "cau-long"
+#
+#     slug_category = "vot-cau-long"
 #     getThuongHieu(cursor, slug_category)
 #     conn.commit()
 #     createDanhMucThuongHieu(cursor)
 #     conn.commit()
-
+#
 #     createSanPham(cursor)
 #     conn.commit()
 
     # thêm thuộc tính cho danh mục
     # tao het san pham roi hay chay
-    createSanPhamChiTiet(cursor)
-    conn.commit()
-
-    createAnhSanPham(
-        cursor,
-        storage_folder=r"C:\Users\huyph\Downloads\badminton"
-    )
-    conn.commit()
+#     createSanPhamChiTiet(cursor)
+#     conn.commit()
+#
+#     createAnhSanPham(
+#         cursor,
+#         storage_folder=r"D:\Class\HK4_2026\anhSP"
+#     )
+#     conn.commit()
 
     ganAnhSanPham(
             cursor,
             conn,
-            storage_folder=r"C:\Users\huyph\Downloads\badminton"
+            storage_folder=r"D:\Class\HK4_2026\anhSP"
         )
     conn.commit()
 

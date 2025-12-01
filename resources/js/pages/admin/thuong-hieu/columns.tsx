@@ -6,6 +6,17 @@ import { ColumnHeader } from '@/components/custom/column-header';
 import { ThuongHieu } from '@/types';
 import { Link } from '@inertiajs/react';
 
+/**
+ * Hàm sắp xếp các thương hiệu có logo lên đầu
+ */
+export function sortThuongHieuByLogo(data: ThuongHieu[]): ThuongHieu[] {
+  return [...data].sort((a, b) => {
+    if (a.logo_url && !b.logo_url) return -1;
+    if (!a.logo_url && b.logo_url) return 1;
+    return 0; // giữ nguyên thứ tự nếu cùng có hoặc cùng không có logo
+  });
+}
+
 export function columns(
   onEdit: (row: ThuongHieu) => void,
   onDelete: (row: ThuongHieu) => void,
