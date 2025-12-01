@@ -10,6 +10,8 @@ php artisan migrate:fresh --seed
 
 php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\JWTAuthServiceProvider"
 php artisan jwt:secret
+
+CREATE EXTENSION IF NOT EXISTS unaccent;
 ```
 
 1. tasks(): HasMany

@@ -76,10 +76,8 @@ class TrangChuController extends Controller
 
     public function getViewHome()
     {
-        // Gọi hàm build query chung
         $baseQuery = $this->buildBaseProductQuery();
 
-        // Clone query để dùng cho nhiều mục đích khác nhau mà không ảnh hưởng query gốc
         $products = (clone $baseQuery)
             ->orderBy('san_pham.created_at', 'desc')
             ->limit(10)
@@ -92,7 +90,8 @@ class TrangChuController extends Controller
             ->get();
 
         $popular = (clone $baseQuery)
-            ->limit(10) // Logic phổ biến có thể thêm orderBy view count ở đây
+            ->inRandomOrder()
+            ->limit(10)
             ->get();
 
         $shoes = (clone $baseQuery)

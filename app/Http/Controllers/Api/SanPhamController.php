@@ -227,35 +227,68 @@ class SanPhamController extends Controller
     public function productSearch(Request $request)
     {
         $keyword = $request->input('keyword');
+        $sort = $request->input('sort');
 
+        // Lưu ý: Nên chuyển buildBaseProductQuery sang Model (xem mục Lời khuyên bên dưới)
+        // Hiện tại giữ nguyên để code chạy được ngay
         $model = new TrangChuController();
-
         $query = $model->buildBaseProductQuery();
 
+        // --- TỐI ƯU TÌM KIẾM ---
         if ($keyword) {
-            $query->where(function ($q) use ($keyword) {
-                $q->where('san_pham.ten_san_pham', 'like', "%{$keyword}%")
-                    ->orWhere('san_pham.slug', 'like', "%{$keyword}%")
-                    ->orWhere('thuong_hieu.ten_thuong_hieu', 'like', "%{$keyword}%")
-                    ->orWhere('danh_muc.ten_danh_muc', 'like', "%{$keyword}%");
+            // Tách từ khóa: "áo thun" -> ["áo", "thun"]
+            $keywords = explode(' ', $keyword);
+
+            $query->where(function ($q) use ($keyword, $keywords) {
+                // 1. Tìm chính xác cụm từ trong tên (dùng unaccent để bỏ dấu)
+                $q->whereRaw('unaccent(san_pham.ten_san_pham) ILIKE unaccent(?)', ["%{$keyword}%"]);
+
+                // 2. Tìm các từ rời rạc trong tên (giúp tìm "áo đỏ" ra "áo sơ mi đỏ")
+                // Logic: Phải chứa TẤT CẢ các từ khóa (AND) nhưng thứ tự không quan trọng
+                $q->orWhere(function ($subQ) use ($keywords) {
+                    foreach ($keywords as $word) {
+                        $subQ->whereRaw('unaccent(san_pham.ten_san_pham) ILIKE unaccent(?)', ["%{$word}%"]);
+                    }
+                });
+
+                // 3. Tìm trong Slug (Slug thường không dấu nên chỉ cần ILIKE)
+                $q->orWhere('san_pham.slug', 'ILIKE', "%{$keyword}%");
+
+                // 4. Tìm trong Thương hiệu & Danh mục (Bỏ dấu)
+                $q->orWhereRaw('unaccent(thuong_hieu.ten_thuong_hieu) ILIKE unaccent(?)', ["%{$keyword}%"]);
+                $q->orWhereRaw('unaccent(danh_muc.ten_danh_muc) ILIKE unaccent(?)', ["%{$keyword}%"]);
             });
+
+            // (Tùy chọn) Sắp xếp ưu tiên: Sản phẩm có tên bắt đầu bằng từ khóa lên đầu
+             $query->orderByRaw("CASE WHEN unaccent(san_pham.ten_san_pham) ILIKE unaccent(?) THEN 0 ELSE 1 END", ["{$keyword}%"]);
         }
 
-        $sort = $request->input('sort');
+        // --- TỐI ƯU SẮP XẾP ---
         switch ($sort) {
             case 'price_asc':
-                $query->orderBy('variants.gia_ban', 'asc');
+                // NULLS LAST: Đảm bảo sản phẩm lỗi giá (null) nằm dưới cùng
+                $query->orderByRaw('variants.gia_ban ASC NULLS LAST');
                 break;
             case 'price_desc':
-                $query->orderBy('variants.gia_ban', 'desc');
+                $query->orderByRaw('variants.gia_ban DESC NULLS LAST');
+                break;
+            case 'name_asc':
+                $query->orderBy('san_pham.ten_san_pham', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('san_pham.ten_san_pham', 'desc');
                 break;
             default:
+                // Mặc định: Mới nhất lên đầu
                 $query->orderBy('san_pham.created_at', 'desc');
                 break;
         }
 
-        $products = $query->limit(5)->get();
+        // --- TỐI ƯU PHÂN TRANG ---
+        // Thay vì limit(5), hãy dùng paginate để FE làm chức năng "Xem thêm" hoặc phân trang
+        // withQueryString() giúp giữ lại tham số keyword và sort khi chuyển trang
+        $products = $query->paginate(12)->withQueryString();
 
-        return Response::Success($products, '');
+        return Response::Success($products, 'Tìm kiếm thành công');
     }
 }
