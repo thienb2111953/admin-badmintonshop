@@ -9,7 +9,6 @@ from func import get_product_info_from_shopvnb
 from func import random_date_2025
 from func import natural_sort_key
 
-
 from slugify import slugify
 import random
 from datetime import date, timedelta
@@ -72,7 +71,7 @@ def getThuongHieu(cursor, slug_category):
 
 def createDanhMucThuongHieu(cursor):
     headers = {"User-Agent": "Mozilla/5.0"}
-    base_url = "https://shopvnb.com/vot-cau-long.html"
+    base_url = "https://shopvnb.com.html"
 
     # Gửi request đến trang chính
     response = requests.get(base_url, headers=headers)
@@ -145,75 +144,74 @@ def createDanhMucThuongHieu(cursor):
                 print(f"⚠️ Lỗi khi thêm '{ten_danh_muc_thuong_hieu}': {e}")
 
 
-def createSanPham(cursor, ten_thuong_hieu_input, ten_danh_muc_input):
-#     cursor.execute("TRUNCATE san_pham CASCADE")
-
-    dm_slug = slugify(ten_danh_muc_input)
-    th_slug = slugify(ten_thuong_hieu_input)
+def createSanPham(cursor):
+    cursor.execute("TRUNCATE san_pham CASCADE")
 
     headers = {"User-Agent": "Mozilla/5.0"}
-    base_url = f"https://shopvnb.com/{dm_slug}-{th_slug}.html"
 
-    response = requests.get(base_url, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    product_tags = soup.select("span.product-name a")
-    if not product_tags:
-        print("❌ Không tìm thấy sản phẩm nào.")
-        return
-
-    # Lấy id_thuong_hieu theo tên nhập
-    cursor.execute(
-        "SELECT id_thuong_hieu FROM thuong_hieu WHERE LOWER(ten_thuong_hieu) = %s",
-        (ten_thuong_hieu_input.lower(),)
-    )
-    th = cursor.fetchone()
-    id_thuong_hieu = th[0] if th else None
-
-    # Lấy id_danh_muc theo tên nhập
-    cursor.execute(
-        "SELECT id_danh_muc FROM danh_muc WHERE LOWER(ten_danh_muc) = %s",
-        (ten_danh_muc_input.lower(),)
-    )
-    dm = cursor.fetchone()
-    id_danh_muc = dm[0] if dm else None
-
-    if not id_thuong_hieu or not id_danh_muc:
-        print(f"❌ Không tìm thấy ID cho thương hiệu '{ten_thuong_hieu_input}' hoặc danh mục '{ten_danh_muc_input}'")
-        return
-
-    # Lấy id_danh_muc_thuong_hieu
+    # 1) Lấy toàn bộ danh_muc_thuong_hieu + slug danh mục & slug thương hiệu
     cursor.execute("""
-        SELECT id_danh_muc_thuong_hieu
-        FROM danh_muc_thuong_hieu
-        WHERE id_thuong_hieu = %s AND id_danh_muc = %s
-    """, (id_thuong_hieu, id_danh_muc))
-    dmth = cursor.fetchone()
-    id_danh_muc_thuong_hieu = dmth[0] if dmth else None
+        SELECT
+            dmth.id_danh_muc_thuong_hieu,
+            dm.id_danh_muc,
+            th.id_thuong_hieu,
+            dm.ten_danh_muc,
+            th.ten_thuong_hieu,
+            dmth.slug as dmth_slug
+        FROM danh_muc_thuong_hieu dmth
+        JOIN danh_muc dm ON dm.id_danh_muc = dmth.id_danh_muc
+        JOIN thuong_hieu th ON th.id_thuong_hieu = dmth.id_thuong_hieu
+        ORDER BY dm.ten_danh_muc, th.ten_thuong_hieu
+    """)
 
-    if not id_danh_muc_thuong_hieu:
-        print(f"⚠️ Không tìm thấy danh_muc_thuong_hieu cho {ten_thuong_hieu_input}-{ten_danh_muc_input}")
-        return
+    dmth_list = cursor.fetchall()
 
-    # Duyệt qua từng sản phẩm
-    for index, a_tag in enumerate(product_tags, start=1):
-        ten_san_pham = a_tag.text.strip()
-        if not ten_san_pham:
+    print(f"🔍 Tìm thấy {len(dmth_list)} danh_muc_thuong_hieu cần crawl")
+
+    # 2) Lặp từng dòng
+    for row in dmth_list:
+        id_dmth = row[0]
+        id_danh_muc = row[1]
+        id_thuong_hieu = row[2]
+        ten_danh_muc = row[3]
+        ten_thuong_hieu = row[4]
+        dmth_slug = row[5]
+
+        url = f"https://shopvnb.com/{dmth_slug}.html"
+        print(f"\n🌐 Crawl URL: {url}")
+
+        res = requests.get(url, headers=headers)
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        # danh sách sản phẩm
+        product_tags = soup.select("span.product-name a")
+        if not product_tags:
+            print("❌ Không tìm thấy sản phẩm nào.")
             continue
 
-        slug = slugify(ten_san_pham)
-        ma_san_pham = f"BMS{id_thuong_hieu}{id_danh_muc}{str(index).zfill(3)}"
+        print(f"👉 {len(product_tags)} sản phẩm")
 
-        try:
-            cursor.execute("""
-                INSERT INTO san_pham (ma_san_pham, ten_san_pham, slug, id_danh_muc_thuong_hieu)
-                VALUES (%s, %s, %s, %s)
-            """, (ma_san_pham, ten_san_pham, slug, id_danh_muc_thuong_hieu))
-            print(f"✅ Đã thêm: {ten_san_pham} ({ma_san_pham})")
+        # 3) Lặp từng sản phẩm
+        for index, a_tag in enumerate(product_tags, start=1):
+            ten_san_pham = a_tag.text.strip()
+            if not ten_san_pham:
+                continue
 
-        except Exception as e:
-            print(f"⚠️ Lỗi khi thêm sản phẩm '{ten_san_pham}': {e}")
+            slug = slugify(ten_san_pham)
 
+            # Tạo mã sản phẩm theo thương hiệu + danh mục + index
+            ma_san_pham = f"BMS{id_thuong_hieu}{id_danh_muc}{str(index).zfill(3)}"
+
+            try:
+                cursor.execute("""
+                    INSERT INTO san_pham (ma_san_pham, ten_san_pham, slug, id_danh_muc_thuong_hieu)
+                    VALUES (%s, %s, %s, %s)
+                """, (ma_san_pham, ten_san_pham, slug, id_dmth))
+
+                print(f"   ✅ {ten_san_pham}")
+
+            except Exception as e:
+                print(f"   ⚠️ Lỗi khi thêm '{ten_san_pham}': {e}")
 
 def createSanPhamChiTiet(cursor):
     cursor.execute("TRUNCATE san_pham_chi_tiet CASCADE")
@@ -240,9 +238,21 @@ def createSanPhamChiTiet(cursor):
 
         # Lấy giá + thuộc tính từ web
         info = get_product_info_from_shopvnb(slug)
-        gia_ban = info["gia_ban"]
-        gia_niem_yet = info["gia_niem_yet"]
+        gia_ban = info.get("gia_ban") or 0
+        gia_niem_yet = info.get("gia_niem_yet") or 0
         attributes = info["attributes"]
+
+        # ==========================
+        # 🔥 FIX: GIÁ = 0 → RANDOM
+        # ==========================
+        if gia_ban <= 0:
+            # random khoảng 700k – 3tr cho hợp lý
+            gia_ban = random.randint(700_000, 3_000_000)
+
+        if gia_niem_yet <= 0 or gia_niem_yet < gia_ban:
+            # niêm yết cao hơn giá bán 5%–25%
+            he_so = random.uniform(1.05, 1.25)
+            gia_niem_yet = int(gia_ban * he_so)
 
         # Tạo phiếu nhập
         ngay_nhap = random_date_2025()
@@ -352,11 +362,10 @@ def createSanPhamChiTiet(cursor):
 
     print("🎉 Hoàn tất tạo dữ liệu!")
 
-
 def createAnhSanPham(cursor, storage_folder=None):
     # Nếu không truyền vào → dùng default
     if not storage_folder:
-        storage_folder = r"C:\Users\sxnd\Downloads\badminton_image"
+        storage_folder = r"C:\Users\huyph\Downloads\badminton"
 
     # Tạo thư mục gốc nếu chưa có
     if not os.path.exists(storage_folder):
@@ -431,13 +440,10 @@ def ganAnhSanPham(cursor, connection, storage_folder=None):
     connection.commit()
 
     if not storage_folder:
-        storage_folder = r"C:\Users\sxnd\Downloads\badminton_image"
+        storage_folder = r"C:\Users\huyph\Downloads\badminton"
 
-<<<<<<< HEAD
-    laravel_storage = r"D:\Class\HK4_2026\admin-badmintonshop\storage\app\public\anh_san_phams"
-=======
-    laravel_storage = r"E:\FreeLancer\ShopCauLong\admin-badmintonshop\storage\app\public\anh_san_phams"
->>>>>>> 5162171fc3c31b7a8844af0f26b25ef2ba648494
+    laravel_storage = r"D:\Project\badminton-shop\admin-badmintonshop\storage\app\public\anh_san_phams"
+
     os.makedirs(laravel_storage, exist_ok=True)
 
     # XÓA file storage cũ
@@ -529,40 +535,31 @@ def main():
 #     getDanhMuc(cursor)
 #     conn.commit()
 #
-#     slug_category = "vot-cau-long"
+
+#     slug_category = "cau-long"
 #     getThuongHieu(cursor, slug_category)
 #     conn.commit()
-#
 #     createDanhMucThuongHieu(cursor)
 #     conn.commit()
-#
-#     createSanPham(cursor, "Yonex", "Vợt cầu lông")
+
+#     createSanPham(cursor)
 #     conn.commit()
 
-# thêm thuộc tính cho danh mục
-
+    # thêm thuộc tính cho danh mục
     # tao het san pham roi hay chay
     createSanPhamChiTiet(cursor)
     conn.commit()
 
     createAnhSanPham(
         cursor,
-<<<<<<< HEAD
-        storage_folder=r"D:\Class\HK4_2026\anhSP"
-=======
-        storage_folder=r"C:\Users\sxnd\Downloads\badminton_image"
->>>>>>> 5162171fc3c31b7a8844af0f26b25ef2ba648494
+        storage_folder=r"C:\Users\huyph\Downloads\badminton"
     )
     conn.commit()
 
     ganAnhSanPham(
             cursor,
             conn,
-<<<<<<< HEAD
-            storage_folder=r"D:\Class\HK4_2026\anhSP"
-=======
-            storage_folder=r"C:\Users\sxnd\Downloads\badminton_image"
->>>>>>> 5162171fc3c31b7a8844af0f26b25ef2ba648494
+            storage_folder=r"C:\Users\huyph\Downloads\badminton"
         )
     conn.commit()
 

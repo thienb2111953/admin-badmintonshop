@@ -272,12 +272,12 @@ class CheckOutController extends Controller
             // ✅ Thanh toán thành công
             $this->xuLySauThanhToanThanhCong($id_don_hang, $amount, $bankCode, $ngayThanhToan);
 
-            return redirect('http://localhost:3000/order/' . $id_don_hang)->with('success', 'Thanh toán thành công');
+            return redirect('http://localhost:3000/orders/' . $id_don_hang)->with('success', 'Thanh toán thành công');
         } else {
             // ❌ Thanh toán thất bại → rollback
             $this->xuLySauThanhToanThatBai($id_don_hang);
 
-            return redirect('http://localhost:3000')->with('success', 'Thanh toán thất bại');
+            return redirect('http://localhost:3000/cart')->with('success', 'Thanh toán thất bại');
         }
     }
 
