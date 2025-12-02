@@ -18,28 +18,6 @@ class ThuocTinhController extends Controller
         ]);
     }
 
-//    public function store(Request $request)
-//    {
-//        $validator = Validator::make($request->all(), [
-//            'ten_thuoc_tinh' => 'required|string|max:255'
-//        ], [
-//            'ten_thuoc_tinh.required' => 'Tên thuộc tính không được để trống.'
-//        ]);
-//
-//        if ($validator->fails()) {
-//            return Inertia::render('admin/thuoc-tinh/thuoc-tinh', [
-//                'thuoc_tinhs' => ThuocTinh::all(),
-//                'errors' => $validator->errors()->getMessages()
-//            ])->withViewData([
-//                'errors' => $validator->errors()
-//            ]);
-//        }
-//
-//        ThuocTinh::create($validator->validated());
-//
-//        return redirect()->back();
-//    }
-
     public function store(Request $request)
     {
         $validated = $request->validate([

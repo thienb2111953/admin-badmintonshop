@@ -1,54 +1,65 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import psycopg2
-from psycopg2.extras import RealDictCursor
 from groq import Groq
 import json
 import os
+from pathlib import Path
+from danh_muc import DANH_MUC_THUOC_TINH
 
-# =====================================================
-# 1. CONFIG
-# =====================================================
+# ==========================
+# CONFIG + LOAD DATA
+# ==========================
+
+BASE_DIR = Path(__file__).resolve().parent
+SAN_PHAM_PATH = BASE_DIR / "san_pham.json"
+
+with open(SAN_PHAM_PATH, "r", encoding="utf-8") as f:
+    SAN_PHAM_DATA = json.load(f)  # list[dict]
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
 client = Groq(api_key=GROQ_API_KEY)
 
-def db():
-    return psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="123",
-        dbname="badminton_shop",
-        cursor_factory=RealDictCursor
-    )
-
 app = FastAPI()
 
-# ===============================================
-# AI INTENT PARSER → JSON
-# ===============================================
+# ==========================
+# AI INTENT (giữ nguyên, nhưng thêm context)
+# ==========================
 
-INTENT_PROMPT = """
+INTENT_PROMPT = f"""
 Bạn là hệ thống phân tích nhu cầu mua sắm.
 Hãy đọc câu của khách và trả về JSON duy nhất.
 
-JSON format:
-{
-  "category": "vợt" | "giày" | "quần áo" | null,
-  "brand": "Yonex" | "Lining" | "Victor" | null,
+Danh mục & thuộc tính hợp lệ (không được bịa thêm):
+
+{json.dumps(DANH_MUC_THUOC_TINH, ensure_ascii=False, indent=2)}
+
+KHI THIẾU THÔNG TIN:
+Trả JSON:
+{{
+  "need_more_info": true,
+  "question": "Câu hỏi cần hỏi thêm khách hàng"
+}}
+
+KHI ĐỦ THÔNG TIN:
+Trả JSON dạng:
+{{
+  "need_more_info": false,
+  "category": "vợt cầu lông" | "giày cầu lông" | null,
+  "brand": string | null,
   "min_price": number | null,
   "max_price": number | null,
   "attributes": [
-    {"name": "...", "value": "..."}
+    {{"name": "...", "value": "..." }}
   ]
-}
+}}
 
-Quy tắc:
-- "dưới X triệu" → max_price = X * 1.000.000
-- "từ X đến Y triệu" → min_price = X * 1.000.000
-- "X triệu" → max_price = X * 1.000.000
-- Thương hiệu: Yonex, Lining, Victor, Apacs, Mizuno, ProKennex...
-- Trả về duy nhất JSON hợp lệ.
+YÊU CẦU:
+- Không trả text ngoài JSON.
+- Không giải thích.
+- Không đoán bừa.
 """
+
+
 
 def ai_intent(user_msg: str):
     rsp = client.chat.completions.create(
@@ -63,12 +74,11 @@ def ai_intent(user_msg: str):
 
     raw = rsp.choices[0].message.content.strip()
 
-    # Extract JSON
     try:
         start = raw.index("{")
         end = raw.rindex("}") + 1
         return json.loads(raw[start:end])
-    except:
+    except Exception:
         return {
             "category": None,
             "brand": None,
@@ -77,139 +87,112 @@ def ai_intent(user_msg: str):
             "attributes": []
         }
 
-# ===============================================
-# SQL HELPER – MAP THUỘC TÍNH
-# ===============================================
+# ==========================
+# SEARCH TỪ JSON
+# ==========================
 
-def map_attr_value(name, value):
-    conn = db()
-    cur = conn.cursor()
+CATEGORY_MAPPING = {
+    "vợt": "Vợt cầu lông",
+    "vợt cầu lông": "Vợt cầu lông",
+    "giày": "Giày cầu lông",
+    "giày cầu lông": "Giày cầu lông",
+}
 
-    cur.execute("""
-        SELECT id_thuoc_tinh FROM thuoc_tinh
-        WHERE LOWER(ten_thuoc_tinh) = LOWER(%s)
-    """, (name,))
-    tt = cur.fetchone()
+def _norm(s: str | None) -> str:
+    return s.lower().strip() if isinstance(s, str) else ""
 
-    if not tt:
-        return None
+def search_products_from_json(filters: dict):
+    category = filters.get("category")
+    brand = filters.get("brand")
+    min_price = filters.get("min_price")
+    max_price = filters.get("max_price")
+    attributes = filters.get("attributes", [])
 
-    cur.execute("""
-        SELECT id_thuoc_tinh_chi_tiet
-        FROM thuoc_tinh_chi_tiet
-        WHERE id_thuoc_tinh = %s AND LOWER(ten_thuoc_tinh_chi_tiet) = LOWER(%s)
-    """, (tt["id_thuoc_tinh"], value))
+    # chuẩn hóa category
+    target_category = None
+    if category:
+        target_category = CATEGORY_MAPPING.get(_norm(category))
 
-    row = cur.fetchone()
+    results = []
 
-    cur.close()
-    conn.close()
-    return row["id_thuoc_tinh_chi_tiet"] if row else None
+    for p in SAN_PHAM_DATA:
+        # 1) Category
+        if target_category:
+            if _norm(p.get("ten_danh_muc")) != _norm(target_category):
+                continue
 
-# ===============================================
-# QUERY SẢN PHẨM
-# ===============================================
+        # 2) Brand
+        if brand:
+            if _norm(p.get("ten_thuong_hieu")) != _norm(brand):
+                continue
 
-def search_products(filters):
-    conn = db()
-    cur = conn.cursor()
-
-    sql = """
-        SELECT DISTINCT ON (sp.id_san_pham)
-            sp.id_san_pham,
-            sp.ten_san_pham,
-            sp.slug,
-            sp.ma_san_pham,
-            spct.gia_ban,
-            spct.gia_niem_yet,
-            (
-                SELECT asp.anh_url
-                FROM anh_san_pham asp
-                WHERE asp.id_san_pham_chi_tiet = spct.id_san_pham_chi_tiet
-                ORDER BY asp.thu_tu ASC, asp.id_anh_san_pham ASC
-                LIMIT 1
-            ) AS anh
-        FROM san_pham sp
-        LEFT JOIN san_pham_chi_tiet spct
-            ON spct.id_san_pham = sp.id_san_pham
-        LEFT JOIN danh_muc_thuong_hieu dmth
-            ON dmth.id_danh_muc_thuong_hieu = sp.id_danh_muc_thuong_hieu
-        LEFT JOIN thuong_hieu th
-            ON th.id_thuong_hieu = dmth.id_thuong_hieu
-        WHERE sp.trang_thai = 'Đang sản xuất'
-    """
-
-    params = []
-
-    # Category
-    if filters.get("category"):
-        cur.execute("""
-            SELECT id_danh_muc FROM danh_muc
-            WHERE LOWER(ten_danh_muc) LIKE %s
-        """, (f"%{filters['category'].lower()}%",))
-        cat = cur.fetchone()
-
-        if cat:
-            sql += " AND dmth.id_danh_muc = %s"
-            params.append(cat["id_danh_muc"])
-
-    # Brand
-    if filters.get("brand"):
-        sql += " AND LOWER(th.ten_thuong_hieu) = LOWER(%s)"
-        params.append(filters["brand"])
-
-    # Price
-    if filters.get("min_price"):
-        sql += " AND spct.gia_ban >= %s"
-        params.append(filters["min_price"])
-
-    if filters.get("max_price"):
-        sql += " AND spct.gia_ban <= %s"
-        params.append(filters["max_price"])
-
-    # Attributes
-    for attr in filters.get("attributes", []):
-        attr_id = map_attr_value(attr["name"], attr["value"])
-        if not attr_id:
+        # 3) Price range – lấy giá_ban thấp nhất trong san_pham_chi_tiet
+        chi_tiet = p.get("san_pham_chi_tiet") or []
+        gia_list = [ct.get("gia_ban") for ct in chi_tiet if ct.get("gia_ban") is not None]
+        if not gia_list:
+            # không có giá → tạm bỏ
             continue
 
-        sql += """
-            AND EXISTS (
-                SELECT 1 FROM san_pham_thuoc_tinh spt
-                WHERE spt.id_san_pham = sp.id_san_pham
-                AND spt.id_thuoc_tinh_chi_tiet = %s
-            )
-        """
-        params.append(attr_id)
+        min_gia_sp = min(gia_list)
 
-    sql += " ORDER BY sp.id_san_pham, spct.gia_ban ASC LIMIT 12"
+        if min_price is not None and min_gia_sp < min_price:
+            continue
+        if max_price is not None and min_gia_sp > max_price:
+            continue
 
-    cur.execute(sql, params)
-    rows = cur.fetchall()
+        # 4) Attributes
+        product_attrs = p.get("thuoc_tinh") or {}
 
-    cur.close()
-    conn.close()
-    return rows
+        ok = True
+        for attr in attributes:
+            name = attr.get("name")
+            value = attr.get("value")
+            if not name or not value:
+                continue
 
-# ===============================================
-# FASTAPI REQUEST MODEL
-# ===============================================
+            prod_val = product_attrs.get(name)
+            if not prod_val:
+                ok = False
+                break
+
+            if _norm(prod_val) != _norm(value):
+                ok = False
+                break
+
+        if not ok:
+            continue
+
+        # Nếu pass hết filter:
+        results.append(p)
+
+        if len(results) >= 12:
+            break
+
+    return results
+
+# ==========================
+# REQUEST MODEL + ROUTE
+# ==========================
 
 class ChatRequest(BaseModel):
     message: str
 
-# ===============================================
-# API ROUTE
-# ===============================================
-
 @app.post("/api/chatbot/search")
 def api_search(req: ChatRequest):
-    print(req.message)
-    filters = ai_intent(req.message)
-    products = search_products(filters)
+    intent = ai_intent(req.message)
+
+    # Nếu thiếu thông tin → hỏi thêm khách hàng
+    if intent.get("need_more_info"):
+        return {
+            "type": "ask",
+            "question": intent["question"]
+        }
+
+    # Ngược lại → tìm sản phẩm
+    products = search_products_from_json(intent)
 
     return {
-        "filters": filters,
+        "type": "products",
+        "filters": intent,
         "products": products
     }
-

@@ -55,7 +55,6 @@ export default function ThuocTinhPage({ thuoc_tinhs }: { thuoc_tinhs: ThuocTinh[
   };
 
   const handleSubmit = () => {
-      console.log(form.errors)
       if (selectedRow) {
       form.put(route('thuoc_tinh.update'), {
         onSuccess: () => {

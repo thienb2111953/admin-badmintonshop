@@ -51,6 +51,7 @@ class DonHangController extends Controller
 
         $id_don_hang = $request->id_don_hang;
         $trang_thai_don_hang = $request->input('trang_thai_don_hang');
+        $trang_thai_thanh_toan = $request->input('trang_thai_thanh_toan');
 
         if ($trang_thai_don_hang === 'Hủy') {
             $chiTietDonHang = DB::table('don_hang_chi_tiet')
@@ -68,6 +69,7 @@ class DonHangController extends Controller
         DB::table('don_hang')
             ->where('id_don_hang', $request->id_don_hang)
             ->update([
+                'trang_thai_thanh_toan' => $trang_thai_thanh_toan,
                 'trang_thai_don_hang' => $trang_thai_don_hang,
                 'updated_at' => now(),
             ]);

@@ -29,6 +29,7 @@ interface ComboBoxProps {
   value?: string | number
   onChange?: (value: string | number | null) => void
   className?: string
+    disabled?: boolean
 }
 
 export function Combobox({
@@ -37,6 +38,7 @@ export function Combobox({
   value,
   onChange,
   className,
+    disabled = false,
 }: ComboBoxProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -49,6 +51,7 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          disabled={disabled}
           className={cn("w-full justify-between", className)}
         >
           {selected ? selected.label : placeholder}
