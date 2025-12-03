@@ -18,7 +18,7 @@ return new class extends Migration {
       $table
         ->foreignId('id_san_pham_chi_tiet')
         ->constrained('san_pham_chi_tiet', 'id_san_pham_chi_tiet')
-        ->onDelete('restrict');
+        ->onDelete('cascade');
 
       $table->integer('so_luong');
       $table->decimal('don_gia', 15, 0);
