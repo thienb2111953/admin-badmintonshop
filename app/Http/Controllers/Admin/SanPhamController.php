@@ -71,8 +71,6 @@ class SanPhamController extends Controller
           ]);
       }
 
-    SanPham::create($validated);
-
      return redirect()
       ->route('san_pham', ['id_danh_muc_thuong_hieu' => $id_danh_muc_thuong_hieu])
       ->with('success', 'Cập nhật thành công');

@@ -85,6 +85,64 @@ def get_product_info_from_shopvnb(slug: str):
         "attributes": attributes,
     }
 
+def get_variant_options_from_shopvnb(slug: str):
+    url = f"https://shopvnb.com/{slug}.html"
+    print(f"🔍 Lấy dữ liệu từ: {url}")
+
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    try:
+        resp = requests.get(url, headers=headers, timeout=10)
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"❌ Lỗi tải trang {url}: {e}")
+        return {
+            "colors": [],
+            "sizes": []
+        }
+
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    # ======================================================
+    # 1) LẤY DANH SÁCH MÀU TỪ class="reprelst lesspro"
+    # ======================================================
+    colors = []
+    color_block = soup.select_one(".reprelst.lesspro")
+
+    if color_block:
+        for bt in color_block.select("bt"):
+            # Lấy tên màu từ label.rname
+            name_el = bt.select_one(".rname")
+            ten_mau = name_el.get_text(strip=True) if name_el else None
+
+            if ten_mau:
+                colors.append(ten_mau)
+    else:
+        print("⚠️ Không có danh sách màu")
+
+    # ======================================================
+    # 2) LẤY DANH SÁCH SIZE TỪ class="swatch clearfix"
+    # ======================================================
+    sizes = []
+    size_block = soup.select_one(".swatch.clearfix")
+
+    if size_block:
+        for se in size_block.select(".swatch-element"):
+            size_text = se.get("data-value") or None
+            if size_text:
+                sizes.append(size_text)
+    else:
+        print("⚠️ Không có danh sách size")
+
+    print(f"🎨 Màu lấy được: {len(colors)} → {colors}")
+    print(f"📏 Size lấy được: {len(sizes)} → {sizes}")
+
+    return {
+        "colors": colors,
+        "sizes": sizes
+    }
+
+
 def random_date_2025():
     start = date(2025, 1, 1)
     end = date(2025, 12, 31)

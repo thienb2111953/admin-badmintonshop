@@ -35,6 +35,7 @@ class CheckOutController extends Controller
 
                 $sanPhamArr = $request->input('san_pham');
                 $id_nguoi_dung = $request->input('id_nguoi_dung');
+                $phuong_thuc_thanh_toan = $request->input('phuong_thuc_thanh_toan');
 
                 $id_dia_chi_nguoi_dung = $request->input('id_dia_chi_nguoi_dung');
 
@@ -52,7 +53,7 @@ class CheckOutController extends Controller
                     'ma_don_hang' => $ma_don_hang,
                     'trang_thai_don_hang' => 'Đang xử lý',
                     'trang_thai_thanh_toan' => 'Chưa thanh toán',
-                    'phuong_thuc_thanh_toan' => 'VNPay',
+                    'phuong_thuc_thanh_toan' => $phuong_thuc_thanh_toan,
                     'tong_tien'=> 0,
                     'ngay_dat_hang' => now(),
                 ], 'id_don_hang');
@@ -148,6 +149,12 @@ class CheckOutController extends Controller
                     ->leftJoin('gio_hang','gio_hang.id_gio_hang','=','gio_hang_chi_tiet.id_gio_hang')
                     ->where('gio_hang.id_nguoi_dung', $id_nguoi_dung)
                     ->delete();
+
+                if ($phuong_thuc_thanh_toan === 'COD'){
+                    return response()->json([
+                        'id_don_hang' => $id_don_hang,
+                    ], 201);
+                }
 
                 return response()->json([
                     'id_nguoi_dung' => $id_nguoi_dung,
@@ -272,7 +279,7 @@ class CheckOutController extends Controller
             // ✅ Thanh toán thành công
             $this->xuLySauThanhToanThanhCong($id_don_hang, $amount, $bankCode, $ngayThanhToan);
 
-            return redirect('http://localhost:3000/orders/' . $id_don_hang)->with('success', 'Thanh toán thành công');
+            return redirect('http://localhost:3000/order/' . $id_don_hang)->with('success', 'Thanh toán thành công');
         } else {
             // ❌ Thanh toán thất bại → rollback
             $this->xuLySauThanhToanThatBai($id_don_hang);
@@ -299,7 +306,6 @@ class CheckOutController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
 
     }
 

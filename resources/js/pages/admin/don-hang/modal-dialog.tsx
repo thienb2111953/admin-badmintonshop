@@ -23,6 +23,11 @@ const trangThaiList = [
   { label: 'Hủy', value: 'Hủy' },
 ]
 
+const thanhToanList = [
+    { label: 'Chưa thanh toán', value: 'Chưa thanh toán' },
+    { label: 'Đã thanh toán', value: 'Đã thanh toán' },
+]
+
 export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: Props) {
   const { data, setData, errors } = form;
 
@@ -51,6 +56,19 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
               />
               {errors.ma_don_hang && <p className="text-red-500">{errors.ma_don_hang}</p>}
             </div>
+
+              <div className="grid gap-3">
+                  <Label>Trạng thái thanh toán</Label>
+                  <Combobox
+                      options={thanhToanList}
+                      value={data.trang_thai_thanh_toan}
+                      onChange={(val) => setData('trang_thai_thanh_toan', val as string)}
+                      placeholder="Chọn Trạng thái thanh toán..."
+                      className="w-full"
+                      disabled={data.phuong_thuc_thanh_toan !== "COD"}
+                  />
+                  {errors.trang_thai_thanh_toan && <p className="text-red-500">{errors.trang_thai_thanh_toan}</p>}
+              </div>
 
             <div className="grid gap-3">
               <Label>Trạng thái thương hiệu</Label>
