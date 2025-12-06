@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from conn import get_db_connection, PATH_PROJECT_STORAGE
+from conn import get_db_connection, PATH_PROJECT_STORAGE, APP_URL_PATH
 import json
 from decimal import Decimal
 
@@ -38,8 +38,10 @@ def export_products():
                 spct.gia_ban,
                 m.ten_mau,
                 kt.ten_kich_thuoc,
-                spct.so_luong_ton
+                spct.so_luong_ton,
+                asp.anh_url
             FROM san_pham_chi_tiet spct
+            LEFT JOIN anh_san_pham asp ON asp.id_san_pham_chi_tiet = spct.id_san_pham_chi_tiet AND asp.thu_tu = 1
             LEFT JOIN mau m ON m.id_mau = spct.id_mau
             LEFT JOIN kich_thuoc kt ON kt.id_kich_thuoc = spct.id_kich_thuoc
             WHERE spct.id_san_pham = %s
@@ -71,6 +73,23 @@ def export_products():
         thuoc_tinh_map = {a["ten_thuoc_tinh"]: a["ten_thuoc_tinh_chi_tiet"] for a in attrs}
 
         # 4) Thêm vào kết quả
+        chi_tiet = []
+        for ct in chi_tiet_rows:
+            chi_tiet.append({
+                "id_san_pham_chi_tiet": ct["id_san_pham_chi_tiet"],
+                "gia_ban": int(ct["gia_ban"]) if isinstance(ct["gia_ban"], Decimal) else ct["gia_ban"],
+                "ten_mau": ct["ten_mau"],
+                "ten_kich_thuoc": ct["ten_kich_thuoc"],
+                "so_luong_ton": int(ct["so_luong_ton"]),
+                "anh_url": ct["anh_url"]            # 🔥 thêm img
+            })
+
+        # 🔥 Lấy ảnh đại diện từ biến thể đầu tiên
+        anh_dai_dien = None
+        if chi_tiet and chi_tiet[0].get("anh_url"):
+            raw = chi_tiet[0]["anh_url"]
+            anh_dai_dien = f"{APP_URL_PATH}/{raw}"
+
         results.append({
             "id_san_pham": sp["id_san_pham"],
             "ten_san_pham": sp["ten_san_pham"],
@@ -78,6 +97,7 @@ def export_products():
             "ten_danh_muc": sp["ten_danh_muc"],
             "ten_thuong_hieu": sp["ten_thuong_hieu"],
             "ngay_tao": sp["created_at"].strftime("%Y-%m-%d"),
+            "anh_dai_dien": anh_dai_dien,
             "san_pham_chi_tiet": chi_tiet,
             "thuoc_tinh": thuoc_tinh_map
         })

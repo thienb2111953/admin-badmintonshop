@@ -1,126 +1,159 @@
-import sys
+from fastapi import FastAPI
+from pydantic import BaseModel
 import json
-import math
-import os
-import google.generativeai as genai
+from pathlib import Path
+from google.genai import Client, types
+from typing import List, Optional, Any
 
-# ===========================
-# 1️⃣ Cấu hình API Key Gemini
-# ===========================
-try:
-    # ⚠️ KHÔNG nên hardcode key — đây chỉ để test nhanh.
-    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyBVmKfeHadaZh8MhZT9sjw6ctX3-6D9gOY")
-    if not GOOGLE_API_KEY or GOOGLE_API_KEY == "YOUR_GOOGLE_API_KEY":
-        print("❌ Lỗi: Bạn chưa cấu hình GOOGLE_API_KEY.")
-        print("Hướng dẫn:")
-        print("  Windows: set GOOGLE_API_KEY=KEY_CUA_BAN")
-        print("  Linux/Mac: export GOOGLE_API_KEY=KEY_CUA_BAN")
-        sys.exit(1)
-    genai.configure(api_key=GOOGLE_API_KEY)
-except Exception as e:
-    print(f"❌ Lỗi cấu hình API Key: {e}")
-    sys.exit(1)
-
-# ===========================
-# 2️⃣ Đọc dữ liệu sản phẩm
-# ===========================
-PRODUCT_PATH = os.path.join(os.path.dirname(__file__), "products.json")
+# =========================
+# CONFIG & IMPORTS
+# =========================
 
 try:
-    with open(PRODUCT_PATH, "r", encoding="utf-8") as f:
-        products = json.load(f)
-except FileNotFoundError:
-    print(f"❌ Không tìm thấy file: {PRODUCT_PATH}")
-    sys.exit(1)
-except json.JSONDecodeError:
-    print("❌ File 'products.json' không hợp lệ (không phải JSON).")
-    sys.exit(1)
+    from conn import API_KEY_GEMINI
+except ImportError:
+    API_KEY_GEMINI = "YOUR_API_KEY_HERE"
 
-# ===========================
-# 3️⃣ Nhận câu hỏi từ Laravel
-# ===========================
-question = sys.argv[1] if len(sys.argv) > 1 else "Tôi muốn mua vợt nhẹ cho người mới chơi"
-print(f"🔍 Đang tìm kiếm cho câu hỏi: \"{question}\"")
+BASE_DIR = Path(__file__).resolve().parent
+PRODUCT_FILE = BASE_DIR / "san_pham.json"
 
-# ===========================
-# 4️⃣ Tạo embedding cho câu hỏi
-# ===========================
-print("➡️ 1. Đang tạo embedding cho câu hỏi...")
-try:
-    emb_result = genai.embed_content(
-        model="models/embedding-001",
-        content=question,
-        task_type="RETRIEVAL_QUERY"
-    )
-    emb = emb_result["embedding"]
-except Exception as e:
-    print(f"❌ Lỗi khi tạo embedding cho câu hỏi: {e}")
-    sys.exit(1)
+# =========================
+# 1. HÀM XỬ LÝ DỮ LIỆU
+# =========================
 
-# ===========================
-# 5️⃣ Tạo embedding cho sản phẩm
-# ===========================
-print(f"➡️ 2. Đang tạo embedding cho {len(products)} sản phẩm...")
-product_texts = [f"{p['ten']} - {p['loai']} - {p['phong_cach']} - {p['trinh_do']} - {p['muc_gia']}đ" for p in products]
+def load_products():
+    if not PRODUCT_FILE.exists():
+        return []
+    try:
+        with open(PRODUCT_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
 
-try:
-    product_embeds_result = genai.embed_content(
-        model="models/embedding-001",
-        content=product_texts,
-        task_type="RETRIEVAL_DOCUMENT"
-    )
-    # API trả về dictionary, có thể là list hoặc dict -> xử lý an toàn
-    if isinstance(product_embeds_result, list):
-        product_vectors = [p["embedding"] for p in product_embeds_result]
-    else:
-        product_vectors = product_embeds_result.get("embedding", [])
-except Exception as e:
-    print(f"❌ Lỗi khi tạo embedding cho sản phẩm: {e}")
-    sys.exit(1)
+PRODUCT_DATA_RAW = load_products()
 
-# ===========================
-# 6️⃣ Hàm tính cosine similarity
-# ===========================
-def cosine(a, b):
-    dot = sum(x * y for x, y in zip(a, b))
-    normA = math.sqrt(sum(x * x for x in a))
-    normB = math.sqrt(sum(x * x for x in b))
-    if normA == 0 or normB == 0:
-        return 0.0
-    return dot / (normA * normB)
+def build_product_context(products):
+    lines = []
+    for p in products:
+        gia_ban = p["san_pham_chi_tiet"][0]["gia_ban"] if p["san_pham_chi_tiet"] else "N/A"
 
-# ===========================
-# 7️⃣ Tính độ tương đồng & chọn top sản phẩm
-# ===========================
-print("➡️ 3. Đang tính toán độ tương đồng...")
-scored = []
-for p, vec in zip(products, product_vectors):
-    sim = cosine(vec, emb)
-    scored.append((sim, p))
+        lines.append(
+f"""
+SẢN PHẨM:
+  - id: {p['id_san_pham']}
+  - tên: {p['ten_san_pham']}
+  - slug: {p['slug']}
+  - thương hiệu: {p['ten_thuong_hieu']}
+  - danh mục: {p['ten_danh_muc']}
+  - giá: {gia_ban}
+  - thuộc tính:
+      {json.dumps(p['thuoc_tinh'], ensure_ascii=False)}
+"""
+        )
+    return "\n".join(lines)
 
-scored.sort(reverse=True, key=lambda x: x[0])
-top = [x[1] for x in scored[:3]]
 
-# ===========================
-# 8️⃣ Gọi Gemini tạo câu trả lời
-# ===========================
-print("➡️ 4. Đang tạo câu trả lời tư vấn...\n")
+# --- HÀM MỚI: Tra cứu thông tin chi tiết từ Slug ---
+def get_product_details_by_slugs(slugs: List[str], all_products: List[dict]) -> List[dict]:
+    results = []
+    for slug in slugs:
+        # Tìm sản phẩm trong danh sách gốc khớp với slug
+        product = next((p for p in all_products if p.get("slug") == slug), None)
 
-prompt = f"Người dùng hỏi: {question}\n\nDưới đây là 3 sản phẩm phù hợp nhất tôi tìm thấy:\n"
-for p in top:
-    prompt += f"- {p['ten']} (Loại: {p['loai']}, Phong cách: {p['phong_cach']}, Trình độ: {p['trinh_do']}, Giá: {p['muc_gia']}đ)\n"
+        if product:
+            gia_ban = None
+            chi_tiet_list = product.get("san_pham_chi_tiet", [])
+            if isinstance(chi_tiet_list, list) and chi_tiet_list:
+                gia_ban = chi_tiet_list[0].get("gia_ban")
 
-prompt += "\nHãy đóng vai là chuyên gia tư vấn cầu lông. Hãy giải thích ngắn gọn và thân thiện vì sao sản phẩm phù hợp với nhu cầu người dùng, dùng tiếng Việt tự nhiên."
+            # Map sang format bạn mong muốn
+            item = {
+                "id_san_pham": product.get("id") or product.get("id_san_pham"),
+                "ten_san_pham": product.get("ten_san_pham"),
+                "slug": product.get("slug"),
+                "ten_danh_muc": product.get("ten_danh_muc"),
+                "ten_thuong_hieu": product.get("ten_thuong_hieu"),
+                "ngay_tao": product.get("created_at") or product.get("ngay_tao"),
+                "anh_dai_dien": product.get("anh_dai_dien"),
+                "gia_ban": gia_ban,
+            }
+            results.append(item)
+    return results
 
-try:
-    model = genai.GenerativeModel(
-        model_name="gemini-2.0-flash-exp",  # nhanh & tiết kiệm hơn gemini-1.5
-        system_instruction="Bạn là chatbot tư vấn bán hàng chuyên nghiệp, nói tiếng Việt tự nhiên, thân thiện."
-    )
-    response = model.generate_content(prompt)
+# =========================
+# 2. CẤU HÌNH CONTEXT
+# =========================
 
-    print("--- Tư vấn từ Gemini ---")
-    print(response.text.strip())
-except Exception as e:
-    print(f"❌ Lỗi khi tạo câu trả lời: {e}")
-    sys.exit(1)
+CONTEXT_DATA = f"""
+Bạn là nhân viên tư vấn Badminton Shop.
+Dữ liệu:
+{build_product_context(PRODUCT_DATA_RAW)}
+
+QUY TẮC:
+1. Trả về JSON: {{"answer": "...", "products": ["slug1", "slug2"]}}
+2. Chỉ lấy slug của sản phẩm phù hợp.
+3. KHÔNG dùng Markdown.
+4. Không liệt kê tên sản phẩm trong answer.
+"""
+
+client = Client(api_key=API_KEY_GEMINI)
+chat_history = []
+
+# =========================
+# 3. FASTAPI APP
+# =========================
+
+app = FastAPI()
+
+class ChatRequest(BaseModel):
+    message: str
+
+# Cập nhật Model Response: products là danh sách Object (dict), không phải string nữa
+class ChatResponse(BaseModel):
+    answer: str
+    products: List[dict]
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat_api(req: ChatRequest):
+    try:
+        chat_history.append({"role": "user", "content": req.message})
+
+        formatted_contents = []
+        for msg in chat_history:
+            role = "user" if msg["role"] == "user" else "model"
+            formatted_contents.append(types.Content(role=role, parts=[types.Part(text=msg["content"])]))
+
+        conf = types.GenerateContentConfig(
+            system_instruction=CONTEXT_DATA,
+            response_mime_type="application/json",
+            temperature=0.7
+        )
+
+        # Dùng model 1.5 Flash cho ổn định
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=formatted_contents,
+            config=conf
+        )
+
+        # Parse kết quả từ AI
+        try:
+            data = json.loads(response.text)
+        except:
+            data = {"answer": response.text, "products": []}
+
+        # --- BƯỚC QUAN TRỌNG: MAPPING LẠI DỮ LIỆU ---
+        # AI trả về list slug -> Python đổi thành list chi tiết
+        slug_list = data.get("products", [])
+        detailed_products = get_product_details_by_slugs(slug_list, PRODUCT_DATA_RAW)
+
+        chat_history.append({"role": "assistant", "content": data.get("answer", "")})
+
+        return ChatResponse(
+            answer=data.get("answer", ""),
+            products=detailed_products # Trả về full info
+        )
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return ChatResponse(answer="Hệ thống bận.", products=[])
