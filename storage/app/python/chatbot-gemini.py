@@ -6,6 +6,7 @@ import google.generativeai as genai
 from typing import List, Dict, Any
 import traceback
 from rapidfuzz import process, fuzz
+from fastapi.middleware.cors import CORSMiddleware
 
 # =========================
 # 1. CẤU HÌNH (CONFIGURATION)
@@ -164,6 +165,20 @@ def detect_category_and_rewrite(history: List[dict], current_msg: str):
 # 4. API ENDPOINT
 # =========================
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# 3. Thêm Middleware vào ứng dụng
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,       # Cho phép port 3000 gọi vào
+    allow_credentials=True,      # Cho phép gửi cookie/token (nếu có)
+    allow_methods=["*"],         # Cho phép tất cả các method: POST, GET, PUT, DELETE...
+    allow_headers=["*"],         # Cho phép tất cả các header
+)
 
 class ChatRequest(BaseModel):
     session_id: str = "default"
