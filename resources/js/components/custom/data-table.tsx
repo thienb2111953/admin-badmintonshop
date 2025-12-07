@@ -30,6 +30,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onAdd: () => void;
+    onExport?: () => void;
   showAddButton?: boolean
     disableSearchBox?: boolean
     filters?: DataTableFilterConfig[]
@@ -41,6 +42,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   onAdd,
+    onExport,
   showAddButton = true,
   disableSearchBox = false,
  filters = [],
@@ -92,12 +94,21 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between py-4">
         <div className="flex justify-between item-left">
           {showAddButton && (
-            <Button onClick={onAdd}>
+            <Button onClick={onAdd} className="mr-2">
               <Plus className="h-4 w-4" />
               <Label>Thêm</Label>
             </Button>
           )}
+
+            {onExport && (
+                <Button
+                    onClick={onExport}
+                >
+                    <Label>Đồng bộ sản phẩm</Label>
+                </Button>
+            )}
         </div>
+
         <div className="flex item-right">
            {/*<DataTableViewOptions table={table} />*/}
             {filters.length > 0 &&

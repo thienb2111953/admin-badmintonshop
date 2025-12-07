@@ -8,6 +8,7 @@ import { ModalDialog } from './modal-dialog';
 import { DialogConfirmDelete } from '@/components/custom/dialog-confirm-delete';
 import { toast } from 'sonner';
 import { san_pham_thuong_hieu } from '@/routes';
+import axios from 'axios';
 
 export default function DanhMucThuongHieuPage({
   danh_muc_thuong_hieus,
@@ -21,6 +22,7 @@ export default function DanhMucThuongHieuPage({
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<DanhMucThuongHieu | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
+const [isExporting, setIsExporting] = useState(false);
 
   const breadcrumbs: BreadcrumbItem[] = [{ title: `Quản lý Danh mục Thương hiệu`, href: san_pham_thuong_hieu() }];
 
@@ -58,12 +60,36 @@ export default function DanhMucThuongHieuPage({
     });
   };
 
-  return (
+    const handleExport = async () => {
+        if (isExporting) return; // Chặn spam click
+        setIsExporting(true);
+
+        // Sử dụng toast.promise của Sonner để hiển thị trạng thái loading/thành công/thất bại
+        toast.promise(
+            // Gọi API
+            axios.post(route('danh_muc_thuong_hieu.export')),
+            {
+                loading: 'Đang chạy script Python...',
+                success: (response) => {
+                    setIsExporting(false);
+                    // Bạn có thể log output từ python nếu cần: console.log(response.data.output)
+                    return `Thành công: ${response.data.message}`;
+                },
+                error: (error) => {
+                    setIsExporting(false);
+                    const msg = error.response?.data?.message || 'Có lỗi xảy ra!';
+                    return `Thất bại: ${msg}`;
+                },
+            }
+        );
+    };
+
+    return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Quản lý Danh mục Thương hiệu" />
 
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={danh_muc_thuong_hieus} onAdd={handleAdd} />
+        <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+        <DataTable columns={columns(handleEdit, handleDelete)} data={danh_muc_thuong_hieus} onAdd={handleAdd} onExport={handleExport}/>
       </div>
 
       <ModalDialog
