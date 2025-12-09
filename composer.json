@@ -17,6 +17,7 @@
     "laravel/wayfinder": "^0.1.9",
     "league/flysystem": "^3.30",
     "openai-php/client": "^0.18.0",
+    "symfony/process": "^7.4",
     "tightenco/ziggy": "^2.5",
     "tymon/jwt-auth": "^2.2"
   },

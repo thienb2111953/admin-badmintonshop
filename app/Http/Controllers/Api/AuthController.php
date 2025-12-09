@@ -62,10 +62,7 @@ class AuthController extends Controller
     public function refresh()
     {
         $newToken = Auth::guard('api')->refresh();
-
-        $user = Auth::guard('api')->setToken($newToken)->user();
-
-        return $this->respondWithToken($newToken, $user);
+        return $this->respondWithToken($newToken);
     }
 
     protected function respondWithToken($token)
@@ -96,16 +93,16 @@ class AuthController extends Controller
         $user = Auth::guard('api')->user();
 
         $validatedData = $request->validate([
-            'name'  => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => [
                 'required',
                 'email',
             ],
-            'sdt'   => ['nullable', 'regex:/(84|0[3|5|7|8|9])+([0-9]{8})\b/'],
+            'sdt' => ['nullable', 'regex:/(84|0[3|5|7|8|9])+([0-9]{8})\b/'],
         ], [
             'name.required' => 'Vui lòng nhập họ tên.',
-            'email.unique'  => 'Email này đã được sử dụng bởi tài khoản khác.',
-            'sdt.regex'     => 'Số điện thoại không đúng định dạng.',
+            'email.unique' => 'Email này đã được sử dụng bởi tài khoản khác.',
+            'sdt.regex' => 'Số điện thoại không đúng định dạng.',
         ]);
 
         $user->fill($validatedData);

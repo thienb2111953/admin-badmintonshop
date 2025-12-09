@@ -95,6 +95,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/', [DanhMucThuongHieuController::class, 'update'])->name('danh_muc_thuong_hieu.update');
         Route::delete('/', [DanhMucThuongHieuController::class, 'destroy'])->name('danh_muc_thuong_hieu.destroy');
 
+        Route::post('/export-san-pham', [DanhMucThuongHieuController::class, 'exportSanPham'])->name('danh_muc_thuong_hieu.export');
+
         Route::prefix('{id_danh_muc_thuong_hieu}/san-pham')->group(function () {
             Route::get('/', [SanPhamController::class, 'index'])->name('san_pham');
             Route::get('/them', [SanPhamController::class, 'storeView'])->name('san_pham.storeView');

@@ -17,6 +17,7 @@ import re
 import uuid
 import datetime
 import shutil
+import random
 
 
 def getDanhMuc(cursor):
@@ -328,6 +329,8 @@ def createSanPhamChiTiet(cursor):
 
                 # Tạo chi tiết sản phẩm
                 try:
+                    giam_phan_tram = random.uniform(0.10, 0.20)
+                    don_gia = int(gia_ban * (1 - giam_phan_tram))
                     cursor.execute("""
                         INSERT INTO san_pham_chi_tiet
                         (id_san_pham, id_mau, id_kich_thuoc, so_luong_ton,
@@ -340,14 +343,14 @@ def createSanPhamChiTiet(cursor):
                     ))
                     id_spct = cursor.fetchone()[0]
 
-                    print(f"✅ SPCT: {ten_chi_tiet}")
+                    print(f"✅ SPCT: {ten_chi_tiet} — Giá nhập: {don_gia:,} VNĐ")
 
                     # Thêm vào nhap_hang_chi_tiet
                     cursor.execute("""
                         INSERT INTO nhap_hang_chi_tiet
                         (id_nhap_hang, id_san_pham_chi_tiet, so_luong, don_gia)
                         VALUES (%s, %s, %s, %s)
-                    """, (id_nhap_hang, id_spct, 10, gia_ban))
+                    """, (id_nhap_hang, id_spct, 10, don_gia))
 
                 except Exception as e:
                     print(f"❌ Lỗi tạo chi tiết '{ten_chi_tiet}': {e}")

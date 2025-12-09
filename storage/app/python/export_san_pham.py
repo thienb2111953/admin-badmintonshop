@@ -1,0 +1,179 @@
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from conn import get_db_connection, PATH_PROJECT_STORAGE, APP_URL_PATH
+import json
+from decimal import Decimal
+from pathlib import Path
+import re
+
+
+# ============================
+# Utils
+# ============================
+
+def slugify_filename(s):
+    """Tạo tên file an toàn."""
+    s = str(s).strip()
+    return re.sub(r'[\\/*?:"<>|]', "", s)
+
+
+# ============================
+# Main Export Function
+# ============================
+
+def export_products_by_category():
+    conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    print("⏳ Đang lấy dữ liệu từ database...")
+
+    # 1) Lấy thông tin sản phẩm + danh mục + thương hiệu
+    cur.execute("""
+        SELECT
+            sp.id_san_pham,
+            sp.ten_san_pham,
+            sp.slug,
+            sp.created_at,
+            dm.ten_danh_muc,
+            dm.slug AS slug_danh_muc,
+            th.ten_thuong_hieu
+        FROM san_pham sp
+        LEFT JOIN danh_muc_thuong_hieu dmth
+            ON dmth.id_danh_muc_thuong_hieu = sp.id_danh_muc_thuong_hieu
+        LEFT JOIN danh_muc dm
+            ON dm.id_danh_muc = dmth.id_danh_muc
+        LEFT JOIN thuong_hieu th
+            ON th.id_thuong_hieu = dmth.id_thuong_hieu
+        WHERE sp.trang_thai = 'Đang sản xuất'
+        ORDER BY sp.id_san_pham
+    """)
+
+    san_pham_list = cur.fetchall()
+    total_products = len(san_pham_list)
+
+    print(f"📦 Tìm thấy {total_products} sản phẩm. Bắt đầu xử lý...")
+
+    grouped_results = {}
+
+    # ============================
+    # Xử lý từng sản phẩm
+    # ============================
+    for index, sp in enumerate(san_pham_list):
+        sp_id = sp["id_san_pham"]
+
+        slug_danh_muc = sp["slug_danh_muc"] if sp["slug_danh_muc"] else "khac"
+        ten_danh_muc = sp["ten_danh_muc"] if sp["ten_danh_muc"] else "Khác"
+
+        # 2) Lấy biến thể sản phẩm
+        cur.execute("""
+            SELECT
+                spct.id_san_pham_chi_tiet,
+                spct.gia_ban,
+                m.ten_mau,
+                kt.ten_kich_thuoc,
+                spct.so_luong_ton,
+                asp.anh_url
+            FROM san_pham_chi_tiet spct
+            LEFT JOIN anh_san_pham asp
+                ON asp.id_san_pham_chi_tiet = spct.id_san_pham_chi_tiet
+                AND asp.thu_tu = 1
+            LEFT JOIN mau m ON m.id_mau = spct.id_mau
+            LEFT JOIN kich_thuoc kt ON kt.id_kich_thuoc = spct.id_kich_thuoc
+            WHERE spct.id_san_pham = %s
+            ORDER BY spct.id_san_pham_chi_tiet
+        """, (sp_id,))
+        chi_tiet_rows = cur.fetchall()
+
+        chi_tiet_processed = []
+        for ct in chi_tiet_rows:
+            chi_tiet_processed.append({
+                "id_san_pham_chi_tiet": ct["id_san_pham_chi_tiet"],
+                "gia_ban": int(ct["gia_ban"]) if isinstance(ct["gia_ban"], Decimal) else ct["gia_ban"],
+                "ten_mau": ct["ten_mau"],
+                "ten_kich_thuoc": ct["ten_kich_thuoc"],
+                "so_luong_ton": int(ct["so_luong_ton"]),
+                "anh_url": ct["anh_url"]
+            })
+
+        # Lấy ảnh đại diện từ biến thể đầu có ảnh
+        anh_dai_dien = None
+        for item in chi_tiet_processed:
+            if item.get("anh_url"):
+                anh_dai_dien = f"{APP_URL_PATH}/{item['anh_url']}"
+                break
+
+        # 3) Lấy thuộc tính sản phẩm
+        cur.execute("""
+            SELECT
+                tt.ten_thuoc_tinh,
+                ttct.ten_thuoc_tinh_chi_tiet
+            FROM san_pham_thuoc_tinh spt
+            LEFT JOIN thuoc_tinh_chi_tiet ttct
+                ON ttct.id_thuoc_tinh_chi_tiet = spt.id_thuoc_tinh_chi_tiet
+            LEFT JOIN thuoc_tinh tt
+                ON tt.id_thuoc_tinh = ttct.id_thuoc_tinh
+            WHERE spt.id_san_pham = %s
+        """, (sp_id,))
+        attrs = cur.fetchall()
+
+        thuoc_tinh_map = {
+            a["ten_thuoc_tinh"]: a["ten_thuoc_tinh_chi_tiet"]
+            for a in attrs
+        }
+
+        # 4) Build sản phẩm hoàn chỉnh
+        product_data = {
+            "id_san_pham": sp["id_san_pham"],
+            "ten_san_pham": sp["ten_san_pham"],
+            "slug": sp["slug"],  # slug sản phẩm, không dùng để grouping
+            "ten_danh_muc": ten_danh_muc,
+            "ten_thuong_hieu": sp["ten_thuong_hieu"],
+            "ngay_tao": sp["created_at"].strftime("%Y-%m-%d") if sp["created_at"] else None,
+            "anh_dai_dien": anh_dai_dien,
+            "san_pham_chi_tiet": chi_tiet_processed,
+            "thuoc_tinh": thuoc_tinh_map
+        }
+
+        # 5) Nhóm theo slug danh mục
+        group_key = slug_danh_muc
+        if group_key not in grouped_results:
+            grouped_results[group_key] = []
+
+        grouped_results[group_key].append(product_data)
+
+        # Log
+        if (index + 1) % 50 == 0:
+            print(f"   ... Đã xử lý {index + 1}/{total_products} sản phẩm")
+
+    cur.close()
+    conn.close()
+
+    # ============================
+    # Ghi file JSON
+    # ============================
+
+    output_dir = PATH_PROJECT_STORAGE / "python" / "danh-muc"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    print("\n💾 Đang ghi file...")
+
+    for slug_dm, products in grouped_results.items():
+        safe_name = slugify_filename(slug_dm)
+        file_path = output_dir / f"{safe_name}.json"
+
+        try:
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(products, f, indent=4, ensure_ascii=False)
+            print(f"   ✅ {safe_name}.json: {len(products)} sản phẩm")
+        except Exception as e:
+            print(f"   ❌ Lỗi ghi file {safe_name}.json: {e}")
+
+    print("\n🎉 Hoàn tất export!")
+
+
+# ============================
+# Run Script
+# ============================
+
+if __name__ == "__main__":
+    export_products_by_category()

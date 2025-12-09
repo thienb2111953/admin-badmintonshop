@@ -17,5 +17,6 @@ CREATE EXTENSION IF NOT EXISTS unaccent;
 ```
 
 ```
- fastapi dev .\storage\app\python\chatbot-groq.py --port=8001
+pip install "fastapi[standard]"
+ fastapi dev .\storage\app\python\chatbot-gemini.py --port=8001
 ```

@@ -10,9 +10,53 @@ use App\Models\ThuongHieu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Illuminate\Support\Facades\Storage;
 
 class DanhMucThuongHieuController extends Controller
 {
+    public function exportSanPham()
+    {
+        $scriptPath = storage_path('app/python/export_san_pham.py');
+        $pythonPath = env('PYTHON_PATH', 'python'); // Lấy đường dẫn exe đã cấu hình
+
+        if (!file_exists($scriptPath)) {
+            return response()->json(['message' => 'File script không tồn tại!'], 404);
+        }
+
+        // Câu lệnh chạy (như cũ)
+        $command = "\"{$pythonPath}\" \"{$scriptPath}\"";
+
+        // --- KHẮC PHỤC Ở ĐÂY ---
+        // Sử dụng phương thức env() của Process để GHI ĐÈ cấu hình
+        $result = Process::env([
+            // Ép buộc dùng localhost thay vì 172.22.166.22
+            'DB_HOST' => '127.0.0.1',
+
+            // Đảm bảo các thông số khác lấy đúng từ Laravel
+            'DB_DATABASE' => env('DB_DATABASE'),
+            'DB_USERNAME' => env('DB_USERNAME'),
+            'DB_PASSWORD' => env('DB_PASSWORD'),
+            'DB_PORT' => env('DB_PORT', '5432'),
+
+            // Giữ lại các biến môi trường hệ thống (System Root, Path...) để Python chạy được
+            'SYSTEMROOT' => getenv('SYSTEMROOT'),
+            'PATH' => getenv('PATH'),
+            'TEMP' => getenv('TEMP'),
+
+            'PYTHONIOENCODING' => 'utf-8',
+            'LANG' => 'C.UTF-8',
+        ])->run($command);
+
+        if ($result->successful()) {
+            return response()->json(['message' => 'Thành công!', 'output' => $result->output()]);
+        } else {
+            return response()->json(['message' => 'Lỗi: ' . $result->errorOutput()], 500);
+        }
+    }
+
   public function index()
   {
     $danh_mucs = DanhMuc::all();
