@@ -71,7 +71,7 @@ export function ModalDialog({ open, onClose, title, form, onSubmit, btnTitle }: 
               </div>
 
             <div className="grid gap-3">
-              <Label>Trạng thái thương hiệu</Label>
+              <Label>Trạng thái đơn hàng</Label>
               <Combobox
                 options={trangThaiList}
                 value={data.trang_thai_don_hang}
