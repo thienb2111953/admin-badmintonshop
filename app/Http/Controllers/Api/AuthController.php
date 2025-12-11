@@ -3,17 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\GioHang;
 use App\Models\User;
 use App\Response;
-use App\StaticString;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -119,5 +116,45 @@ class AuthController extends Controller
             'status' => 'error',
             'message' => 'Không thể lưu vào cơ sở dữ liệu.'
         ], 500);
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 401);
+        }
+
+        $user = User::where('email', $googleUser->getEmail())->first();
+
+        if (!$user) {
+            $user = User::create([
+                'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
+                'google_id' => $googleUser->getId(),
+                'password' => Hash::make(Str::random(16)),
+            ]);
+
+            DB::table('gio_hang')->insert([
+                'id_nguoi_dung' => $user->id_nguoi_dung ?? $user->id
+            ]);
+
+        } else {
+            if (!$user->google_id) {
+                $user->update(['google_id' => $googleUser->getId()]);
+            }
+        }
+
+        $token = Auth::guard('api')->login($user);
+
+        $frontendUrl = env('GOOGLE_REDIRECT_URI_CLIENT') . 'login/google/callback';
+
+        return redirect($frontendUrl . '?token=' . $token);
     }
 }

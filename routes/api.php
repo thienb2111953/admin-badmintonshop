@@ -12,7 +12,6 @@ use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\UserAddressController;
-use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ThuongHieuController;
 
 Route::post('/chatbot', [ChatbotController::class, 'reply']);
@@ -37,6 +36,8 @@ Route::get('/thuong-hieu', [ThuongHieuController::class, 'getAllThuongHieu'])->n
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 Route::middleware('jwt')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
