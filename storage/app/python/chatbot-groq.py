@@ -5,6 +5,11 @@ import json
 import unicodedata
 import re
 from pathlib import Path
+from typing import Dict, Any, Optional, List
+from danh_muc import THUONG_HIEU_MAPPING
+
+import numpy as np
+from sentence_transformers import SentenceTransformer
 from conn import API_KEY_GROQ
 
 # =====================================
@@ -13,15 +18,46 @@ from conn import API_KEY_GROQ
 
 BASE_DIR = Path(__file__).resolve().parent
 DIR_DANH_MUC = BASE_DIR / "danh-muc"
+VECTOR_DIR = BASE_DIR / "vector-cache"
+VECTOR_DIR.mkdir(exist_ok=True)
 
-SESSION_LAST_FILTERS = {}
+PAGE_SIZE = 5
+EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-base"
 
 client = Groq(api_key=API_KEY_GROQ)
 app = FastAPI()
 
+_embedding_model = None
+
+
+def get_embedding_model():
+    global _embedding_model
+    if _embedding_model is None:
+        _embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+    return _embedding_model
+
 
 # =====================================
-# INPUT MODEL
+# GLOBAL STATE
+# =====================================
+
+SESSION: Dict[str, Dict[str, Any]] = {}
+PRODUCT_CACHE: Dict[str, List[Dict[str, Any]]] = {}
+VECTOR_CACHE: Dict[str, np.ndarray] = {}
+
+CATEGORY_LABEL = {
+    "vot-cau-long": "vợt cầu lông",
+    "giay-cau-long": "giày cầu lông",
+    "ao-cau-long": "áo cầu lông",
+    "quan-cau-long": "quần cầu lông",
+    "balo-cau-long": "balo cầu lông",
+    "tui-vot-cau-long": "túi vợt cầu lông",
+    "vay-cau-long": "váy cầu lông",
+}
+
+
+# =====================================
+# INPUT
 # =====================================
 
 class ChatRequest(BaseModel):
@@ -30,158 +66,170 @@ class ChatRequest(BaseModel):
 
 
 # =====================================
-# UTIL: NORMALIZE TEXT
+# UTIL
 # =====================================
 
 def normalize(text: str) -> str:
     text = text.lower()
     text = unicodedata.normalize("NFD", text)
-    return "".join(ch for ch in text if unicodedata.category(ch) != "Mn")
+    return "".join(c for c in text if unicodedata.category(c) != "Mn")
 
 
-# =====================================
-# 1. DETECT CATEGORY
-# =====================================
-
-def detect_category(msg: str):
+def is_load_more(msg: str) -> bool:
     msg = normalize(msg)
+    return any(k in msg for k in [
+        "xem them", "them nua", "tiep di", "tiep tuc"
+    ])
 
+
+def is_relax_price(msg: str) -> bool:
+    msg = normalize(msg)
+    return any(k in msg for k in [
+        "khong quan tam gia",
+        "khong quan tam ve gia",
+        "bo gia",
+        "gia nao cung duoc"
+    ])
+
+
+# =====================================
+# CATEGORY
+# =====================================
+
+def detect_category(msg: str) -> Optional[str]:
+    msg = normalize(msg)
     mapping = {
         "vot": "vot-cau-long",
-        "vot cau long": "vot-cau-long",
         "giay": "giay-cau-long",
-        "giay cau long": "giay-cau-long",
         "ao": "ao-cau-long",
         "quan": "quan-cau-long",
         "balo": "balo-cau-long",
-        "tui": "tui-cau-long",
+        "tui": "tui-vot-cau-long",
         "vay": "vay-cau-long",
     }
-
     for k, v in mapping.items():
         if k in msg:
             return v
-
     return None
 
 
 # =====================================
-# 2. EXTRACT FILTERS
+# BRAND + PRICE
 # =====================================
+
+def parse_price(val: str, unit: Optional[str]) -> int:
+    v = float(val.replace(",", "."))
+    if unit in ("tr", "trieu"):
+        return int(v * 1_000_000)
+    if unit == "k":
+        return int(v * 1_000)
+    return int(v * 1_000_000)
+
 
 def extract_filters(msg: str):
     msg = normalize(msg)
 
+    # ===== BRAND từ mapping =====
     brand = None
-    price_min = None
-    price_max = None
-    is_explicit_range = False
-
-    # ----- BRAND -----
-    brands = ["yonex", "lining", "apacs", "mizuno", "kumpoo", "victor"]
-    for b in brands:
-        if b in msg:
-            brand = b.capitalize()
-
-    # ----- PRICE: "từ X đến Y" -----
-    patterns = [
-        r"tu\s*(\d+)\s*trieu\s*den\s*(\d+)\s*trieu",
-        r"(\d+)\s*tr\s*-\s*(\d+)\s*tr",
-        r"(\d+)\s*trieu\s*-\s*(\d+)\s*trieu",
-    ]
-
-    for p in patterns:
-        m = re.search(p, msg)
-        if m:
-            price_min = int(m.group(1)) * 1_000_000
-            price_max = int(m.group(2)) * 1_000_000
-            is_explicit_range = True
-            return brand, price_min, price_max, is_explicit_range
-
-    # ----- PRICE: "tầm / khoảng" -----
-    approx_prices = {
-        "1 trieu": 1_000_000,
-        "1tr": 1_000_000,
-        "2 trieu": 2_000_000,
-        "2tr": 2_000_000,
-        "900k": 900_000,
-        "800k": 800_000,
-        "700k": 700_000,
-    }
-
-    for k, v in approx_prices.items():
+    for k, v in THUONG_HIEU_MAPPING.items():
         if k in msg:
-            price_min = v - 300_000
-            price_max = v + 300_000
-            return brand, price_min, price_max, is_explicit_range
+            brand = v
+            break
 
-    return brand, price_min, price_max, is_explicit_range
+    # ===== PRICE =====
+    m = re.search(r"(\d+(?:\.\d+)?)\s*(trieu|tr|k)", msg)
+    if m:
+        center = parse_price(m.group(1), m.group(2))
+        return brand, center - 300_000, center + 300_000
+
+    return brand, None, None
 
 
 # =====================================
-# 3. LOAD PRODUCTS
+# DATA
 # =====================================
 
-def load_products_by_category(slug: str):
+def load_products(slug: str) -> List[Dict[str, Any]]:
+    if slug in PRODUCT_CACHE:
+        return PRODUCT_CACHE[slug]
+
     path = DIR_DANH_MUC / f"{slug}.json"
     if not path.exists():
+        PRODUCT_CACHE[slug] = []
         return []
 
     with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+        PRODUCT_CACHE[slug] = json.load(f)
+
+    return PRODUCT_CACHE[slug]
 
 
-# =====================================
-# 4. FILTER PRODUCTS
-# =====================================
-
-def filter_products(products, brand=None, price_min=None, price_max=None):
+def filter_products(products, brand, pmin, pmax):
     result = []
-
     for p in products:
-        if brand and p.get("ten_thuong_hieu", "").lower() != brand.lower():
+        if brand and p.get("ten_thuong_hieu") != brand:
             continue
 
-        prices = [ct["gia_ban"] for ct in p.get("san_pham_chi_tiet", [])]
-        if not prices:
+        price = p.get("gia_ban", 0)
+        if pmin is not None and price < pmin:
             continue
-
-        min_price = min(prices)
-
-        if price_min is not None and min_price < price_min:
-            continue
-        if price_max is not None and min_price > price_max:
+        if pmax is not None and price > pmax:
             continue
 
         result.append(p)
-
     return result
 
 
 # =====================================
-# 5. AI RESPONSE (NO HALLUCINATION)
+# GROQ (SAFE)
 # =====================================
 
-def call_groq(prompt: str):
-    completion = client.chat.completions.create(
+def call_groq(category_label: str, brand: Optional[str]) -> str:
+    return client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
             {
                 "role": "system",
                 "content": (
-                    "Bạn là trợ lý tìm kiếm sản phẩm cầu lông. "
-                    "Chỉ mô tả chung, KHÔNG liệt kê tên sản phẩm, "
-                    "KHÔNG bịa thương hiệu, KHÔNG tạo danh sách."
-                )
+                    "Bạn là trợ lý tư vấn bán dụng cụ cầu lông.\n"
+                    "CẤM TUYỆT ĐỐI:\n"
+                    "- KHÔNG nêu tên sản phẩm\n"
+                    "- KHÔNG nêu model\n"
+                    "- KHÔNG đoán giá\n"
+                    "CHỈ tư vấn tiêu chí chọn chung."
+                ),
             },
-            {"role": "user", "content": prompt}
-        ]
-    )
-    return completion.choices[0].message.content
+            {
+                "role": "user",
+                "content": (
+                    f"Khách đang tìm {category_label} "
+                    f"thương hiệu {brand or 'không giới hạn'}. "
+                    "Hãy tư vấn ngắn gọn và nhắc khách có thể gõ 'xem thêm'."
+                ),
+            },
+        ],
+    ).choices[0].message.content
 
 
 # =====================================
-# 6. CHAT ENDPOINT (RESET SESSION LOGIC)
+# SESSION
+# =====================================
+
+def default_session():
+    return {
+        "search_state": {
+            "category": None,
+            "brand": None,
+            "price_min": None,
+            "price_max": None,
+        },
+        "results": [],
+        "offset": 0
+    }
+
+
+# =====================================
+# CHAT
 # =====================================
 
 @app.post("/chat")
@@ -189,69 +237,109 @@ def chat(req: ChatRequest):
     uid = req.sender
     msg = req.message
 
-    # detect intent
-    cat_new = detect_category(msg)
-    brand_new, pmin_new, pmax_new, is_explicit = extract_filters(msg)
+    s = SESSION.get(uid) or default_session()
+    st = s["search_state"]
 
-    # ============================
-    # 🔥 RESET SESSION NẾU LÀ TRUY VẤN ĐẦY ĐỦ
-    # ============================
-    if is_explicit and cat_new and brand_new:
-        session = {
-            "category": cat_new,
-            "brand": brand_new,
-            "price_min": pmin_new,
-            "price_max": pmax_new
-        }
-    else:
-        session = SESSION_LAST_FILTERS.get(uid, {
-            "category": None,
-            "brand": None,
-            "price_min": None,
-            "price_max": None
-        })
+    # ===============================
+    # 1. RELAX PRICE → XOÁ GIÁ + SEARCH LẠI
+    # ===============================
+    if is_relax_price(msg) and st["category"]:
+        st["price_min"] = None
+        st["price_max"] = None
 
-        if cat_new:
-            session["category"] = cat_new
-        if brand_new:
-            session["brand"] = brand_new
+        products = load_products(st["category"])
+        filtered = filter_products(
+            products,
+            st["brand"],
+            None,
+            None
+        )
 
-        if is_explicit:
-            session["price_min"] = pmin_new
-            session["price_max"] = pmax_new
-        else:
-            if pmin_new is not None:
-                session["price_min"] = pmin_new
-            if pmax_new is not None:
-                session["price_max"] = pmax_new
+        s["results"] = filtered
+        s["offset"] = PAGE_SIZE
+        SESSION[uid] = s
 
-    SESSION_LAST_FILTERS[uid] = session
+        if not filtered:
+            return {
+                "reply": "Hiện tại chưa có sản phẩm phù hợp.",
+                "products": []
+            }
 
-    # chưa có danh mục
-    if not session["category"]:
+        reply = call_groq(
+            CATEGORY_LABEL[st["category"]],
+            st["brand"]
+        )
+
         return {
-            "reply": call_groq(
-                f"Khách nói: {msg}. Hãy hỏi lại khách họ muốn tìm loại sản phẩm nào."
-            ),
+            "reply": reply,
+            "products": filtered[:PAGE_SIZE]
+        }
+
+    # ===============================
+    # 2. LOAD MORE
+    # ===============================
+    if is_load_more(msg) and s["results"]:
+        offset = s["offset"]
+        batch = s["results"][offset: offset + PAGE_SIZE]
+        s["offset"] += PAGE_SIZE
+        SESSION[uid] = s
+        return {
+            "reply": f"Mình gửi thêm {len(batch)} sản phẩm cho bạn.",
+            "products": batch
+        }
+
+    # ===============================
+    # 3. NEW / UPDATE SEARCH
+    # ===============================
+    cat = detect_category(msg)
+    brand, pmin, pmax = extract_filters(msg)
+
+    if cat:
+        st["category"] = cat
+        st["price_min"] = None
+        st["price_max"] = None
+        st["brand"] = None
+
+    if brand is not None:
+        st["brand"] = brand
+    if pmin is not None:
+        st["price_min"] = pmin
+    if pmax is not None:
+        st["price_max"] = pmax
+
+    if not st["category"]:
+        return {
+            "reply": "Bạn muốn tìm vợt, giày hay balo cầu lông?",
             "products": []
         }
 
-    products = load_products_by_category(session["category"])
+    # ===============================
+    # 4. SEARCH
+    # ===============================
+    products = load_products(st["category"])
     filtered = filter_products(
         products,
-        brand=session["brand"],
-        price_min=session["price_min"],
-        price_max=session["price_max"]
+        st["brand"],
+        st["price_min"],
+        st["price_max"]
     )
 
+    if not filtered:
+        return {
+            "reply": "Hiện tại chưa tìm được sản phẩm phù hợp.",
+            "products": []
+        }
+
+    s["results"] = filtered
+    s["offset"] = PAGE_SIZE
+    SESSION[uid] = s
+
     reply = call_groq(
-        f"Khách đang tìm {session['category']} "
-        f"thương hiệu {session['brand']} "
-        f"trong khoảng giá từ {session['price_min']} đến {session['price_max']}. "
-        f"Hãy tư vấn ngắn gọn."
+        CATEGORY_LABEL[st["category"]],
+        st["brand"]
     )
 
     return {
         "reply": reply,
-        "products": filtered
+        "products": filtered[:PAGE_SIZE]
     }

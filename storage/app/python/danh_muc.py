@@ -60,13 +60,72 @@ DANH_MUC_THUOC_TINH = {
     }
 }
 
+
 CATEGORY_MAPPING = {
+    "vot": "Vợt cầu lông",
     "vợt": "Vợt cầu lông",
     "vợt cầu lông": "Vợt cầu lông",
+
+    "giay": "Giày cầu lông",
     "giày": "Giày cầu lông",
     "giày cầu lông": "Giày cầu lông",
+
     "balo": "Balo cầu lông",
+
+    "tui": "Túi vợt cầu lông",
     "túi": "Túi vợt cầu lông",
+
+    "ao": "Áo cầu lông",
     "áo": "Áo cầu lông",
-    "quần": "Quần cầu lông"
+
+    "quan": "Quần cầu lông",
+    "quần": "Quần cầu lông",
+}
+
+THUONG_HIEU_MAPPING = {
+    "joto": "Joto",
+    "taro": "Taro",
+    "redson": "Redson",
+    "donexpro": "DonexPro",
+    "ixe": "IXE",
+    "iron man": "Iron Man",
+    "protech": "Protech",
+    "maxta": "Maxta",
+    "hang khac": "Hãng khác",
+    "the 3rd game": "The 3rd Game",
+    "forza": "Forza",
+    "adonex": "Adonex",
+    "kawasaki": "Kawasaki",
+    "lining": "Lining",
+    "li ning": "Lining",
+    "gosen": "Gosen",
+    "babolat": "Babolat",
+    "adidas": "Adidas",
+    "pro kennex": "Pro Kennex",
+    "mizuno": "Mizuno",
+    "jogarbola": "Jogarbola",
+    "vicleo": "Vicleo",
+    "kumpoo": "Kumpoo",
+    "fleet": "Fleet",
+    "vnb": "VNB",
+    "fukymi": "FUKYMI",
+    "apacs": "Apacs",
+    "lotus": "Lotus",
+    "vs": "VS",
+    "gamicy": "Gamicy",
+    "felet": "Felet",
+    "yuko": "Yuko",
+    "yonex": "Yonex",
+    "sunbatta": "Sunbatta",
+    "kamito": "Kamito",
+    "proace": "Proace",
+    "kaiwin": "Kaiwin",
+    "paramount": "Paramount",
+    "pebble beach": "Pebble Beach",
+    "kolt": "Kolt",
+    "ashaway": "Ashaway",
+    "flypower": "FlyPower",
+    "victec": "Victec",
+    "victor": "Victor",
+    "fykyimi": "FYKYMI",
 }

@@ -12,7 +12,6 @@ import re
 # ============================
 
 def slugify_filename(s):
-    """Tạo tên file an toàn."""
     s = str(s).strip()
     return re.sub(r'[\\/*?:"<>|]', "", s)
 
@@ -27,7 +26,7 @@ def export_products_by_category():
 
     print("⏳ Đang lấy dữ liệu từ database...")
 
-    # 1) Lấy thông tin sản phẩm + danh mục + thương hiệu
+    # 1) Lấy thông tin sản phẩm
     cur.execute("""
         SELECT
             sp.id_san_pham,
@@ -50,7 +49,6 @@ def export_products_by_category():
 
     san_pham_list = cur.fetchall()
     total_products = len(san_pham_list)
-
     print(f"📦 Tìm thấy {total_products} sản phẩm. Bắt đầu xử lý...")
 
     grouped_results = {}
@@ -58,53 +56,60 @@ def export_products_by_category():
     # ============================
     # Xử lý từng sản phẩm
     # ============================
-    for index, sp in enumerate(san_pham_list):
+    for idx, sp in enumerate(san_pham_list):
         sp_id = sp["id_san_pham"]
 
-        slug_danh_muc = sp["slug_danh_muc"] if sp["slug_danh_muc"] else "khac"
-        ten_danh_muc = sp["ten_danh_muc"] if sp["ten_danh_muc"] else "Khác"
+        slug_danh_muc = sp["slug_danh_muc"] or "khac"
+        ten_danh_muc = sp["ten_danh_muc"] or "Khác"
 
-        # 2) Lấy biến thể sản phẩm
+        # ===========================================
+        # 2) Lấy biến thể nhưng CHỈ dùng để gom màu, size
+        # ===========================================
         cur.execute("""
             SELECT
-                spct.id_san_pham_chi_tiet,
                 spct.gia_ban,
                 m.ten_mau,
                 kt.ten_kich_thuoc,
-                spct.so_luong_ton,
                 asp.anh_url
             FROM san_pham_chi_tiet spct
             LEFT JOIN anh_san_pham asp
-                ON asp.id_san_pham_chi_tiet = spct.id_san_pham_chi_tiet
-                AND asp.thu_tu = 1
+                ON asp.id_san_pham_chi_tiet = spct.id_san_pham_chi_tiet AND asp.thu_tu = 1
             LEFT JOIN mau m ON m.id_mau = spct.id_mau
             LEFT JOIN kich_thuoc kt ON kt.id_kich_thuoc = spct.id_kich_thuoc
             WHERE spct.id_san_pham = %s
             ORDER BY spct.id_san_pham_chi_tiet
         """, (sp_id,))
-        chi_tiet_rows = cur.fetchall()
+        ct_rows = cur.fetchall()
 
-        chi_tiet_processed = []
-        for ct in chi_tiet_rows:
-            chi_tiet_processed.append({
-                "id_san_pham_chi_tiet": ct["id_san_pham_chi_tiet"],
-                "gia_ban": int(ct["gia_ban"]) if isinstance(ct["gia_ban"], Decimal) else ct["gia_ban"],
-                "ten_mau": ct["ten_mau"],
-                "ten_kich_thuoc": ct["ten_kich_thuoc"],
-                "so_luong_ton": int(ct["so_luong_ton"]),
-                "anh_url": ct["anh_url"]
-            })
-
-        # Lấy ảnh đại diện từ biến thể đầu có ảnh
+        ds_mau = []
+        ds_kich_thuoc = []
         anh_dai_dien = None
-        gia_ban = 0
-        for item in chi_tiet_processed:
-            if item.get("anh_url"):
-                anh_dai_dien = f"{APP_URL_PATH}/{item['anh_url']}"
-                gia_ban = item['gia_ban']
-                break
+        gia_ban_min = None
 
-        # 3) Lấy thuộc tính sản phẩm
+        for ct in ct_rows:
+            # Giá bán nhỏ nhất
+            g = int(ct["gia_ban"]) if isinstance(ct["gia_ban"], Decimal) else ct["gia_ban"]
+            if gia_ban_min is None or g < gia_ban_min:
+                gia_ban_min = g
+
+            # Màu
+            if ct["ten_mau"] and ct["ten_mau"] not in ds_mau:
+                ds_mau.append(ct["ten_mau"])
+
+            # Kích thước
+            if ct["ten_kich_thuoc"] and ct["ten_kich_thuoc"] not in ds_kich_thuoc:
+                ds_kich_thuoc.append(ct["ten_kich_thuoc"])
+
+            # Ảnh đại diện
+            if not anh_dai_dien and ct.get("anh_url"):
+                anh_dai_dien = f"{APP_URL_PATH}/{ct['anh_url']}"
+
+        # Nếu không có giá thì để 0
+        gia_ban_min = gia_ban_min or 0
+
+        # ===========================================
+        # 3) Thuộc tính sản phẩm
+        # ===========================================
         cur.execute("""
             SELECT
                 tt.ten_thuoc_tinh,
@@ -118,35 +123,33 @@ def export_products_by_category():
         """, (sp_id,))
         attrs = cur.fetchall()
 
-        thuoc_tinh_map = {
+        thuoc_tinh = {
             a["ten_thuoc_tinh"]: a["ten_thuoc_tinh_chi_tiet"]
             for a in attrs
         }
 
-        # 4) Build sản phẩm hoàn chỉnh
-        product_data = {
+        # ===========================================
+        # 4) Build object
+        # ===========================================
+        product_obj = {
             "id_san_pham": sp["id_san_pham"],
             "ten_san_pham": sp["ten_san_pham"],
-            "slug": sp["slug"],  # slug sản phẩm, không dùng để grouping
+            "slug": sp["slug"],
             "ten_danh_muc": ten_danh_muc,
             "ten_thuong_hieu": sp["ten_thuong_hieu"],
             "ngay_tao": sp["created_at"].strftime("%Y-%m-%d") if sp["created_at"] else None,
             "anh_dai_dien": anh_dai_dien,
-            "gia_ban": gia_ban,
-            "san_pham_chi_tiet": chi_tiet_processed,
-            "thuoc_tinh": thuoc_tinh_map
+            "gia_ban": gia_ban_min,
+            "ds_mau": ds_mau,
+            "ds_kich_thuoc": ds_kich_thuoc,
+            "thuoc_tinh": thuoc_tinh
         }
 
-        # 5) Nhóm theo slug danh mục
-        group_key = slug_danh_muc
-        if group_key not in grouped_results:
-            grouped_results[group_key] = []
+        # Nhóm theo slug danh mục
+        grouped_results.setdefault(slug_danh_muc, []).append(product_obj)
 
-        grouped_results[group_key].append(product_data)
-
-        # Log
-        if (index + 1) % 50 == 0:
-            print(f"   ... Đã xử lý {index + 1}/{total_products} sản phẩm")
+        if (idx + 1) % 50 == 0:
+            print(f"   ... Đã xử lý {idx + 1}/{total_products} sản phẩm")
 
     cur.close()
     conn.close()
