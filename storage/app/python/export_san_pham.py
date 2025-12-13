@@ -97,9 +97,11 @@ def export_products_by_category():
 
         # Lấy ảnh đại diện từ biến thể đầu có ảnh
         anh_dai_dien = None
+        gia_ban = 0
         for item in chi_tiet_processed:
             if item.get("anh_url"):
                 anh_dai_dien = f"{APP_URL_PATH}/{item['anh_url']}"
+                gia_ban = item['gia_ban']
                 break
 
         # 3) Lấy thuộc tính sản phẩm
@@ -130,6 +132,7 @@ def export_products_by_category():
             "ten_thuong_hieu": sp["ten_thuong_hieu"],
             "ngay_tao": sp["created_at"].strftime("%Y-%m-%d") if sp["created_at"] else None,
             "anh_dai_dien": anh_dai_dien,
+            "gia_ban": gia_ban,
             "san_pham_chi_tiet": chi_tiet_processed,
             "thuoc_tinh": thuoc_tinh_map
         }

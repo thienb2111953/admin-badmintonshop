@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 import random
 from datetime import date, timedelta
 import unicodedata
+import json
+from pathlib import Path
+from danh_muc import CATEGORY_MAPPING
 
 def to_slug(text: str) -> str:
     text = unicodedata.normalize('NFD', text)
@@ -152,3 +155,131 @@ def random_date_2025():
 # Hàm natural sort
 def natural_sort_key(s):
     return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', s)]
+
+
+def _norm(s):
+    return s.lower().strip() if isinstance(s, str) else ""
+
+
+# ==========================
+# LOAD DATA SẢN PHẨM
+# ==========================
+
+def load_all_products_from_folder(base_dir: Path):
+    data_dir = base_dir / "danh-muc"
+    all_products = []
+
+    if not data_dir.exists():
+        print("⚠️ Không tìm thấy thư mục:", data_dir)
+        return []
+
+    for path in data_dir.glob("*.json"):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                products = json.load(f)
+            for p in products:
+                p["_slug_danh_muc"] = path.stem
+            all_products.extend(products)
+            print(f"Loaded {len(products)} sản phẩm từ {path.name}")
+        except Exception as e:
+            print("❌ Lỗi đọc file:", e)
+
+    print("Tổng sản phẩm load:", len(all_products))
+    return all_products
+
+
+# ==========================
+# ATTRIBUTES MAPPING
+# ==========================
+
+def expand_level_attributes(ctx_attrs: dict) -> dict:
+    """
+    Convert "trình độ chơi = người mới chơi"
+    → thành các thuộc tính thật mà sản phẩm có
+    """
+    attrs = dict(ctx_attrs)
+
+    level = None
+    for name, val in list(attrs.items()):
+        if _norm(name) == "trình độ chơi":
+            level = _norm(val)
+            del attrs[name]
+            break
+
+    if not level:
+        return attrs
+
+    if "mới chơi" in level:
+        attrs.setdefault("Độ cứng đũa", "Dẻo")
+        attrs.setdefault("Điểm cân bằng", "Nhẹ đầu")
+
+    elif "trung bình" in level:
+        attrs.setdefault("Phong cách chơi", "Công thủ toàn diện")
+
+    elif "khá tốt" in level or "nâng cao" in level:
+        attrs.setdefault("Độ cứng đũa", "Cứng")
+        attrs.setdefault("Điểm cân bằng", "Nặng đầu")
+
+    return attrs
+
+
+# ==========================
+# SEARCH PRODUCTS
+# ==========================
+
+def search_products(SAN_PHAM_DATA, ctx, full=False):
+    category = ctx["category"]
+    brand = ctx["brand"]
+    min_price = ctx["min_price"]
+    max_price = ctx["max_price"]
+    attributes = expand_level_attributes(ctx["attributes"])
+
+    # mở rộng range giá
+    if min_price and max_price:
+        mid = (min_price + max_price) // 2
+        max_price = mid + 300000
+
+    target_cat_name = CATEGORY_MAPPING.get(_norm(category)) if category else None
+
+    results = []
+
+    for p in SAN_PHAM_DATA:
+
+        # CATEGORY FILTER
+        if target_cat_name and target_cat_name.lower() not in _norm(p["ten_danh_muc"]):
+            continue
+
+        # BRAND FILTER
+        if brand and _norm(brand) not in _norm(p["ten_thuong_hieu"]):
+            continue
+
+        # PRICE FILTER
+        variants = p["san_pham_chi_tiet"]
+        prices = [v["gia_ban"] for v in variants if v.get("gia_ban")]
+
+        if not prices:
+            continue
+
+        min_price_sp = min(prices)
+
+        if min_price and min_price_sp < min_price:
+            continue
+        if max_price and min_price_sp > max_price:
+            continue
+
+        # ATTRIBUTES FILTER
+        p_attrs = p.get("thuoc_tinh", {})
+        ok = True
+        for k, v in attributes.items():
+            if _norm(v) not in _norm(str(p_attrs.get(k, ""))):
+                ok = False
+                break
+        if not ok:
+            continue
+
+        results.append(p)
+
+    # Sort theo sản phẩm mới nhất
+    results = sorted(results, key=lambda x: x["ngay_tao"], reverse=True)
+
+    return results if full else results[:5]

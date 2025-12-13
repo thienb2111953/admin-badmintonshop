@@ -59,3 +59,14 @@ DANH_MUC_THUOC_TINH = {
 
     }
 }
+
+CATEGORY_MAPPING = {
+    "vợt": "Vợt cầu lông",
+    "vợt cầu lông": "Vợt cầu lông",
+    "giày": "Giày cầu lông",
+    "giày cầu lông": "Giày cầu lông",
+    "balo": "Balo cầu lông",
+    "túi": "Túi vợt cầu lông",
+    "áo": "Áo cầu lông",
+    "quần": "Quần cầu lông"
+}

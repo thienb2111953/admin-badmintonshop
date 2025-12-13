@@ -7,6 +7,7 @@
         "ten_thuong_hieu": "Adonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS126001_20251202_194048_eabcebcd.jpg",
+        "gia_ban": 360000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2954,
@@ -51,6 +52,7 @@
         "ten_thuong_hieu": "Apacs",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS276001_20251202_194109_c024e508.jpg",
+        "gia_ban": 950000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2958,
@@ -84,6 +86,7 @@
         "ten_thuong_hieu": "Apacs",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS276002_20251202_194109_72aaf288.jpg",
+        "gia_ban": 560000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2960,
@@ -128,6 +131,7 @@
         "ten_thuong_hieu": "Apacs",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS276003_20251202_194109_165f4eab.jpg",
+        "gia_ban": 630000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2964,
@@ -172,6 +176,7 @@
         "ten_thuong_hieu": "Apacs",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2968,
@@ -216,6 +221,7 @@
         "ten_thuong_hieu": "Forza",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS116001_20251202_194048_4c1732f6.jpg",
+        "gia_ban": 400000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2972,
@@ -260,6 +266,7 @@
         "ten_thuong_hieu": "Forza",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS116002_20251202_194048_dc7d33b9.jpg",
+        "gia_ban": 400000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2976,
@@ -304,6 +311,7 @@
         "ten_thuong_hieu": "Forza",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS116003_20251202_194048_0014f51c.jpg",
+        "gia_ban": 400000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2980,
@@ -348,6 +356,7 @@
         "ten_thuong_hieu": "Forza",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS116004_20251202_194048_282d6573.jpg",
+        "gia_ban": 400000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2984,
@@ -392,6 +401,7 @@
         "ten_thuong_hieu": "Forza",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS116005_20251202_194048_94a0a14d.jpg",
+        "gia_ban": 400000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2988,
@@ -436,6 +446,7 @@
         "ten_thuong_hieu": "Forza",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS116006_20251202_194048_713aa464.jpg",
+        "gia_ban": 260000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2992,
@@ -480,6 +491,7 @@
         "ten_thuong_hieu": "Forza",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS116007_20251202_194048_51b53fb0.jpg",
+        "gia_ban": 240000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 2996,
@@ -524,6 +536,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136001_20251202_194048_b3e5772b.jpg",
+        "gia_ban": 950000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3000,
@@ -568,6 +581,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136002_20251202_194049_77a8835e.jpg",
+        "gia_ban": 850000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3004,
@@ -616,6 +630,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136003_20251202_194049_5bca8530.jpg",
+        "gia_ban": 940000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3008,
@@ -665,6 +680,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136004_20251202_194049_94a40072.jpg",
+        "gia_ban": 840000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3012,
@@ -714,6 +730,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136005_20251202_194049_a329eee3.jpg",
+        "gia_ban": 840000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3016,
@@ -763,6 +780,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136006_20251202_194049_746a687e.jpg",
+        "gia_ban": 890000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3020,
@@ -812,6 +830,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136007_20251202_194049_56857dc7.jpg",
+        "gia_ban": 500000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3024,
@@ -861,6 +880,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136008_20251202_194049_11da3b77.jpg",
+        "gia_ban": 500000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3028,
@@ -910,6 +930,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136009_20251202_194049_d1ecf298.jpg",
+        "gia_ban": 600000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3032,
@@ -959,6 +980,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136010_20251202_194049_17e7c201.jpg",
+        "gia_ban": 600000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3036,
@@ -1008,6 +1030,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136011_20251202_194049_8c4e5f25.jpg",
+        "gia_ban": 550000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3040,
@@ -1057,6 +1080,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136012_20251202_194049_1b8ebdd1.jpg",
+        "gia_ban": 550000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3044,
@@ -1106,6 +1130,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136013_20251202_194049_baa6b40e.jpg",
+        "gia_ban": 550000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3048,
@@ -1150,6 +1175,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136014_20251202_194049_cbd8fd91.jpg",
+        "gia_ban": 850000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3052,
@@ -1194,6 +1220,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136015_20251202_194049_9201cb3b.jpg",
+        "gia_ban": 550000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3056,
@@ -1238,6 +1265,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136016_20251202_194049_dbf8d7b4.jpg",
+        "gia_ban": 550000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3060,
@@ -1282,6 +1310,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136017_20251202_194049_1a17d0bd.jpg",
+        "gia_ban": 800000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3064,
@@ -1326,6 +1355,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136018_20251202_194049_89b4a4f1.jpg",
+        "gia_ban": 770000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3068,
@@ -1370,6 +1400,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136019_20251202_194049_70ade037.jpg",
+        "gia_ban": 770000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3072,
@@ -1414,6 +1445,7 @@
         "ten_thuong_hieu": "Kawasaki",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS136020_20251202_194049_9d90afb7.jpg",
+        "gia_ban": 790000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3076,
@@ -1458,6 +1490,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146001_20251202_194056_dd211f5f.jpg",
+        "gia_ban": 1990000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3080,
@@ -1507,6 +1540,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3084,
@@ -1551,6 +1585,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3088,
@@ -1595,6 +1630,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3092,
@@ -1639,6 +1675,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146005_20251202_194056_a0192636.jpg",
+        "gia_ban": 3000000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3096,
@@ -1688,6 +1725,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146006_20251202_194056_a962b7d8.jpg",
+        "gia_ban": 1150000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3100,
@@ -1737,6 +1775,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146007_20251202_194056_cbb1e258.jpg",
+        "gia_ban": 1300000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3104,
@@ -1786,6 +1825,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146008_20251202_194056_a98bdabe.jpg",
+        "gia_ban": 1990000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3108,
@@ -1835,6 +1875,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146009_20251202_194056_450b9a18.jpg",
+        "gia_ban": 2200000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3112,
@@ -1867,6 +1908,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3114,
@@ -1911,6 +1953,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3118,
@@ -1955,6 +1998,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3122,
@@ -1999,6 +2043,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146013_20251202_194057_8dc19b65.jpg",
+        "gia_ban": 1150000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3126,
@@ -2048,6 +2093,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3130,
@@ -2092,6 +2138,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3134,
@@ -2136,6 +2183,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3138,
@@ -2180,6 +2228,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146017_20251202_194057_f9a2fe86.jpg",
+        "gia_ban": 1650000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3142,
@@ -2244,6 +2293,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146018_20251202_194057_be06c4bf.jpg",
+        "gia_ban": 2200000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3148,
@@ -2276,6 +2326,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146019_20251202_194057_419e94b2.jpg",
+        "gia_ban": 2200000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3150,
@@ -2308,6 +2359,7 @@
         "ten_thuong_hieu": "Lining",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS146020_20251202_194057_d6521463.jpg",
+        "gia_ban": 2200000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3152,
@@ -2340,6 +2392,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3154,
@@ -2384,6 +2437,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3158,
@@ -2428,6 +2482,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3162,
@@ -2472,6 +2527,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3166,
@@ -2516,6 +2572,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS206005_20251202_194103_35dcd171.jpg",
+        "gia_ban": 1830000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3170,
@@ -2565,6 +2622,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3174,
@@ -2609,6 +2667,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3178,
@@ -2653,6 +2712,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3182,
@@ -2697,6 +2757,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3186,
@@ -2741,6 +2802,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3190,
@@ -2785,6 +2847,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3194,
@@ -2829,6 +2892,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3198,
@@ -2873,6 +2937,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3202,
@@ -2917,6 +2982,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS206014_20251202_194103_1afba110.jpg",
+        "gia_ban": 450000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3206,
@@ -2961,6 +3027,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS206015_20251202_194103_666e68e4.jpg",
+        "gia_ban": 290000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3210,
@@ -3005,6 +3072,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS206016_20251202_194103_62b35b99.jpg",
+        "gia_ban": 260000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3214,
@@ -3049,6 +3117,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS206017_20251202_194103_4d90b0d5.jpg",
+        "gia_ban": 450000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3218,
@@ -3093,6 +3162,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS206018_20251202_194103_3cf0a5cd.jpg",
+        "gia_ban": 450000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3222,
@@ -3137,6 +3207,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS206019_20251202_194103_848a8d1d.jpg",
+        "gia_ban": 400000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3226,
@@ -3181,6 +3252,7 @@
         "ten_thuong_hieu": "Mizuno",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS206020_20251202_194103_b23917ce.jpg",
+        "gia_ban": 1090000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3230,
@@ -3225,6 +3297,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446001_20251202_194133_695f239f.jpg",
+        "gia_ban": 1350000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3234,
@@ -3274,6 +3347,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446002_20251202_194133_a89c01ae.jpg",
+        "gia_ban": 1280000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3238,
@@ -3323,6 +3397,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3242,
@@ -3367,6 +3442,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3246,
@@ -3411,6 +3487,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3250,
@@ -3455,6 +3532,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446006_20251202_194133_7dcccf2b.jpg",
+        "gia_ban": 1250000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3254,
@@ -3504,6 +3582,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3258,
@@ -3548,6 +3627,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446008_20251202_194133_86e59ebb.jpg",
+        "gia_ban": 750000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3262,
@@ -3597,6 +3677,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446009_20251202_194133_67edde6b.jpg",
+        "gia_ban": 1600000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3266,
@@ -3646,6 +3727,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446010_20251202_194133_bceaf338.jpg",
+        "gia_ban": 1600000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3270,
@@ -3695,6 +3777,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446011_20251202_194133_1d72f3b4.jpg",
+        "gia_ban": 1590000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3274,
@@ -3741,6 +3824,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446012_20251202_194133_6a1e24ee.jpg",
+        "gia_ban": 1590000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3278,
@@ -3790,6 +3874,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446013_20251202_194133_4535c592.jpg",
+        "gia_ban": 800000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3282,
@@ -3834,6 +3919,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446014_20251202_194133_8db3c9c8.jpg",
+        "gia_ban": 1050000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3286,
@@ -3883,6 +3969,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446015_20251202_194133_8d047180.jpg",
+        "gia_ban": 950000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3290,
@@ -3948,6 +4035,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446016_20251202_194133_42ae4245.jpg",
+        "gia_ban": 750000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3296,
@@ -3981,6 +4069,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446017_20251202_194133_9b5a57e8.jpg",
+        "gia_ban": 750000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3298,
@@ -4014,6 +4103,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3300,
@@ -4058,6 +4148,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3304,
@@ -4102,6 +4193,7 @@
         "ten_thuong_hieu": "Victor",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS446020_20251202_194133_dac18ed8.jpg",
+        "gia_ban": 750000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3308,
@@ -4134,6 +4226,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336001_20251202_194121_d6fdae28.jpg",
+        "gia_ban": 699000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3310,
@@ -4199,6 +4292,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336002_20251202_194121_4a0e7cc1.jpg",
+        "gia_ban": 889000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3316,
@@ -4280,6 +4374,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336003_20251202_194121_e603f3c5.jpg",
+        "gia_ban": 889000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3324,
@@ -4361,6 +4456,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336004_20251202_194121_0d7dbe5e.jpg",
+        "gia_ban": 539000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3332,
@@ -4437,6 +4533,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336005_20251202_194121_ee077349.jpg",
+        "gia_ban": 3819000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3340,
@@ -4486,6 +4583,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336006_20251202_194121_760e06a2.jpg",
+        "gia_ban": 629000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3344,
@@ -4567,6 +4665,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336007_20251202_194121_cfdaf158.jpg",
+        "gia_ban": 369000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3352,
@@ -4648,6 +4747,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336008_20251202_194121_b8f29427.jpg",
+        "gia_ban": 889000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3360,
@@ -4729,6 +4829,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336009_20251202_194121_6f9f2952.jpg",
+        "gia_ban": 369000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3368,
@@ -4810,6 +4911,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336010_20251202_194121_f2eb2500.jpg",
+        "gia_ban": 629000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3376,
@@ -4891,6 +4993,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336011_20251202_194121_6f28ad32.jpg",
+        "gia_ban": 889000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3384,
@@ -4972,6 +5075,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336012_20251202_194121_6cf2f3ad.jpg",
+        "gia_ban": 529000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3392,
@@ -5053,6 +5157,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336013_20251202_194121_25d96e07.jpg",
+        "gia_ban": 369000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3400,
@@ -5134,6 +5239,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336014_20251202_194122_2e9dfb2f.jpg",
+        "gia_ban": 529000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3408,
@@ -5215,6 +5321,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336015_20251202_194122_f8f982f5.jpg",
+        "gia_ban": 699000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3416,
@@ -5296,6 +5403,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336016_20251202_194122_2f642822.jpg",
+        "gia_ban": 529000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3424,
@@ -5377,6 +5485,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336017_20251202_194122_d6100b2c.jpg",
+        "gia_ban": 629000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3432,
@@ -5458,6 +5567,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3440,
@@ -5502,6 +5612,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/BMS336019_20251202_194122_06f8bbad.jpg",
+        "gia_ban": 839000,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3444,
@@ -5599,6 +5710,7 @@
         "ten_thuong_hieu": "Yonex",
         "ngay_tao": "2025-12-02",
         "anh_dai_dien": null,
+        "gia_ban": 0,
         "san_pham_chi_tiet": [
             {
                 "id_san_pham_chi_tiet": 3454,
