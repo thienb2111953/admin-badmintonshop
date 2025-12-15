@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\NguoiDungController;
 use App\Http\Controllers\Admin\QuyenController;
+use App\Http\Controllers\Api\BaoHanhController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\TrangChuController;
 use App\Http\Controllers\ChatBotController;
@@ -64,6 +65,8 @@ Route::middleware('jwt')->group(function () {
         Route::get('/', [OrderController::class, 'getOrders']);
         Route::get('/{id_don_hang}', [OrderController::class, 'getOrderDetail']);
     });
+
+    Route::post('/bao-hanh', [BaoHanhController::class, 'store']);
 });
 
 Route::post('tao-don-hang', [CheckOutController::class, 'taoDonHang'])->name('CheckOutController.taoDonHang');
