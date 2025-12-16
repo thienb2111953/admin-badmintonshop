@@ -16,5 +16,5 @@ def get_db_connection():
 PATH_PROJECT_STORAGE = Path(r"D:\Project\badminton-shop\admin-badmintonshop\storage\app")
 
 APP_URL_PATH = "http://127.0.0.1:8000/storage"
-API_KEY_GROQ = "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"
+API_KEY_GROQ = "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"
 
