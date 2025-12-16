@@ -117,6 +117,22 @@ class DanhMucController extends Controller
             });
         }
 
+        $inputAttributes = $request->input('attributes');
+
+        if ($inputAttributes && is_array($inputAttributes) && count($inputAttributes) > 0) {
+
+            $selectedAttrCount = count($inputAttributes);
+
+            $query->whereExists(function ($subQuery) use ($inputAttributes, $selectedAttrCount) {
+                $subQuery->select(DB::raw(1))
+                    ->from('san_pham_thuoc_tinh as sptt')
+                    ->whereColumn('sptt.id_san_pham', 'sp.id_san_pham')
+                    ->whereIn('sptt.id_thuoc_tinh_chi_tiet', $inputAttributes)
+                    ->groupBy('sptt.id_san_pham')
+                    ->havingRaw('COUNT(DISTINCT sptt.id_thuoc_tinh_chi_tiet) = ?', [$selectedAttrCount]);
+            });
+        }
+
         if ($request->has('sort')) {
             switch ($request->sort) {
                 case 'low_to_hight':
@@ -184,6 +200,22 @@ class DanhMucController extends Controller
 
         if ($request->has('brands') && is_array($request->brands) && count($request->brands) > 0) {
             $query->whereIn('th.ten_thuong_hieu', $request->brands);
+        }
+
+        $inputAttributes = $request->input('attributes');
+
+        if ($inputAttributes && is_array($inputAttributes) && count($inputAttributes) > 0) {
+
+            $selectedAttrCount = count($inputAttributes);
+
+            $query->whereExists(function ($subQuery) use ($inputAttributes, $selectedAttrCount) {
+                $subQuery->select(DB::raw(1))
+                    ->from('san_pham_thuoc_tinh as sptt')
+                    ->whereColumn('sptt.id_san_pham', 'sp.id_san_pham')
+                    ->whereIn('sptt.id_thuoc_tinh_chi_tiet', $inputAttributes)
+                    ->groupBy('sptt.id_san_pham')
+                    ->havingRaw('COUNT(DISTINCT sptt.id_thuoc_tinh_chi_tiet) = ?', [$selectedAttrCount]);
+            });
         }
 
         if ($request->has('price_ranges') && is_array($request->price_ranges) && count($request->price_ranges) > 0) {
