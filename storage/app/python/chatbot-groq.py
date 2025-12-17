@@ -519,20 +519,18 @@ def is_warranty_policy(msg: str) -> bool:
     ]
     return any(k in msg for k in keywords)
 
-WARRANTY_TEXT = """
-Nếu sản phẩm xảy ra lỗi như những tình trạng trên, quý khách vui lòng thực hiện các bước sau để cửa hàng hỗ trợ bảo hành:<br><br>
+WARRANTY_TEXT = (
+    "Nếu sản phẩm xảy ra lỗi như những tình trạng trên, quý khách vui lòng thực hiện các bước sau để cửa hàng hỗ trợ bảo hành:\n\n"
+    "(Bước 1) Khi phát hiện lỗi sản phẩm, quý khách vui lòng giữ nguyên hiện trạng và liên hệ ngay với Shop Badminton "
+    "qua LIÊN HỆ VỚI CHÚNG TÔI để yêu cầu bảo hành.\n\n"
+    "(Bước 2) Quý khách vui lòng điền đầy đủ thông tin bao gồm (thông tin liên hệ), "
+    "(thông tin sản phẩm) và (mô tả chi tiết lỗi gặp phải).\n\n"
+    "(Bước 3) Sau khi admin tiếp nhận yêu cầu bảo hành, chúng tôi sẽ phản hồi lại qua (EMAIL) "
+    "mà quý khách đã cung cấp. Vui lòng theo dõi thông báo từ email.\n\n"
+    "(Bước 4) Trong trường hợp sản phẩm bị lỗi do nhà sản xuất, quý khách sẽ được (đổi sản phẩm mới) "
+    "theo chính sách bảo hành."
+)
 
-(Bước 1) Khi phát hiện lỗi sản phẩm, quý khách vui lòng giữ nguyên hiện trạng và liên hệ ngay với Shop Badminton qua
-<a href="/lien-he" target="_blank" rel="noopener">LIÊN HỆ VỚI CHÚNG TÔI</a>
-để yêu cầu bảo hành.<br><br>
-
-(Bước 2) Quý khách vui lòng điền đầy đủ thông tin bao gồm (thông tin liên hệ), (thông tin sản phẩm) và (mô tả chi tiết lỗi gặp phải).<br><br>
-
-(Bước 3) Sau khi admin tiếp nhận yêu cầu bảo hành, chúng tôi sẽ phản hồi lại qua (EMAIL) mà quý khách đã cung cấp.
-Vui lòng theo dõi thông báo từ email.<br><br>
-
-(Bước 4) Trong trường hợp sản phẩm bị lỗi do nhà sản xuất, quý khách sẽ được (đổi sản phẩm mới) theo chính sách bảo hành.
-"""
 
 
 

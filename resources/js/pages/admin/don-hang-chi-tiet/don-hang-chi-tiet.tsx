@@ -93,12 +93,32 @@ export default function DonHangChiTietPage({
     }
   };
 
-  return (
+    const handlePrint = () => {
+        const iframe = document.createElement('iframe')
+        iframe.style.position = 'fixed'
+        iframe.style.right = '0'
+        iframe.style.bottom = '0'
+        iframe.style.width = '0'
+        iframe.style.height = '0'
+        iframe.style.border = '0'
+
+        iframe.src = `/don-hang/${don_hang_info.id_don_hang}/print`
+
+        iframe.onload = () => {
+            iframe.contentWindow?.focus()
+            iframe.contentWindow?.print()
+        }
+
+        document.body.appendChild(iframe)
+    }
+
+
+    return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Quản lý Nhập hàng chi tiết" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={don_hang_chi_tiets} onAdd={handleAdd} showAddButton={false}/>
+        <DataTable columns={columns(handleEdit, handleDelete)} data={don_hang_chi_tiets} onAdd={handlePrint} addButtonLabel="in đơn hàng"/>
       </div>
 
       {/* <ModalDialog

@@ -11,4 +11,15 @@ class DonHangChiTiet extends Model
   public $incrementing = true;
 
   protected $fillable = ['id_don_hang', 'id_san_pham_chi_tiet', 'so_luong', 'don_gia', 'tong_tien'];
+
+    public function donHang()
+    {
+        return $this->belongsTo(DonHang::class, 'id_don_hang');
+    }
+
+    public function sanPhamChiTiet()
+    {
+        return $this->belongsTo(SanPhamChiTiet::class, 'id_san_pham_chi_tiet');
+    }
+
 }

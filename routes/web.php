@@ -159,10 +159,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route::put('', [DonHangController::class, 'update'])->name('don_hang.update');
         // Route::delete('', [DonHangController::class, 'destroy'])->name('don_hang.destroy');
         // Route::prefix('{id_nhap_hang}')->group(function () {
-        Route::get('{id_don_hang}', [DonHangChiTietController::class, 'index'])->name('don_hang_chi_tiet');
-        // Route::post('/', [DonHangChiTietController::class, 'store'])->name('nhap_hang_chi_tiet.store');
-        // Route::put('/', [DonHangChiTietController::class, 'update'])->name('nhap_hang_chi_tiet.update');
-        // Route::delete('/', [DonHangChiTietController::class, 'destroy'])->name('nhap_hang_chi_tiet.destroy');
+        Route::get('{id_don_hang}', [DonHangChiTietController::class, 'index'])->name('don_hang_chi_tiet');// routes/api.php
+        Route::get('{id_don_hang}/print', [DonHangChiTietController::class, 'inHoaDon']);
+
         // });
     });
 
