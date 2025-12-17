@@ -4366,5 +4366,32 @@
             "Điểm cân bằng": "Cân bằng",
             "Trình độ chơi": "Mới chơi"
         }
+    },
+    {
+        "id_san_pham": 801,
+        "ten_san_pham": "Vợt cầu lông Victor Thruster Ryuga Muse",
+        "slug": "vot-cau-long-victor-thruster-ryuga-muse",
+        "ten_danh_muc": "Vợt Cầu Lông",
+        "ten_thuong_hieu": "Victor",
+        "ngay_tao": "2025-12-17",
+        "anh_dai_dien": "http://127.0.0.1:8000/storage/anh_san_phams/TEST_co-bao-hanh_20251217_083831_69420997aef59.jpg",
+        "gia_ban": 3040000,
+        "ds_mau": [
+            "Có bảo hành"
+        ],
+        "ds_kich_thuoc": [
+            "2U5"
+        ],
+        "thuoc_tinh": {
+            "Chiều dài vợt": "665 mm",
+            "Chiều dài cán vợt": "200 mm",
+            "Swingweight": "Dưới 82 kg/cm2",
+            "Trọng lượng": "2U: 90 - 94g",
+            "Điểm cân bằng": "Nhẹ đầu",
+            "Độ cứng đũa": "Dẻo",
+            "Phong cách chơi": "Tấn công",
+            "Nội dung chơi": "Đánh đơn",
+            "Trình độ chơi": "Mới chơi"
+        }
     }
 ]

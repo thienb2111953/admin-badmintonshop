@@ -74,16 +74,6 @@ SESSION: Dict[str, Dict[str, Any]] = {}
 PRODUCT_CACHE: Dict[str, List[Dict[str, Any]]] = {}
 VECTOR_CACHE: Dict[str, np.ndarray] = {}
 
-CATEGORY_LABEL = {
-    "vot-cau-long": "vợt cầu lông",
-    "giay-cau-long": "giày cầu lông",
-    "ao-cau-long": "áo cầu lông",
-    "quan-cau-long": "quần cầu lông",
-    "balo-cau-long": "balo cầu lông",
-    "tui-vot-cau-long": "túi vợt cầu lông",
-    "vay-cau-long": "váy cầu lông",
-}
-
 # =====================================
 # INPUT
 # =====================================
@@ -412,10 +402,6 @@ def default_session():
 
 
 def get_category_label(slug: str) -> str:
-    # ưu tiên map cố định nếu có
-    if slug in CATEGORY_LABEL:
-        return CATEGORY_LABEL[slug]
-    # fallback theo mapping
     for _, v in CATEGORY_MAPPING.items():
         if normalize(v).replace(" ", "-") == slug:
             return v
@@ -521,6 +507,35 @@ def default_session():
         "combo_state": None,   # 👈 thêm
     }
 
+def is_warranty_policy(msg: str) -> bool:
+    msg = normalize(msg)
+    keywords = [
+        "chinh sach bao hanh",
+        "bao hanh",
+        "doi tra",
+        "doi moi",
+        "bao hanh nhu the nao",
+        "chinh sach doi tra",
+    ]
+    return any(k in msg for k in keywords)
+
+WARRANTY_TEXT = """
+Nếu sản phẩm xảy ra lỗi như những tình trạng trên, quý khách vui lòng thực hiện các bước sau để cửa hàng hỗ trợ bảo hành:<br><br>
+
+(Bước 1) Khi phát hiện lỗi sản phẩm, quý khách vui lòng giữ nguyên hiện trạng và liên hệ ngay với Shop Badminton qua
+<a href="/lien-he" target="_blank" rel="noopener">LIÊN HỆ VỚI CHÚNG TÔI</a>
+để yêu cầu bảo hành.<br><br>
+
+(Bước 2) Quý khách vui lòng điền đầy đủ thông tin bao gồm (thông tin liên hệ), (thông tin sản phẩm) và (mô tả chi tiết lỗi gặp phải).<br><br>
+
+(Bước 3) Sau khi admin tiếp nhận yêu cầu bảo hành, chúng tôi sẽ phản hồi lại qua (EMAIL) mà quý khách đã cung cấp.
+Vui lòng theo dõi thông báo từ email.<br><br>
+
+(Bước 4) Trong trường hợp sản phẩm bị lỗi do nhà sản xuất, quý khách sẽ được (đổi sản phẩm mới) theo chính sách bảo hành.
+"""
+
+
+
 # =====================================
 # CHAT
 # =====================================
@@ -529,6 +544,9 @@ def default_session():
 def chat(req: ChatRequest):
     uid = req.session_id
     msg = req.message or ""
+
+    if is_warranty_policy(msg):
+        return {"answer": WARRANTY_TEXT, "products": []}
 
     s = SESSION.get(uid) or default_session()
     st = s["search_state"]
