@@ -42,16 +42,24 @@ class SanPhamController extends Controller
   {
     $validated = $request->validate(
       [
-        'ma_san_pham' => 'required|string|max:255',
+        'ma_san_pham'  => 'required|string|max:255|unique:san_pham,ma_san_pham',
         'ten_san_pham' => 'required|string|max:255',
-        'slug' => 'required|string|max:255',
-        'mo_ta' => 'nullable|string',
+        'slug'         => 'required|string|max:255|unique:san_pham,slug',
+        'mo_ta'        => 'nullable|string',
+        'trang_thai'   => 'required|string|in:Đang sản xuất,Hết sản xuất',
       ],
       [
-        'ma_san_pham.required' => 'Mã sản phẩm không được để trống',
-        'ten_san_pham.required' => 'Tên sản phẩm không được để trống',
-        'slug.required' => 'Slug không được để trống',
-      ],
+        'ma_san_pham.required' => 'Mã sản phẩm không được để trống.',
+        'ma_san_pham.unique'   => 'Mã sản phẩm đã tồn tại.',
+
+        'ten_san_pham.required' => 'Tên sản phẩm không được để trống.',
+
+        'slug.required' => 'Slug không được để trống.',
+        'slug.unique'   => 'Slug đã tồn tại.',
+
+        'trang_thai.required' => 'Vui lòng chọn trạng thái.',
+        'trang_thai.in'       => 'Trạng thái không hợp lệ.',
+      ]
     );
 
     $validated['id_danh_muc_thuong_hieu'] = $id_danh_muc_thuong_hieu;

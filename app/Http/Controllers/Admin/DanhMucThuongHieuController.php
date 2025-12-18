@@ -9,6 +9,7 @@ use App\Models\DanhMucThuongHieu;
 use App\Models\ThuongHieu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
@@ -17,45 +18,45 @@ use Illuminate\Support\Facades\Storage;
 
 class DanhMucThuongHieuController extends Controller
 {
-    public function exportSanPham()
-    {
-        $scriptPath = storage_path('app/python/export_san_pham.py');
-        $pythonPath = env('PYTHON_PATH', 'python'); // Lấy đường dẫn exe đã cấu hình
+  public function exportSanPham()
+  {
+    $scriptPath = storage_path('app/python/export_san_pham.py');
+    $pythonPath = env('PYTHON_PATH', 'python'); // Lấy đường dẫn exe đã cấu hình
 
-        if (!file_exists($scriptPath)) {
-            return response()->json(['message' => 'File script không tồn tại!'], 404);
-        }
-
-        // Câu lệnh chạy (như cũ)
-        $command = "\"{$pythonPath}\" \"{$scriptPath}\"";
-
-        // --- KHẮC PHỤC Ở ĐÂY ---
-        // Sử dụng phương thức env() của Process để GHI ĐÈ cấu hình
-        $result = Process::env([
-            // Ép buộc dùng localhost thay vì 172.22.166.22
-            'DB_HOST' => '127.0.0.1',
-
-            // Đảm bảo các thông số khác lấy đúng từ Laravel
-            'DB_DATABASE' => env('DB_DATABASE'),
-            'DB_USERNAME' => env('DB_USERNAME'),
-            'DB_PASSWORD' => env('DB_PASSWORD'),
-            'DB_PORT' => env('DB_PORT', '5432'),
-
-            // Giữ lại các biến môi trường hệ thống (System Root, Path...) để Python chạy được
-            'SYSTEMROOT' => getenv('SYSTEMROOT'),
-            'PATH' => getenv('PATH'),
-            'TEMP' => getenv('TEMP'),
-
-            'PYTHONIOENCODING' => 'utf-8',
-            'LANG' => 'C.UTF-8',
-        ])->run($command);
-
-        if ($result->successful()) {
-            return response()->json(['message' => 'Thành công!', 'output' => $result->output()]);
-        } else {
-            return response()->json(['message' => 'Lỗi: ' . $result->errorOutput()], 500);
-        }
+    if (!file_exists($scriptPath)) {
+      return response()->json(['message' => 'File script không tồn tại!'], 404);
     }
+
+    // Câu lệnh chạy (như cũ)
+    $command = "\"{$pythonPath}\" \"{$scriptPath}\"";
+
+    // --- KHẮC PHỤC Ở ĐÂY ---
+    // Sử dụng phương thức env() của Process để GHI ĐÈ cấu hình
+    $result = Process::env([
+      // Ép buộc dùng localhost thay vì 172.22.166.22
+      'DB_HOST' => '127.0.0.1',
+
+      // Đảm bảo các thông số khác lấy đúng từ Laravel
+      'DB_DATABASE' => env('DB_DATABASE'),
+      'DB_USERNAME' => env('DB_USERNAME'),
+      'DB_PASSWORD' => env('DB_PASSWORD'),
+      'DB_PORT' => env('DB_PORT', '5432'),
+
+      // Giữ lại các biến môi trường hệ thống (System Root, Path...) để Python chạy được
+      'SYSTEMROOT' => getenv('SYSTEMROOT'),
+      'PATH' => getenv('PATH'),
+      'TEMP' => getenv('TEMP'),
+
+      'PYTHONIOENCODING' => 'utf-8',
+      'LANG' => 'C.UTF-8',
+    ])->run($command);
+
+    if ($result->successful()) {
+      return response()->json(['message' => 'Thành công!', 'output' => $result->output()]);
+    } else {
+      return response()->json(['message' => 'Lỗi: ' . $result->errorOutput()], 500);
+    }
+  }
 
   public function index()
   {
@@ -96,18 +97,31 @@ class DanhMucThuongHieuController extends Controller
     $validated = $request->validate(
       [
         'ten_danh_muc_thuong_hieu' => 'required|string|max:255',
-        'slug' => 'required|string',
-        'mo_ta' => 'nullable|string',
-        'id_danh_muc' => 'required|integer',
-        'id_thuong_hieu' => 'required|integer',
+        'slug'                    => 'required|string|max:255|unique:danh_muc_thuong_hieu,slug',
+        'mo_ta'                   => 'nullable|string',
+        'id_danh_muc'             => 'required|integer|exists:danh_muc,id_danh_muc',
+        'id_thuong_hieu'          => 'required|integer|exists:thuong_hieu,id_thuong_hieu',
       ],
       [
-        'ten_danh_muc_thuong_hieu.max' => 'Vượt quá số ký tự quy định (255 ký tự)',
-        'ten_danh_muc_thuong_hieu.required' => 'Tên danh mục thương hiệu là bắt buộc',
-        'slug.required' => 'Slug không được để trống',
-        'id_danh_muc.required' => 'Vui lòng chọn danh mục',
-        'id_thuong_hieu.required' => 'Vui lòng chọn thương hiệu',
-      ],
+        'ten_danh_muc_thuong_hieu.required' => 'Tên danh mục thương hiệu là bắt buộc.',
+        'ten_danh_muc_thuong_hieu.string'   => 'Tên danh mục thương hiệu phải là chuỗi.',
+        'ten_danh_muc_thuong_hieu.max'      => 'Vượt quá số ký tự quy định (255 ký tự).',
+
+        'slug.required' => 'Slug không được để trống.',
+        'slug.string'   => 'Slug phải là chuỗi.',
+        'slug.max'      => 'Slug tối đa 255 ký tự.',
+        'slug.unique'   => 'Slug đã tồn tại.',
+
+        'mo_ta.string' => 'Mô tả phải là chuỗi.',
+
+        'id_danh_muc.required' => 'Vui lòng chọn danh mục.',
+        'id_danh_muc.integer'  => 'Danh mục không hợp lệ.',
+        'id_danh_muc.exists'   => 'Danh mục không tồn tại.',
+
+        'id_thuong_hieu.required' => 'Vui lòng chọn thương hiệu.',
+        'id_thuong_hieu.integer'  => 'Thương hiệu không hợp lệ.',
+        'id_thuong_hieu.exists'   => 'Thương hiệu không tồn tại.',
+      ]
     );
 
     DanhMucThuongHieu::create($validated);
@@ -130,26 +144,39 @@ class DanhMucThuongHieuController extends Controller
 
   public function update(Request $request)
   {
+    $id = $request->id_danh_muc_thuong_hieu;
+
     $validated = $request->validate(
       [
         'ten_danh_muc_thuong_hieu' => 'required|string|max:255',
-        'slug' => 'required|string',
+        'slug' => [
+          'required',
+          'string',
+          'max:255',
+          Rule::unique('danh_muc_thuong_hieu', 'slug')
+            ->ignore($id, 'id_danh_muc_thuong_hieu'),
+        ],
         'mo_ta' => 'nullable|string',
-        'id_danh_muc' => 'required|integer',
-        'id_thuong_hieu' => 'required|integer',
+        'id_danh_muc' => 'required|integer|exists:danh_muc,id_danh_muc',
+        'id_thuong_hieu' => 'required|integer|exists:thuong_hieu,id_thuong_hieu',
       ],
       [
-        'ten_danh_muc_thuong_hieu.max' => 'Vượt quá số ký tự quy định (255 ký tự)',
-        'ten_danh_muc_thuong_hieu.required' => 'Tên danh mục thương hiệu là bắt buộc',
-        'slug.required' => 'Slug không được để trống',
-        'id_danh_muc.required' => 'Vui lòng chọn danh mục',
-        'id_thuong_hieu.required' => 'Vui lòng chọn thương hiệu',
-      ],
+        'ten_danh_muc_thuong_hieu.required' => 'Tên danh mục thương hiệu là bắt buộc.',
+        'ten_danh_muc_thuong_hieu.max' => 'Vượt quá số ký tự quy định (255 ký tự).',
+
+        'slug.required' => 'Slug không được để trống.',
+        'slug.unique' => 'Slug đã tồn tại.',
+
+        'id_danh_muc.required' => 'Vui lòng chọn danh mục.',
+        'id_danh_muc.exists' => 'Danh mục không tồn tại.',
+
+        'id_thuong_hieu.required' => 'Vui lòng chọn thương hiệu.',
+        'id_thuong_hieu.exists' => 'Thương hiệu không tồn tại.',
+      ]
     );
 
-    $danh_muc_thuoc_tinh = DanhMucThuongHieu::findOrFail($request->id_danh_muc_thuong_hieu);
-
-    $danh_muc_thuoc_tinh->update($validated);
+    $record = DanhMucThuongHieu::findOrFail($id);
+    $record->update($validated);
 
     return redirect()->route('san_pham_thuong_hieu')->with('success', 'Cập nhật thành công');
   }

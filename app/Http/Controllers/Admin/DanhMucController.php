@@ -22,11 +22,23 @@ class DanhMucController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'ten_danh_muc'   => 'required|string|max:255',
-            'slug'           => 'required|string|max:255',
-            'id_thuoc_tinh'  => 'nullable|array',
-        ]);
+        $validated = $request->validate(
+            [
+                'ten_danh_muc'  => 'required|string|max:255',
+                'slug'          => 'required|string|max:255|unique:danh_muc,slug',
+                'id_thuoc_tinh' => 'nullable|array',
+            ],
+            [
+                'ten_danh_muc.required' => 'Tên danh mục không được để trống.',
+                'ten_danh_muc.string'   => 'Tên danh mục phải là chuỗi.',
+                'ten_danh_muc.max'      => 'Tên danh mục tối đa 255 ký tự.',
+
+                'slug.required' => 'Slug không được để trống.',
+                'slug.string'   => 'Slug phải là chuỗi.',
+                'slug.max'      => 'Slug tối đa 255 ký tự.',
+                'slug.unique'   => 'Slug đã tồn tại.',
+            ]
+        );
 
         $danh_muc = DanhMuc::create([
             'ten_danh_muc' => $validated['ten_danh_muc'],

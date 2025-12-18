@@ -118,7 +118,7 @@ export default function DonHangChiTietPage({
       <Head title="Quản lý Nhập hàng chi tiết" />
 
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <DataTable columns={columns(handleEdit, handleDelete)} data={don_hang_chi_tiets} onAdd={handlePrint} addButtonLabel="in đơn hàng"/>
+        <DataTable columns={columns(handleEdit, handleDelete)} data={don_hang_chi_tiets} onAdd={handlePrint} addButtonLabel="Xuất hóa đơn"/>
       </div>
 
       {/* <ModalDialog

@@ -7,6 +7,7 @@ import { DonHang } from '@/types';
 import { Link } from '@inertiajs/react';
 import { don_hang, don_hang_chi_tiet } from '@/routes';
 import { format } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
 
 export function columns(onEdit: (row: DonHang) => void, onDelete: (row: DonHang) => void): ColumnDef<DonHang>[] {
   return [
@@ -41,9 +42,21 @@ export function columns(onEdit: (row: DonHang) => void, onDelete: (row: DonHang)
       accessorKey: 'phuong_thuc_thanh_toan',
       header: ({ column }) => <ColumnHeader column={column} title="Phương thức thanh toán" />,
     },
+
     {
       accessorKey: 'trang_thai_thanh_toan',
-      header: ({ column }) => <ColumnHeader column={column} title="Trạng thái thanh toán" />,
+      header: ({ column }) => (
+        <ColumnHeader column={column} title="Trạng thái thanh toán" />
+      ),
+      cell: ({ row }) => {
+        const value = row.getValue<string>('trang_thai_thanh_toan');
+
+        if (value === 'Đã thanh toán') {
+          return <Badge variant="secondary">Đã thanh toán</Badge>;
+        }
+
+        return <Badge variant="destructive">Chưa thanh toán</Badge>;
+      },
     },
     {
       accessorKey: 'trang_thai_don_hang',
