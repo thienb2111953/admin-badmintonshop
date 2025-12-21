@@ -77,7 +77,7 @@ export const columns: ColumnDef<ThongKeSanPham>[] = [
   },
   {
     accessorKey: 'gia_nhap',
-    header: ({ column }) => <ColumnHeader column={column} title="Giá nhập (TB)" />,
+    header: ({ column }) => <ColumnHeader column={column} title="Giá nhập" />,
     cell: ({ row }) => (
       <div className="min-w-[120px]">
         {formatCurrency(row.original.gia_nhap)}
@@ -86,7 +86,7 @@ export const columns: ColumnDef<ThongKeSanPham>[] = [
   },
   {
     accessorKey: 'gia_ban',
-    header: ({ column }) => <ColumnHeader column={column} title="Giá bán (TB)" />,
+    header: ({ column }) => <ColumnHeader column={column} title="Giá bán" />,
     cell: ({ row }) => (
       <div className="min-w-[120px]">
         {formatCurrency(row.original.gia_ban)}

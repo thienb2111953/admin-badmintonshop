@@ -164,7 +164,7 @@ class ThongKeController extends Controller
 
     /*
     |-----------------------------------------
-    | 1. Xác định format + giá trị filter + title
+    | 1. Xác định format + filter thời gian + title
     |-----------------------------------------
     */
     switch ($type) {
@@ -192,7 +192,24 @@ class ThongKeController extends Controller
 
     /*
     |-----------------------------------------
-    | 2. Subquery NHẬP
+    | 2. Subquery GIÁ NHẬP ALL-TIME (KHÔNG lọc thời gian)
+    |-----------------------------------------
+    */
+    $giaNhapAllTime = DB::table('nhap_hang_chi_tiet as nct')
+      ->select(
+        'nct.id_san_pham_chi_tiet',
+        DB::raw('
+        CASE
+          WHEN SUM(nct.so_luong) = 0 THEN 0
+          ELSE SUM(nct.so_luong * nct.don_gia) / SUM(nct.so_luong)
+        END as gia_nhap_tb_all
+      ')
+      )
+      ->groupBy('nct.id_san_pham_chi_tiet');
+
+    /*
+    |-----------------------------------------
+    | 3. Subquery NHẬP (chỉ để gom số lượng theo kỳ)
     |-----------------------------------------
     */
     $subNhap = DB::table('nhap_hang_chi_tiet as nct')
@@ -201,7 +218,6 @@ class ThongKeController extends Controller
         'nct.id_san_pham_chi_tiet',
         DB::raw("$formatNhap as thoi_gian"),
         DB::raw('SUM(nct.so_luong) as so_luong_nhap'),
-        DB::raw('AVG(nct.don_gia) as gia_nhap_tb'),
         DB::raw('0 as so_luong_ban'),
         DB::raw('0 as gia_ban_tb')
       )
@@ -209,7 +225,7 @@ class ThongKeController extends Controller
 
     /*
     |-----------------------------------------
-    | 3. Subquery BÁN
+    | 4. Subquery BÁN
     |-----------------------------------------
     */
     $subBan = DB::table('don_hang_chi_tiet as dhct')
@@ -219,7 +235,6 @@ class ThongKeController extends Controller
         'dhct.id_san_pham_chi_tiet',
         DB::raw("$formatBan as thoi_gian"),
         DB::raw('0 as so_luong_nhap'),
-        DB::raw('0 as gia_nhap_tb'),
         DB::raw('SUM(dhct.so_luong) as so_luong_ban'),
         DB::raw('AVG(dhct.don_gia) as gia_ban_tb')
       )
@@ -228,29 +243,60 @@ class ThongKeController extends Controller
 
     /*
     |-----------------------------------------
-    | 4. Query chính + filter thời gian
+    | 5. Query chính
     |-----------------------------------------
     */
     $query = DB::query()
       ->from(DB::raw("({$subBan->toSql()}) as t"))
       ->mergeBindings($subBan)
+
       ->join('san_pham_chi_tiet as spc', 't.id_san_pham_chi_tiet', '=', 'spc.id_san_pham_chi_tiet')
+
+      // 🔥 JOIN GIÁ NHẬP ALL TIME
+      ->leftJoinSub($giaNhapAllTime, 'gn', function ($join) {
+        $join->on('gn.id_san_pham_chi_tiet', '=', 't.id_san_pham_chi_tiet');
+      })
+
       ->select(
         'spc.ten_san_pham_chi_tiet',
         'spc.so_luong_ton',
+
         DB::raw('SUM(t.so_luong_ban) as so_luong_ban'),
-        DB::raw('AVG(NULLIF(t.gia_ban_tb, 0)) as gia_ban_tb'),
-        DB::raw('SUM(t.so_luong_ban * t.gia_ban_tb) as doanh_thu')
+
+        // ✅ Giá nhập TB toàn bộ lịch sử
+        DB::raw('COALESCE(gn.gia_nhap_tb_all, 0) as gia_nhap_tb'),
+
+        // Giá bán TB theo kỳ
+        DB::raw('
+        CASE
+          WHEN SUM(t.so_luong_ban) = 0 THEN 0
+          ELSE SUM(t.so_luong_ban * t.gia_ban_tb) / SUM(t.so_luong_ban)
+        END as gia_ban_tb
+      '),
+
+        // Doanh thu
+        DB::raw('SUM(t.so_luong_ban * t.gia_ban_tb) as doanh_thu'),
+
+        // ✅ Lợi nhuận chuẩn
+        DB::raw('
+        SUM(t.so_luong_ban * t.gia_ban_tb)
+        - (COALESCE(gn.gia_nhap_tb_all, 0) * SUM(t.so_luong_ban))
+        as loi_nhuan
+      ')
       )
       ->where('t.thoi_gian', $thoiGianValue)
-      ->groupBy('spc.ten_san_pham_chi_tiet', 'spc.so_luong_ton')
+      ->groupBy(
+        'spc.ten_san_pham_chi_tiet',
+        'spc.so_luong_ton',
+        'gn.gia_nhap_tb_all'
+      )
       ->orderByDesc('so_luong_ban');
 
     $data = $query->get();
 
     /*
     |-----------------------------------------
-    | 5. Tên file Excel
+    | 6. Export Excel
     |-----------------------------------------
     */
     $fileName = match ($type) {
@@ -265,6 +311,5 @@ class ThongKeController extends Controller
       $fileName . '.xlsx'
     );
   }
-
 
 }
