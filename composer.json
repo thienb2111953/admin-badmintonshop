@@ -17,6 +17,7 @@
     "laravel/tinker": "^2.10.1",
     "laravel/wayfinder": "^0.1.9",
     "league/flysystem": "^3.30",
+    "maatwebsite/excel": "^3.1",
     "openai-php/client": "^0.18.0",
     "symfony/process": "^7.4",
     "tightenco/ziggy": "^2.5",

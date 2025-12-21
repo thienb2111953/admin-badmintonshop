@@ -168,7 +168,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('thong-ke')->group(function () {
         Route::get('', [ThongKeController::class, 'index'])->name('thong_ke');
         Route::get('/doanh-thu', [ThongKeController::class, 'doanhThu'])->name('thong_ke.doanh_thu');
-        Route::get('/san-pham', [ThongKeController::class, 'thongKeSanPham'])->name('thong_ke.san_pham');
+      Route::get('/san-pham', [ThongKeController::class, 'thongKeSanPham'])->name('thong_ke.san_pham');
+      Route::get('/export', [ThongKeController::class, 'export'])->name('thong_ke.export');
     });
 
     Route::prefix('khuyen-mai')->group(function () {
